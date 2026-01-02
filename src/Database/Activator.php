@@ -24,6 +24,7 @@ class Activator {
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
+        $result = dbDelta($sql);
+        error_log('WP Desa Activator dbDelta result: ' . print_r($result, true));
     }
 }
