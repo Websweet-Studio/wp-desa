@@ -1,6 +1,10 @@
 <div class="wrap" x-data="residentsManager()">
     <h1 class="wp-heading-inline">Data Penduduk</h1>
     <button @click="openModal('add')" class="page-title-action">Tambah Baru</button>
+    <button @click="exportResidents" class="page-title-action">Export Excel</button>
+    <button @click="$refs.importFile.click()" class="page-title-action">Import Excel</button>
+    <button @click="generateDummy" class="page-title-action" style="margin-left: 10px; border-color: #d63638; color: #d63638;">Generate Dummy (Dev)</button>
+    <input type="file" x-ref="importFile" @change="importResidents" style="display:none" accept=".csv">
     <hr class="wp-header-end">
 
     <!-- Notification -->
@@ -266,6 +270,85 @@
                     })
                     .catch(err => {
                         this.showNotification(err.message || 'Gagal menghapus data.', 'error');
+                    });
+            },
+
+            exportResidents() {
+                const url = new URL(wpDesaSettings.apiUrl + '/export');
+                url.searchParams.append('_wpnonce', wpDesaSettings.nonce);
+                window.open(url.toString(), '_blank');
+            },
+
+            importResidents(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                if (!confirm('Pastikan file CSV memiliki format yang benar. Lanjutkan import?')) {
+                    event.target.value = '';
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                this.loading = true;
+
+                fetch(wpDesaSettings.apiUrl + '/import', {
+                        method: 'POST',
+                        headers: {
+                            'X-WP-Nonce': wpDesaSettings.nonce
+                        },
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        this.loading = false;
+                        event.target.value = ''; // Reset input
+                        if (data.code) {
+                            throw new Error(data.message);
+                        }
+                        
+                        this.fetchResidents();
+                        
+                        if (data.errors && data.errors.length > 0) {
+                             alert('Import selesai dengan catatan:\n- ' + data.errors.join('\n- '));
+                             this.showNotification('Import selesai (dengan beberapa error).', 'warning');
+                        } else {
+                             this.showNotification(data.message);
+                        }
+                    })
+                    .catch(err => {
+                        this.loading = false;
+                        event.target.value = '';
+                        this.showNotification(err.message || 'Gagal import data.', 'error');
+                    });
+            },
+
+            generateDummy() {
+                if (!confirm('AWAS! Ini akan membuat 100 data penduduk acak. Lanjutkan?')) return;
+                
+                this.loading = true;
+                
+                fetch(wpDesaSettings.apiUrl + '/seed', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-WP-Nonce': wpDesaSettings.nonce
+                        },
+                        body: JSON.stringify({ count: 100 })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        this.loading = false;
+                        if (data.code) {
+                            throw new Error(data.message);
+                        }
+                        this.fetchResidents();
+                        this.showNotification(data.message);
+                    })
+                    .catch(err => {
+                        this.loading = false;
+                        this.showNotification(err.message || 'Gagal generate dummy.', 'error');
                     });
             },
 

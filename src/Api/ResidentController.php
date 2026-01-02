@@ -38,6 +38,32 @@ class ResidentController extends WP_REST_Controller
                 'permission_callback' => [$this, 'permissions_check'],
             ],
         ]);
+
+        // Export Route
+        register_rest_route($namespace, '/' . $base . '/export', [
+            [
+                'methods' => WP_REST_Server::READABLE,
+                'callback' => [$this, 'export_items'],
+                'permission_callback' => [$this, 'permissions_check'],
+            ],
+        ]);
+
+        // Import Route
+        register_rest_route($namespace, '/' . $base . '/import', [
+            [
+                'methods' => WP_REST_Server::CREATABLE,
+                'callback' => [$this, 'import_items'],
+                'permission_callback' => [$this, 'permissions_check'],
+            ],
+        ]);
+        // Seeder Route (Dev Only)
+        register_rest_route($namespace, '/' . $base . '/seed', [
+            [
+                'methods' => WP_REST_Server::CREATABLE,
+                'callback' => [$this, 'seed_items'],
+                'permission_callback' => [$this, 'permissions_check'],
+            ],
+        ]);
     }
 
     public function permissions_check()
@@ -139,5 +165,125 @@ class ResidentController extends WP_REST_Controller
         }
 
         return rest_ensure_response(['deleted' => true, 'id' => $id]);
+    }
+
+    public function export_items($request)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'desa_residents';
+        $results = $wpdb->get_results("SELECT * FROM $table_name ORDER BY created_at DESC", ARRAY_A);
+
+        if (empty($results)) {
+            return new WP_Error('no_data', 'Tidak ada data untuk diexport', ['status' => 404]);
+        }
+
+        $filename = 'penduduk-export-' . date('Y-m-d') . '.csv';
+
+        // Clean buffer
+        if (ob_get_level()) ob_end_clean();
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=' . $filename);
+
+        $output = fopen('php://output', 'w');
+
+        // Headers
+        fputcsv($output, ['NIK', 'Nama Lengkap', 'Jenis Kelamin', 'Tempat Lahir', 'Tanggal Lahir', 'Alamat', 'Status Perkawinan', 'Pekerjaan']);
+
+        foreach ($results as $row) {
+            fputcsv($output, [
+                $row['nik'],
+                $row['nama_lengkap'],
+                $row['jenis_kelamin'],
+                $row['tempat_lahir'],
+                $row['tanggal_lahir'],
+                $row['alamat'],
+                $row['status_perkawinan'],
+                $row['pekerjaan']
+            ]);
+        }
+
+        fclose($output);
+        exit;
+    }
+
+    public function import_items($request)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'desa_residents';
+
+        $files = $request->get_file_params();
+
+        if (empty($files['file'])) {
+            return new WP_Error('no_file', 'File tidak ditemukan', ['status' => 400]);
+        }
+
+        $file = $files['file'];
+
+        $handle = fopen($file['tmp_name'], 'r');
+        if ($handle === false) {
+            return new WP_Error('read_error', 'Gagal membaca file', ['status' => 500]);
+        }
+
+        // Skip header
+        fgetcsv($handle);
+
+        $success_count = 0;
+        $errors = [];
+
+        while (($data = fgetcsv($handle)) !== false) {
+            if (count($data) < 8) continue; // Basic validation
+
+            // Map data (assuming same order as export)
+            $insert_data = [
+                'nik' => sanitize_text_field($data[0]),
+                'nama_lengkap' => sanitize_text_field($data[1]),
+                'jenis_kelamin' => sanitize_text_field($data[2]),
+                'tempat_lahir' => sanitize_text_field($data[3]),
+                'tanggal_lahir' => sanitize_text_field($data[4]),
+                'alamat' => sanitize_textarea_field($data[5]),
+                'status_perkawinan' => sanitize_text_field($data[6]),
+                'pekerjaan' => sanitize_text_field($data[7]),
+                'created_at' => current_time('mysql'),
+            ];
+
+            // Check if NIK exists
+            $exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_name WHERE nik = %s", $insert_data['nik']));
+
+            if ($exists) {
+                $errors[] = "NIK {$insert_data['nik']} sudah ada (Dilewati)";
+                continue;
+            }
+
+            $result = $wpdb->insert($table_name, $insert_data);
+            if ($result) {
+                $success_count++;
+            } else {
+                $errors[] = "Gagal simpan {$insert_data['nik']}: " . $wpdb->last_error;
+            }
+        }
+
+        fclose($handle);
+
+        return rest_ensure_response([
+            'success' => true,
+            'message' => "Import selesai. $success_count data berhasil diimport.",
+            'errors' => $errors
+        ]);
+    }
+
+    public function seed_items($request)
+    {
+        $count = $request->get_param('count') ?: 100;
+
+        require_once WP_DESA_PATH . 'src/Database/Seeder.php';
+
+        $inserted = \WpDesa\Database\Seeder::run($count);
+
+        return rest_ensure_response([
+            'success' => true,
+            'message' => "Berhasil membuat $inserted data dummy.",
+            'count' => $inserted
+        ]);
     }
 }
