@@ -5,8 +5,8 @@
 // Debug log to ensure file is loaded
 console.log('WP Desa JS Loaded');
 
-document.addEventListener('alpine:init', () => {
-    console.log('Alpine:init event fired');
+function initAlpineComponents() {
+    console.log('Initializing Alpine Components');
 
     // Frontend Component
     Alpine.data('villageInfo', () => ({
@@ -161,4 +161,11 @@ document.addEventListener('alpine:init', () => {
             });
         }
     }));
-});
+}
+
+// Handle both cases: Alpine already loaded or not
+if (window.Alpine) {
+    initAlpineComponents();
+} else {
+    document.addEventListener('alpine:init', initAlpineComponents);
+}

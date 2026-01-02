@@ -1,126 +1,23 @@
-<div class="wrap" x-data="{
-    residents: [],
-    loading: false,
-    showModal: false,
-    modalMode: 'add',
-    form: {
-        id: null,
-        nik: '',
-        nama_lengkap: '',
-        jenis_kelamin: 'L',
-        pekerjaan: ''
-    },
-
-    init() {
-        console.log('Alpine Component Initialized');
-        if (typeof wpDesaSettings === 'undefined') {
-            console.error('wpDesaSettings is missing. Ensure the plugin assets are loaded correctly.');
-            return;
-        }
-        this.fetchResidents();
-    },
-
-    fetchResidents() {
-        this.loading = true;
-        fetch(wpDesaSettings.root + 'wp-desa/v1/residents', {
-            headers: { 'X-WP-Nonce': wpDesaSettings.nonce }
-        })
-        .then(res => {
-            if (!res.ok) throw new Error(res.statusText);
-            return res.json();
-        })
-        .then(data => {
-            console.log('Data loaded:', data);
-            this.residents = data;
-            this.loading = false;
-        })
-        .catch(err => {
-            console.error('Fetch error:', err);
-            this.loading = false;
-        });
-    },
-
-    openModal(mode, data = null) {
-        console.log('openModal clicked:', mode);
-        this.modalMode = mode;
-        if (mode === 'edit' && data) {
-            this.form = { ...data };
-        } else {
-            this.resetForm();
-        }
-        this.showModal = true;
-    },
-
-    resetForm() {
-        this.form = {
-            id: null,
-            nik: '',
-            nama_lengkap: '',
-            jenis_kelamin: 'L',
-            pekerjaan: ''
-        };
-    },
-
-    saveResident() {
-        const url = this.modalMode === 'add' 
-            ? wpDesaSettings.root + 'wp-desa/v1/residents'
-            : wpDesaSettings.root + 'wp-desa/v1/residents/' + this.form.id;
-        
-        const method = this.modalMode === 'add' ? 'POST' : 'PUT';
-
-        fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-                'X-WP-Nonce': wpDesaSettings.nonce
-            },
-            body: JSON.stringify(this.form)
-        })
-        .then(res => {
-            if (!res.ok) throw new Error('Failed');
-            return res.json();
-        })
-        .then(() => {
-            this.showModal = false;
-            this.fetchResidents();
-            this.resetForm();
-        })
-        .catch(err => {
-            alert('Terjadi kesalahan saat menyimpan data.');
-            console.error(err);
-        });
-    },
-
-    deleteResident(id) {
-        if (!confirm('Apakah Anda yakin ingin menghapus data ini?')) return;
-
-        fetch(wpDesaSettings.root + 'wp-desa/v1/residents/' + id, {
-            method: 'DELETE',
-            headers: { 'X-WP-Nonce': wpDesaSettings.nonce }
-        })
-        .then(res => {
-            if (!res.ok) throw new Error('Failed');
-            return res.json();
-        })
-        .then(() => {
-            this.fetchResidents();
-        })
-        .catch(err => {
-            alert('Gagal menghapus data.');
-            console.error(err);
-        });
-    }
-}">
+<div class="wrap" x-data="residentsManager">
     <h1 class="wp-heading-inline">Data Penduduk</h1>
 
     <!-- Debug Info -->
     <div style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; background: #fff;" x-show="true">
-        <strong>Status:</strong> Alpine Loaded.
+        <strong>Status:</strong> <span x-text="'Alpine Active'">Alpine Not Running</span>.
         <strong>Data:</strong> <span x-text="residents.length">0</span> residents.
         <strong>Loading:</strong> <span x-text="loading">false</span>.
+        <strong>Modal State:</strong> <span x-text="showModal">false</span>.
+        <button type="button" @click="openModal('add'); console.log('Button Clicked')" class="button button-primary">Tambah Penduduk</button>
+
+        <hr>
+        <strong>Test Counter:</strong>
+        <div x-data="{ count: 0 }">
+            <span x-text="count"></span>
+            <button type="button" @click="count++" class="button button-small">Increment</button>
+        </div>
     </div>
 
-    <button type="button" @click="openModal('add')" class="page-title-action">Tambah Penduduk</button>
+    <!-- <button type="button" @click="openModal('add')" class="page-title-action">Tambah Penduduk</button> -->
     <hr class="wp-header-end">
 
     <div class="wp-desa-container" style="margin-top: 20px;">
@@ -170,7 +67,7 @@
     </div>
 
     <!-- Modal Form -->
-    <div x-show="showModal" class="wp-desa-modal-overlay" style="display: none;" x-transition>
+    <div x-show="showModal" class="wp-desa-modal-overlay" x-transition x-cloak>
         <div class="wp-desa-modal" @click.away="showModal = false">
             <h2 x-text="modalMode === 'add' ? 'Tambah Penduduk' : 'Edit Penduduk'"></h2>
             <form @submit.prevent="saveResident">
@@ -208,6 +105,10 @@
 </div>
 
 <style>
+    [x-cloak] {
+        display: none !important;
+    }
+
     .wp-desa-modal-overlay {
         position: fixed;
         top: 0;

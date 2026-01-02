@@ -2,7 +2,8 @@
 
 namespace WP_Desa\Core;
 
-use WP_Desa\Frontend\Assets;
+use WP_Desa\Frontend\Assets as PublicAssets;
+use WP_Desa\Admin\Assets as AdminAssets;
 use WP_Desa\Frontend\Shortcodes;
 use WP_Desa\Api\Router;
 use WP_Desa\Admin\Menu;
@@ -30,13 +31,13 @@ class Plugin {
 		$plugin_admin = new Menu( $this->plugin_name, $this->version );
 		add_action( 'admin_menu', [ $plugin_admin, 'add_plugin_admin_menu' ] );
 		
-		$assets = new Assets( $this->plugin_name, $this->version );
+		$assets = new AdminAssets( $this->plugin_name, $this->version );
 		add_action( 'admin_enqueue_scripts', [ $assets, 'enqueue_scripts' ] );
 		add_action( 'admin_enqueue_scripts', [ $assets, 'enqueue_styles' ] );
 	}
 
 	private function define_public_hooks() {
-		$assets = new Assets( $this->plugin_name, $this->version );
+		$assets = new PublicAssets( $this->plugin_name, $this->version );
 		add_action( 'wp_enqueue_scripts', [ $assets, 'enqueue_styles' ] );
 		add_action( 'wp_enqueue_scripts', [ $assets, 'enqueue_scripts' ] );
 

@@ -2,38 +2,44 @@
 
 namespace WP_Desa\Frontend;
 
-class Assets {
+class Assets
+{
 
 	private $plugin_name;
 	private $version;
 
-	public function __construct( $plugin_name, $version ) {
+	public function __construct($plugin_name, $version)
+	{
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
 	}
 
-	public function enqueue_styles() {
-		wp_enqueue_style( $this->plugin_name, WP_DESA_URL . 'assets/css/wp-desa.css', array(), $this->version, 'all' );
+	public function enqueue_styles()
+	{
+		wp_enqueue_style($this->plugin_name, WP_DESA_URL . 'assets/css/wp-desa.css', array(), $this->version, 'all');
 	}
 
-	public function enqueue_scripts() {
-		// Enqueue Alpine.js from CDN (or local if preferred, but CDN is easier for start)
-		wp_enqueue_script( 'alpinejs', 'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js', array(), '3.x.x', true );
-		// Add defer attribute to Alpine.js
-		add_filter( 'script_loader_tag', function( $tag, $handle ) {
-			if ( 'alpinejs' !== $handle ) {
+	public function enqueue_scripts()
+	{
+		// Enqueue local Alpine.js
+		wp_enqueue_script('alpinejs', WP_DESA_URL . 'assets/js/alpine.min.js', array(), '3.14.8', true);
+
+		// Add defer attribute to Alpine.js and wp-desa script
+		add_filter('script_loader_tag', function ($tag, $handle) {
+			if ('alpinejs' !== $handle && $this->plugin_name !== $handle) {
 				return $tag;
 			}
-			return str_replace( ' src', ' defer src', $tag );
-		}, 10, 2 );
+			return str_replace(' src', ' defer src', $tag);
+		}, 10, 2);
 
-		wp_enqueue_script( $this->plugin_name, WP_DESA_URL . 'assets/js/wp-desa.js', array( 'jquery', 'alpinejs' ), $this->version, true );
+		// Load wp-desa.js BEFORE Alpine if possible to catch events, or rely on window.Alpine check
+		// Dependencies: jquery only, remove alpinejs dependency to allow parallel/controlled loading
+		wp_enqueue_script($this->plugin_name, WP_DESA_URL . 'assets/js/wp-desa.js', array('jquery'), $this->version, true);
 
 		// Localize script for API URL
-		wp_localize_script( $this->plugin_name, 'wpDesaSettings', [
-			'root' => esc_url_raw( rest_url() ),
-			'nonce' => wp_create_nonce( 'wp_rest' )
-		] );
+		wp_localize_script($this->plugin_name, 'wpDesaSettings', [
+			'root' => esc_url_raw(rest_url()),
+			'nonce' => wp_create_nonce('wp_rest')
+		]);
 	}
-
 }
