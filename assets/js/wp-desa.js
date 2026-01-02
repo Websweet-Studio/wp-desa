@@ -1,19 +1,28 @@
 /**
  * Main JS file for WP Desa
  */
+
+// Debug log to ensure file is loaded
+console.log('WP Desa JS Loaded');
+
 document.addEventListener('alpine:init', () => {
-    
+    console.log('Alpine:init event fired');
+
     // Frontend Component
     Alpine.data('villageInfo', () => ({
         info: {},
         loading: true,
 
         init() {
-            console.log('WP Desa Alpine Component Initialized');
+            console.log('villageInfo initialized');
             this.fetchInfo();
         },
 
         fetchInfo() {
+            if (typeof wpDesaSettings === 'undefined') {
+                console.error('wpDesaSettings not defined');
+                return;
+            }
             fetch(wpDesaSettings.root + 'wp-desa/v1/info', {
                 headers: {
                     'X-WP-Nonce': wpDesaSettings.nonce
@@ -46,22 +55,37 @@ document.addEventListener('alpine:init', () => {
         },
 
         init() {
+            console.log('residentsManager initialized');
+            if (typeof wpDesaSettings === 'undefined') {
+                console.error('wpDesaSettings is missing!');
+                return;
+            }
             this.fetchResidents();
         },
 
         fetchResidents() {
+            console.log('Fetching residents...');
             this.loading = true;
             fetch(wpDesaSettings.root + 'wp-desa/v1/residents', {
                 headers: { 'X-WP-Nonce': wpDesaSettings.nonce }
             })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error('API Error: ' + res.status);
+                return res.json();
+            })
             .then(data => {
+                console.log('Residents data:', data);
                 this.residents = data;
+                this.loading = false;
+            })
+            .catch(err => {
+                console.error('Fetch residents failed:', err);
                 this.loading = false;
             });
         },
 
         openModal(mode, data = null) {
+            console.log('Opening modal:', mode, data);
             this.modalMode = mode;
             if (mode === 'edit' && data) {
                 this.form = { ...data };
@@ -69,6 +93,7 @@ document.addEventListener('alpine:init', () => {
                 this.resetForm();
             }
             this.showModal = true;
+            console.log('showModal is now:', this.showModal);
         },
 
         resetForm() {
@@ -86,6 +111,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         saveResident() {
+            console.log('Saving resident...');
             const url = this.modalMode === 'add' 
                 ? wpDesaSettings.root + 'wp-desa/v1/residents'
                 : wpDesaSettings.root + 'wp-desa/v1/residents/' + this.form.id;
@@ -135,5 +161,4 @@ document.addEventListener('alpine:init', () => {
             });
         }
     }));
-
-})
+});
