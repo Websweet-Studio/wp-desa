@@ -27,19 +27,23 @@ class Menu {
     }
 
     public function enqueue_scripts($hook) {
-        if ($hook !== 'wp-desa_page_wp-desa-residents') {
-            return;
+        // Enqueue on Dashboard and Residents page
+        if ($hook === 'toplevel_page_wp-desa' || $hook === 'wp-desa_page_wp-desa-residents') {
+            // Alpine.js
+            wp_enqueue_script('alpinejs', 'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js', [], '3.0.0', true);
+
+            // Admin CSS
+            wp_enqueue_style('wp-desa-admin-css', WP_DESA_URL . 'assets/css/admin/style.css', [], '1.0.0');
         }
 
-        // Alpine.js
-        wp_enqueue_script('alpinejs', 'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js', [], '3.0.0', true);
-
-        // Admin CSS
-        wp_enqueue_style('wp-desa-admin-css', WP_DESA_URL . 'assets/css/admin/style.css', [], '1.0.0');
+        // Only for Dashboard
+        if ($hook === 'toplevel_page_wp-desa') {
+             wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', [], '4.0.0', true);
+        }
     }
 
     public function render_dashboard() {
-        echo '<div class="wrap"><h1>WP Desa Dashboard</h1><p>Selamat datang di sistem manajemen desa.</p></div>';
+        require_once WP_DESA_PATH . 'templates/admin/dashboard.php';
     }
 
     public function render_residents_page() {
