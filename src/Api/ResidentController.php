@@ -75,8 +75,32 @@ class ResidentController extends WP_REST_Controller
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'desa_residents';
-        $results = $wpdb->get_results("SELECT * FROM $table_name ORDER BY created_at DESC");
-        return rest_ensure_response($results);
+
+        // Pagination parameters
+        $page = $request->get_param('page') ? intval($request->get_param('page')) : 1;
+        $per_page = $request->get_param('per_page') ? intval($request->get_param('per_page')) : 20;
+        $offset = ($page - 1) * $per_page;
+
+        // Count total items
+        $total_items = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+        $total_pages = ceil($total_items / $per_page);
+
+        // Fetch items
+        $results = $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM $table_name ORDER BY created_at DESC LIMIT %d OFFSET %d",
+            $per_page,
+            $offset
+        ));
+
+        return rest_ensure_response([
+            'data' => $results,
+            'meta' => [
+                'current_page' => $page,
+                'per_page' => $per_page,
+                'total_items' => $total_items,
+                'total_pages' => $total_pages
+            ]
+        ]);
     }
 
     public function create_item($request)
@@ -190,11 +214,12 @@ class ResidentController extends WP_REST_Controller
         $output = fopen('php://output', 'w');
 
         // Headers
-        fputcsv($output, ['NIK', 'Nama Lengkap', 'Jenis Kelamin', 'Tempat Lahir', 'Tanggal Lahir', 'Alamat', 'Status Perkawinan', 'Pekerjaan']);
+        fputcsv($output, ['NIK', 'No. KK', 'Nama Lengkap', 'Jenis Kelamin', 'Tempat Lahir', 'Tanggal Lahir', 'Alamat', 'Status Perkawinan', 'Pekerjaan']);
 
         foreach ($results as $row) {
             fputcsv($output, [
                 $row['nik'],
+                $row['no_kk'],
                 $row['nama_lengkap'],
                 $row['jenis_kelamin'],
                 $row['tempat_lahir'],
@@ -239,13 +264,14 @@ class ResidentController extends WP_REST_Controller
             // Map data (assuming same order as export)
             $insert_data = [
                 'nik' => sanitize_text_field($data[0]),
-                'nama_lengkap' => sanitize_text_field($data[1]),
-                'jenis_kelamin' => sanitize_text_field($data[2]),
-                'tempat_lahir' => sanitize_text_field($data[3]),
-                'tanggal_lahir' => sanitize_text_field($data[4]),
-                'alamat' => sanitize_textarea_field($data[5]),
-                'status_perkawinan' => sanitize_text_field($data[6]),
-                'pekerjaan' => sanitize_text_field($data[7]),
+                'no_kk' => sanitize_text_field($data[1] ?? ''),
+                'nama_lengkap' => sanitize_text_field($data[2]),
+                'jenis_kelamin' => sanitize_text_field($data[3]),
+                'tempat_lahir' => sanitize_text_field($data[4]),
+                'tanggal_lahir' => sanitize_text_field($data[5]),
+                'alamat' => sanitize_textarea_field($data[6]),
+                'status_perkawinan' => sanitize_text_field($data[7]),
+                'pekerjaan' => sanitize_text_field($data[8]),
                 'created_at' => current_time('mysql'),
             ];
 
