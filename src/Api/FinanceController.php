@@ -6,8 +6,10 @@ use WP_REST_Controller;
 use WP_REST_Server;
 use WP_Error;
 
-class FinanceController extends WP_REST_Controller {
-    public function register_routes() {
+class FinanceController extends WP_REST_Controller
+{
+    public function register_routes()
+    {
         $namespace = 'wp-desa/v1';
         $base = 'finances';
 
@@ -63,17 +65,22 @@ class FinanceController extends WP_REST_Controller {
         ]);
     }
 
-    public function permissions_check() {
+    public function permissions_check()
+    {
         return current_user_can('manage_options');
     }
 
-    public function get_items($request) {
+    public function get_items($request)
+    {
         global $wpdb;
         $table = $wpdb->prefix . 'desa_finances';
-        
+
         $year = $request->get_param('year');
         $type = $request->get_param('type');
-        
+        $page = $request->get_param('page') ? intval($request->get_param('page')) : 1;
+        $per_page = $request->get_param('per_page') ? intval($request->get_param('per_page')) : 20;
+        $offset = ($page - 1) * $per_page;
+
         $where = "WHERE 1=1";
         $args = [];
 
@@ -87,20 +94,38 @@ class FinanceController extends WP_REST_Controller {
             $args[] = $type;
         }
 
-        $sql = "SELECT * FROM $table $where ORDER BY transaction_date DESC";
-        
+        // Count total items
+        $count_sql = "SELECT COUNT(*) FROM $table $where";
         if (!empty($args)) {
-            $sql = $wpdb->prepare($sql, $args);
+            $count_sql = $wpdb->prepare($count_sql, $args);
         }
+        $total_items = (int) $wpdb->get_var($count_sql);
+        $total_pages = ceil($total_items / $per_page);
 
-        $results = $wpdb->get_results($sql);
-        return rest_ensure_response($results);
+        // Get actual data
+        $sql = "SELECT * FROM $table $where ORDER BY transaction_date DESC LIMIT %d OFFSET %d";
+        $args[] = $per_page;
+        $args[] = $offset;
+
+        $prepared_sql = $wpdb->prepare($sql, $args);
+        $results = $wpdb->get_results($prepared_sql);
+
+        return rest_ensure_response([
+            'data' => $results,
+            'meta' => [
+                'current_page' => $page,
+                'per_page' => $per_page,
+                'total_items' => $total_items,
+                'total_pages' => $total_pages
+            ]
+        ]);
     }
 
-    public function get_summary($request) {
+    public function get_summary($request)
+    {
         global $wpdb;
         $table = $wpdb->prefix . 'desa_finances';
-        
+
         $year = $request->get_param('year') ?: date('Y');
 
         // Total Income vs Expense (Budget vs Realization)
@@ -135,15 +160,16 @@ class FinanceController extends WP_REST_Controller {
         ]);
     }
 
-    public function create_item($request) {
+    public function create_item($request)
+    {
         global $wpdb;
         $table = $wpdb->prefix . 'desa_finances';
-        
+
         // Ensure table exists
         \WpDesa\Database\Activator::activate();
 
         $params = $request->get_json_params();
-        
+
         $data = [
             'year' => isset($params['year']) ? intval($params['year']) : date('Y'),
             'type' => sanitize_text_field($params['type']),
@@ -164,7 +190,8 @@ class FinanceController extends WP_REST_Controller {
         return rest_ensure_response(['success' => true, 'id' => $wpdb->insert_id]);
     }
 
-    public function update_item($request) {
+    public function update_item($request)
+    {
         global $wpdb;
         $table = $wpdb->prefix . 'desa_finances';
         $id = $request['id'];
@@ -188,7 +215,8 @@ class FinanceController extends WP_REST_Controller {
         return rest_ensure_response(['success' => true]);
     }
 
-    public function delete_item($request) {
+    public function delete_item($request)
+    {
         global $wpdb;
         $table = $wpdb->prefix . 'desa_finances';
         $id = $request['id'];
@@ -202,13 +230,14 @@ class FinanceController extends WP_REST_Controller {
         return rest_ensure_response(['success' => true]);
     }
 
-    public function seed_items($request) {
+    public function seed_items($request)
+    {
         require_once plugin_dir_path(dirname(__FILE__)) . 'Database/Seeder.php';
-        
+
         $count = \WpDesa\Database\Seeder::seed_finances(50);
-        
+
         return rest_ensure_response([
-            'success' => true, 
+            'success' => true,
             'message' => "$count dummy finance records created.",
             'count' => $count
         ]);

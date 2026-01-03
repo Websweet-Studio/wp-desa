@@ -89,8 +89,26 @@ class AidController extends WP_REST_Controller {
     public function get_programs($request) {
         global $wpdb;
         $table = $wpdb->prefix . 'desa_programs';
-        $results = $wpdb->get_results("SELECT * FROM $table ORDER BY created_at DESC");
-        return rest_ensure_response($results);
+        
+        $page = $request->get_param('page') ? intval($request->get_param('page')) : 1;
+        $per_page = $request->get_param('per_page') ? intval($request->get_param('per_page')) : 20;
+        $offset = ($page - 1) * $per_page;
+
+        // Count total
+        $total_items = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table");
+        $total_pages = ceil($total_items / $per_page);
+
+        $results = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table ORDER BY created_at DESC LIMIT %d OFFSET %d", $per_page, $offset));
+        
+        return rest_ensure_response([
+            'data' => $results,
+            'meta' => [
+                'current_page' => $page,
+                'per_page' => $per_page,
+                'total_items' => $total_items,
+                'total_pages' => $total_pages
+            ]
+        ]);
     }
 
     public function get_program($request) {
@@ -166,13 +184,22 @@ class AidController extends WP_REST_Controller {
         $table_recipients = $wpdb->prefix . 'desa_program_recipients';
         $table_residents = $wpdb->prefix . 'desa_residents';
 
+        $page = $request->get_param('page') ? intval($request->get_param('page')) : 1;
+        $per_page = $request->get_param('per_page') ? intval($request->get_param('per_page')) : 20;
+        $offset = ($page - 1) * $per_page;
+
+        // Count total
+        $total_items = (int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table_recipients WHERE program_id = %d", $program_id));
+        $total_pages = ceil($total_items / $per_page);
+
         // Join with residents to get name and NIK
         $sql = "SELECT r.*, res.nama_lengkap, res.nik, res.alamat, res.jenis_kelamin 
                 FROM $table_recipients r
                 JOIN $table_residents res ON r.resident_id = res.id
-                WHERE r.program_id = %d";
+                WHERE r.program_id = %d
+                LIMIT %d OFFSET %d";
         
-        $results = $wpdb->get_results($wpdb->prepare($sql, $program_id));
+        $results = $wpdb->get_results($wpdb->prepare($sql, $program_id, $per_page, $offset));
 
         // If public (not admin), mask NIK and Name partly
         if (!current_user_can('manage_options')) {
@@ -185,7 +212,15 @@ class AidController extends WP_REST_Controller {
             }
         }
 
-        return rest_ensure_response($results);
+        return rest_ensure_response([
+            'data' => $results,
+            'meta' => [
+                'current_page' => $page,
+                'per_page' => $per_page,
+                'total_items' => $total_items,
+                'total_pages' => $total_pages
+            ]
+        ]);
     }
 
     public function add_recipient($request) {
