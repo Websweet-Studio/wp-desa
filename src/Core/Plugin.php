@@ -37,6 +37,9 @@ class Plugin
 
         $complaints = new \WpDesa\Api\ComplaintController();
         add_action('rest_api_init', [$complaints, 'register_routes']);
+
+        $finances = new \WpDesa\Api\FinanceController();
+        add_action('rest_api_init', [$finances, 'register_routes']);
     }
 
     private function load_frontend()

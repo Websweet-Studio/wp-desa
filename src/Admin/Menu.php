@@ -46,6 +46,16 @@ class Menu
             'wp-desa-complaints',
             [$this, 'render_complaints_page']
         );
+
+        // Submenu Keuangan Desa
+        add_submenu_page(
+            'wp-desa',
+            'Keuangan Desa',
+            'Keuangan Desa',
+            'manage_options',
+            'wp-desa-finances',
+            [$this, 'render_finances_page']
+        );
     }
 
     public function enqueue_scripts($hook)
@@ -55,7 +65,8 @@ class Menu
             'toplevel_page_wp-desa',
             'wp-desa_page_wp-desa-residents',
             'wp-desa_page_wp-desa-letters',
-            'wp-desa_page_wp-desa-complaints'
+            'wp-desa_page_wp-desa-complaints',
+            'wp-desa_page_wp-desa-finances'
         ];
 
         if (in_array($hook, $allowed_pages)) {
@@ -66,8 +77,8 @@ class Menu
             wp_enqueue_style('wp-desa-admin-css', WP_DESA_URL . 'assets/css/admin/style.css', [], '1.0.0');
         }
 
-        // Only for Dashboard
-        if ($hook === 'toplevel_page_wp-desa') {
+        // Dashboard and Finance (Need Chart.js)
+        if ($hook === 'toplevel_page_wp-desa' || $hook === 'wp-desa_page_wp-desa-finances') {
             wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', [], '4.0.0', true);
         }
     }
@@ -90,5 +101,10 @@ class Menu
     public function render_complaints_page()
     {
         require_once WP_DESA_PATH . 'templates/admin/complaints.php';
+    }
+
+    public function render_finances_page()
+    {
+        require_once WP_DESA_PATH . 'templates/admin/finances.php';
     }
 }

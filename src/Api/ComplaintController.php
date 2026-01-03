@@ -200,8 +200,4 @@ class ComplaintController extends WP_REST_Controller {
             'count' => $count
         ]);
     }
-
-    public function permissions_check() {
-        return current_user_can('manage_options');
-    }
 }

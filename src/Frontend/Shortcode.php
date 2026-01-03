@@ -8,13 +8,202 @@ class Shortcode
     {
         add_shortcode('wp_desa_layanan', [$this, 'render_layanan']);
         add_shortcode('wp_desa_aduan', [$this, 'render_aduan']);
+        add_shortcode('wp_desa_keuangan', [$this, 'render_keuangan']);
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
+    }
+
+    public function render_keuangan()
+    {
+        ob_start();
+?>
+        <div id="wp-desa-keuangan" class="wp-desa-wrapper" x-data="keuanganDesa()">
+            <h2 class="wp-desa-title" style="text-align:center;">Transparansi Keuangan Desa</h2>
+
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+                <select x-model="filterYear" @change="fetchSummary" class="wp-desa-select" style="width: auto;">
+                    <template x-for="y in years" :key="y">
+                        <option :value="y" x-text="y"></option>
+                    </template>
+                </select>
+            </div>
+
+            <!-- Summary Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <div class="wp-desa-card" style="text-align: center;">
+                    <h4 style="margin: 0; color: #555;">Pendapatan</h4>
+                    <h3 style="margin: 10px 0; color: #2271b1; font-size: 1.5rem;" x-text="formatCurrency(summary.totals.find(t => t.type === 'income')?.total_realization || 0)"></h3>
+                    <small style="color: #777;">Anggaran: <span x-text="formatCurrency(summary.totals.find(t => t.type === 'income')?.total_budget || 0)"></span></small>
+                </div>
+                <div class="wp-desa-card" style="text-align: center;">
+                    <h4 style="margin: 0; color: #555;">Belanja</h4>
+                    <h3 style="margin: 10px 0; color: #d63638; font-size: 1.5rem;" x-text="formatCurrency(summary.totals.find(t => t.type === 'expense')?.total_realization || 0)"></h3>
+                    <small style="color: #777;">Anggaran: <span x-text="formatCurrency(summary.totals.find(t => t.type === 'expense')?.total_budget || 0)"></span></small>
+                </div>
+                <div class="wp-desa-card" style="text-align: center;">
+                    <h4 style="margin: 0; color: #555;">Surplus/Defisit</h4>
+                    <h3 style="margin: 10px 0; font-size: 1.5rem;" :style="{color: getSurplus() >= 0 ? '#00a32a' : '#d63638'}" x-text="formatCurrency(getSurplus())"></h3>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 30px;">
+                <div class="wp-desa-card">
+                    <h4 style="text-align: center; margin-bottom: 15px;">Sumber Pendapatan</h4>
+                    <canvas id="publicIncomeChart"></canvas>
+                </div>
+                <div class="wp-desa-card">
+                    <h4 style="text-align: center; margin-bottom: 15px;">Penggunaan Dana</h4>
+                    <canvas id="publicExpenseChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Detail Table -->
+            <div class="wp-desa-card">
+                <h4 style="margin-top:0; margin-bottom: 15px;">Rincian Realisasi APBDes</h4>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid #eee;">
+                                <th style="text-align: left; padding: 10px;">Uraian</th>
+                                <th style="text-align: right; padding: 10px;">Anggaran</th>
+                                <th style="text-align: right; padding: 10px;">Realisasi</th>
+                                <th style="text-align: right; padding: 10px;">%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template x-for="item in items" :key="item.id">
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 10px;">
+                                        <strong x-text="item.category"></strong><br>
+                                        <small x-text="item.description"></small>
+                                    </td>
+                                    <td style="text-align: right; padding: 10px;" x-text="formatCurrency(item.budget_amount)"></td>
+                                    <td style="text-align: right; padding: 10px;" x-text="formatCurrency(item.realization_amount)"></td>
+                                    <td style="text-align: right; padding: 10px;">
+                                        <span x-text="calculatePercentage(item.realization_amount, item.budget_amount) + '%'"></span>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function keuanganDesa() {
+                return {
+                    filterYear: new Date().getFullYear(),
+                    years: [],
+                    summary: {
+                        totals: [],
+                        income_sources: [],
+                        expense_sources: []
+                    },
+                    items: [],
+                    incomeChart: null,
+                    expenseChart: null,
+
+                    init() {
+                        const currentYear = new Date().getFullYear();
+                        for (let i = currentYear; i >= currentYear - 5; i--) {
+                            this.years.push(i);
+                        }
+                        this.fetchSummary();
+                        this.fetchData();
+                    },
+
+                    fetchSummary() {
+                        fetch('/wp-json/wp-desa/v1/finances/summary?year=' + this.filterYear)
+                            .then(res => res.json())
+                            .then(data => {
+                                this.summary = data;
+                                this.renderCharts();
+                            });
+                    },
+
+                    fetchData() {
+                        fetch('/wp-json/wp-desa/v1/finances?year=' + this.filterYear)
+                            .then(res => res.json())
+                            .then(data => {
+                                this.items = data;
+                            });
+                    },
+
+                    renderCharts() {
+                        if (this.incomeChart) this.incomeChart.destroy();
+                        if (this.expenseChart) this.expenseChart.destroy();
+
+                        // Wait for Chart.js
+                        if (typeof Chart === 'undefined') {
+                            setTimeout(() => this.renderCharts(), 500);
+                            return;
+                        }
+
+                        const incomeCtx = document.getElementById('publicIncomeChart');
+                        if (incomeCtx && this.summary.income_sources.length > 0) {
+                            this.incomeChart = new Chart(incomeCtx, {
+                                type: 'pie',
+                                data: {
+                                    labels: this.summary.income_sources.map(i => i.category),
+                                    datasets: [{
+                                        data: this.summary.income_sources.map(i => i.total),
+                                        backgroundColor: ['#4bc0c0', '#36a2eb', '#ffcd56', '#ff9f40', '#9966ff']
+                                    }]
+                                },
+                                options: {
+                                    responsive: true
+                                }
+                            });
+                        }
+
+                        const expenseCtx = document.getElementById('publicExpenseChart');
+                        if (expenseCtx && this.summary.expense_sources.length > 0) {
+                            this.expenseChart = new Chart(expenseCtx, {
+                                type: 'doughnut',
+                                data: {
+                                    labels: this.summary.expense_sources.map(i => i.category),
+                                    datasets: [{
+                                        data: this.summary.expense_sources.map(i => i.total),
+                                        backgroundColor: ['#ff6384', '#ff9f40', '#ffcd56', '#4bc0c0', '#36a2eb']
+                                    }]
+                                },
+                                options: {
+                                    responsive: true
+                                }
+                            });
+                        }
+                    },
+
+                    formatCurrency(value) {
+                        return new Intl.NumberFormat('id-ID', {
+                            style: 'currency',
+                            currency: 'IDR',
+                            maximumFractionDigits: 0
+                        }).format(value);
+                    },
+
+                    getSurplus() {
+                        const income = this.summary.totals.find(t => t.type === 'income')?.total_realization || 0;
+                        const expense = this.summary.totals.find(t => t.type === 'expense')?.total_realization || 0;
+                        return income - expense;
+                    },
+
+                    calculatePercentage(realization, budget) {
+                        if (!budget || budget == 0) return 0;
+                        return Math.round((realization / budget) * 100);
+                    }
+                }
+            }
+        </script>
+    <?php
+        return ob_get_clean();
     }
 
     public function render_aduan()
     {
         ob_start();
-?>
+    ?>
         <div id="wp-desa-aduan" class="wp-desa-wrapper" x-data="aduanWarga()">
             <div class="wp-desa-tabs">
                 <button @click="tab = 'form'" :class="{'active': tab === 'form'}" class="wp-desa-tab-btn">Buat Laporan</button>
@@ -265,6 +454,9 @@ class Shortcode
 
         // Enqueue Frontend Styles
         wp_enqueue_style('wp-desa-frontend', WP_DESA_URL . 'assets/css/frontend/style.css', [], '1.0.0');
+
+        // Enqueue Chart.js for Finances (conditionally ideally, but globally for now to ensure it works)
+        wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', [], '4.0.0', true);
     }
 
     public function render_layanan()

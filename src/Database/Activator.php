@@ -75,11 +75,30 @@ class Activator
             UNIQUE KEY tracking_code (tracking_code)
         ) $charset_collate;";
 
+        // 5. Finances Table
+        $table_finances = $wpdb->prefix . 'desa_finances';
+        $sql_finances = "CREATE TABLE $table_finances (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            year int(4) NOT NULL,
+            type enum('income', 'expense') NOT NULL,
+            category varchar(100) NOT NULL,
+            description text,
+            budget_amount decimal(15,2) DEFAULT 0,
+            realization_amount decimal(15,2) DEFAULT 0,
+            transaction_date date NOT NULL,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY  (id),
+            KEY year (year),
+            KEY type (type)
+        ) $charset_collate;";
+
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql_residents);
         dbDelta($sql_letter_types);
         dbDelta($sql_letters);
         dbDelta($sql_complaints);
+        dbDelta($sql_finances);
 
         // Seed Letter Types if empty (Force check)
         // Using $wpdb->get_var directly sometimes fails in activation hook context if dbDelta just ran

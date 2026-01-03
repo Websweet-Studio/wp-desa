@@ -162,6 +162,44 @@ class Seeder {
         return $inserted;
     }
 
+    public static function seed_finances($count = 50) {
+        global $wpdb;
+        $table_finances = $wpdb->prefix . 'desa_finances';
+        
+        \WpDesa\Database\Activator::activate();
+
+        $year = date('Y');
+        $income_categories = ['Dana Desa', 'Alokasi Dana Desa', 'Bantuan Keuangan Provinsi', 'Bantuan Keuangan Kabupaten', 'Pendapatan Asli Desa (PAD)', 'Lain-lain Pendapatan'];
+        $expense_categories = ['Bidang Penyelenggaraan Pemerintahan', 'Bidang Pelaksanaan Pembangunan', 'Bidang Pembinaan Kemasyarakatan', 'Bidang Pemberdayaan Masyarakat', 'Bidang Penanggulangan Bencana'];
+        
+        $inserted = 0;
+
+        for ($i = 0; $i < $count; $i++) {
+            $type = rand(0, 1) ? 'income' : 'expense';
+            $category = $type == 'income' ? $income_categories[array_rand($income_categories)] : $expense_categories[array_rand($expense_categories)];
+            
+            $budget = rand(1000000, 500000000);
+            $realization = rand(0, $budget);
+            
+            $data = [
+                'year' => $year,
+                'type' => $type,
+                'category' => $category,
+                'description' => 'Transaksi ' . $category . ' #' . ($i + 1),
+                'budget_amount' => $budget,
+                'realization_amount' => $realization,
+                'transaction_date' => date('Y-m-d', rand(strtotime($year . '-01-01'), strtotime($year . '-12-31'))),
+                'created_at' => current_time('mysql'),
+            ];
+
+            if ($wpdb->insert($table_finances, $data)) {
+                $inserted++;
+            }
+        }
+
+        return $inserted;
+    }
+
     private static function generate_nik() {
         // Simple mock NIK generator: 16 digits
         // PPKKCCTGDMMYYSSSS
