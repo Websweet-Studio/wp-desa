@@ -1,0 +1,13 @@
+{
+  "name": "wp-desa",
+  "version": "1.0.0",
+  "description": "Plugin WordPress untuk fitur web desa",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "devDependencies": {
+    "archiver": "^7.0.0"
+  },
+  "author": "Aditya Kristyanto",
+  "license": "GPL-2.0+"
+}

@@ -19,8 +19,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Ignore build assets (if any build process is added later)
-# dist/
+# Ignore build assets
+dist/
 
 # WordPress specific (optional, if developing inside a full WP install)
 # wp-config.php
