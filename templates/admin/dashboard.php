@@ -6,9 +6,14 @@
             <h1 class="text-2xl font-bold text-slate-800" style="font-size: 24px; font-weight: 700; color: #1e293b; margin: 0;">Dashboard WP Desa</h1>
             <p class="text-slate-500" style="color: #64748b; margin: 4px 0 0 0;">Ringkasan data dan statistik desa terkini.</p>
         </div>
+        <?php 
+        $settings = get_option('wp_desa_settings', []);
+        if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1): 
+        ?>
         <button @click="generateAllDummy" class="button button-primary" style="background-color: #2563eb; border-color: #2563eb; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px;">
             <span class="dashicons dashicons-database" style="line-height: inherit;"></span> Generate Dummy Data
         </button>
+        <?php endif; ?>
     </div>
 
     <!-- Quick Stats Grid -->

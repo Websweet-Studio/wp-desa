@@ -21,6 +21,9 @@ $settings = get_option('wp_desa_settings', []);
             <div class="wp-desa-tab" :class="{'active': activeTab === 'pejabat'}" @click="activeTab = 'pejabat'">
                 Kepala Desa
             </div>
+            <div class="wp-desa-tab" :class="{'active': activeTab === 'sistem'}" @click="activeTab = 'sistem'">
+                Pengaturan Sistem
+            </div>
         </div>
 
         <form method="post" action="">
@@ -126,6 +129,48 @@ $settings = get_option('wp_desa_settings', []);
                             <button type="button" class="wp-desa-btn wp-desa-btn-danger" id="remove-foto-kades-btn" style="<?php echo empty($settings['foto_kepala_desa']) ? 'display:none;' : ''; ?>">
                                 Hapus
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Pengaturan Sistem -->
+            <div x-show="activeTab === 'sistem'" class="wp-desa-tab-content" style="display: none;">
+                <div class="wp-desa-form-grid">
+                    <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <label class="wp-desa-label" for="dev_mode" style="font-size: 16px; margin-bottom: 4px;">Development Mode</label>
+                                <p class="wp-desa-helper" style="margin: 0;">Aktifkan fitur pengembangan seperti tombol Generate Dummy Data.</p>
+                            </div>
+                            <div>
+                                <label class="switch" style="position: relative; display: inline-block; width: 50px; height: 26px;">
+                                    <input type="checkbox" name="dev_mode" id="dev_mode" value="1" <?php checked($settings['dev_mode'] ?? 0, 1); ?> style="opacity: 0; width: 0; height: 0;">
+                                    <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px;"></span>
+                                </label>
+                                <style>
+                                    input:checked + .slider {
+                                        background-color: #2563eb;
+                                    }
+                                    input:focus + .slider {
+                                        box-shadow: 0 0 1px #2563eb;
+                                    }
+                                    .slider:before {
+                                        position: absolute;
+                                        content: "";
+                                        height: 18px;
+                                        width: 18px;
+                                        left: 4px;
+                                        bottom: 4px;
+                                        background-color: white;
+                                        transition: .4s;
+                                        border-radius: 50%;
+                                    }
+                                    input:checked + .slider:before {
+                                        transform: translateX(24px);
+                                    }
+                                </style>
+                            </div>
                         </div>
                     </div>
                 </div>

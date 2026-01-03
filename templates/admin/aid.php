@@ -325,9 +325,14 @@
         </div>
         <div class="wp-desa-actions">
             <template x-if="view === 'programs'">
+                <?php 
+                $settings = get_option('wp_desa_settings', []);
+                if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1): 
+                ?>
                 <button @click="seedData" class="wp-desa-btn wp-desa-btn-danger" style="background: #fff1f2; color: #e11d48; border-color: #fecdd3;">
                     <span class="dashicons dashicons-database"></span> Generate Dummy
                 </button>
+                <?php endif; ?>
             </template>
             <template x-if="view === 'programs'">
                 <button @click="openProgramModal()" class="wp-desa-btn wp-desa-btn-primary">

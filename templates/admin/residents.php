@@ -308,9 +308,14 @@
             <p style="color: #64748b; margin: 4px 0 0 0; font-size: 14px;">Kelola data kependudukan desa dengan mudah.</p>
         </div>
         <div class="wp-desa-actions">
+            <?php 
+            $settings = get_option('wp_desa_settings', []);
+            if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1): 
+            ?>
             <button @click="generateDummy" class="wp-desa-btn wp-desa-btn-danger" style="background: #fff1f2; color: #e11d48; border-color: #fecdd3;">
                 <span class="dashicons dashicons-database"></span> Generate Dummy
             </button>
+            <?php endif; ?>
             <button @click="exportResidents" class="wp-desa-btn wp-desa-btn-secondary">
                 <span class="dashicons dashicons-download"></span> Export
             </button>
