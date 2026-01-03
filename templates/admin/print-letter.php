@@ -131,13 +131,22 @@
     <a onclick="window.print()" class="no-print">🖨️ Cetak Dokumen</a>
 
     <div class="paper">
+        <?php 
+        $settings = get_option('wp_desa_settings', []); 
+        $nama_desa = $settings['nama_desa'] ?? '[Nama Desa]';
+        $nama_kecamatan = $settings['nama_kecamatan'] ?? '[Nama Kecamatan]';
+        $nama_kabupaten = $settings['nama_kabupaten'] ?? '[Nama Kabupaten]';
+        $alamat_kantor = $settings['alamat_kantor'] ?? 'Jl. Raya Desa No. 1';
+        $kepala_desa = $settings['kepala_desa'] ?? '( Nama Kepala Desa )';
+        ?>
+
         <div class="kop-surat">
             <!-- Placeholder Logo -->
             <!-- <img src="https://via.placeholder.com/100" alt="Logo"> -->
-            <h3>Pemerintah Kabupaten [Nama Kabupaten]</h3>
-            <h3>Kecamatan [Nama Kecamatan]</h3>
-            <h2>Desa [Nama Desa]</h2>
-            <p>Alamat: Jl. Raya Desa No. 1, Kode Pos 12345</p>
+            <h3>Pemerintah Kabupaten <?php echo esc_html($nama_kabupaten); ?></h3>
+            <h3>Kecamatan <?php echo esc_html($nama_kecamatan); ?></h3>
+            <h2>Desa <?php echo esc_html($nama_desa); ?></h2>
+            <p>Alamat: <?php echo esc_html($alamat_kantor); ?></p>
         </div>
 
         <div class="judul-surat">
@@ -146,7 +155,7 @@
         </div>
 
         <div class="isi-surat">
-            <p>Yang bertanda tangan di bawah ini Kepala Desa [Nama Desa], Kecamatan [Nama Kecamatan], Kabupaten [Nama Kabupaten], menerangkan bahwa:</p>
+            <p>Yang bertanda tangan di bawah ini Kepala Desa <?php echo esc_html($nama_desa); ?>, Kecamatan <?php echo esc_html($nama_kecamatan); ?>, Kabupaten <?php echo esc_html($nama_kabupaten); ?>, menerangkan bahwa:</p>
 
             <div class="identitas">
                 <table>
@@ -188,7 +197,7 @@
                 </table>
             </div>
 
-            <p>Orang tersebut di atas adalah benar-benar warga penduduk Desa [Nama Desa] yang berdomisili di alamat tersebut.</p>
+            <p>Orang tersebut di atas adalah benar-benar warga penduduk Desa <?php echo esc_html($nama_desa); ?> yang berdomisili di alamat tersebut.</p>
             
             <p>Surat keterangan ini dibuat untuk keperluan: <strong><?php echo !empty($letter->details) ? esc_html($letter->details) : 'Administrasi'; ?></strong>.</p>
 
@@ -196,9 +205,9 @@
         </div>
 
         <div class="ttd-area">
-            <p>[Nama Desa], <?php echo date_i18n('d F Y'); ?></p>
+            <p><?php echo esc_html($nama_desa); ?>, <?php echo date_i18n('d F Y'); ?></p>
             <p class="jabatan">Kepala Desa</p>
-            <p class="nama">( Nama Kepala Desa )</p>
+            <p class="nama"><?php echo esc_html($kepala_desa); ?></p>
         </div>
     </div>
 

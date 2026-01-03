@@ -66,6 +66,16 @@ class Menu
             'wp-desa-aid',
             [$this, 'render_aid_page']
         );
+
+        // Submenu Pengaturan
+        add_submenu_page(
+            'wp-desa',
+            'Pengaturan Desa',
+            'Pengaturan',
+            'manage_options',
+            'wp-desa-settings',
+            [$this, 'render_settings_page']
+        );
     }
 
     public function enqueue_scripts($hook)
@@ -77,7 +87,8 @@ class Menu
             'wp-desa_page_wp-desa-letters',
             'wp-desa_page_wp-desa-complaints',
             'wp-desa_page_wp-desa-finances',
-            'wp-desa_page_wp-desa-aid'
+            'wp-desa_page_wp-desa-aid',
+            'wp-desa_page_wp-desa-settings'
         ];
 
         if (in_array($hook, $allowed_pages)) {
@@ -86,6 +97,11 @@ class Menu
 
             // Admin CSS
             wp_enqueue_style('wp-desa-admin-css', WP_DESA_URL . 'assets/css/admin/style.css', [], '1.0.0');
+        }
+
+        // Media Uploader for Settings Page
+        if ($hook === 'wp-desa_page_wp-desa-settings') {
+            wp_enqueue_media();
         }
 
         // Dashboard and Finance (Need Chart.js)
@@ -132,5 +148,32 @@ class Menu
     public function render_aid_page()
     {
         require_once WP_DESA_PATH . 'templates/admin/aid.php';
+    }
+
+    public function render_settings_page()
+    {
+        // Handle Form Submission
+        if (isset($_POST['wp_desa_settings_submit'])) {
+            check_admin_referer('wp_desa_settings_action', 'wp_desa_settings_nonce');
+
+            $data = [
+                'nama_desa' => sanitize_text_field($_POST['nama_desa']),
+                'nama_kecamatan' => sanitize_text_field($_POST['nama_kecamatan']),
+                'nama_kabupaten' => sanitize_text_field($_POST['nama_kabupaten']),
+                'alamat_kantor' => sanitize_textarea_field($_POST['alamat_kantor']),
+                'email_desa' => sanitize_email($_POST['email_desa']),
+                'telepon_desa' => sanitize_text_field($_POST['telepon_desa']),
+                'logo_kabupaten' => esc_url_raw($_POST['logo_kabupaten']),
+                'kepala_desa' => sanitize_text_field($_POST['kepala_desa']),
+                'nip_kepala_desa' => sanitize_text_field($_POST['nip_kepala_desa']),
+                'foto_kepala_desa' => esc_url_raw($_POST['foto_kepala_desa']),
+            ];
+
+            update_option('wp_desa_settings', $data);
+            
+            echo '<div class="notice notice-success is-dismissible"><p>Pengaturan berhasil disimpan.</p></div>';
+        }
+
+        require_once WP_DESA_PATH . 'templates/admin/settings.php';
     }
 }
