@@ -132,8 +132,6 @@ class Activator
         dbDelta($sql_finances);
         dbDelta($sql_programs);
         dbDelta($sql_recipients);
-    }
-}
 
         // Seed Letter Types if empty (Force check)
         // Using $wpdb->get_var directly sometimes fails in activation hook context if dbDelta just ran

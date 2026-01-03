@@ -64,6 +64,10 @@ class Seeder {
 
     public static function seed_aid($count = 50) {
         global $wpdb;
+        
+        // Ensure table exists (in case called individually)
+        \WpDesa\Database\Activator::activate();
+
         $table_programs = $wpdb->prefix . 'desa_programs';
         $table_recipients = $wpdb->prefix . 'desa_program_recipients';
         $table_residents = $wpdb->prefix . 'desa_residents';
@@ -129,6 +133,9 @@ class Seeder {
 
     public static function seed_letters($count = 50) {
         global $wpdb;
+        
+        \WpDesa\Database\Activator::activate();
+
         $table_letters = $wpdb->prefix . 'desa_letters';
         $table_residents = $wpdb->prefix . 'desa_residents';
         $table_types = $wpdb->prefix . 'desa_letter_types';
