@@ -28,6 +28,7 @@ class Plugin
             $menu = new Menu();
             add_action('admin_menu', [$menu, 'register_menus']);
             add_action('admin_enqueue_scripts', [$menu, 'enqueue_scripts']);
+            add_action('in_admin_header', [$menu, 'remove_notices']);
 
             $meta_boxes = new \WpDesa\Admin\MetaBoxes();
             $meta_boxes->register();

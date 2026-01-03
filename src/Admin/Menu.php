@@ -94,6 +94,16 @@ class Menu
         }
     }
 
+    public function remove_notices()
+    {
+        $screen = get_current_screen();
+        // Remove notices on all WP Desa pages
+        if ($screen && strpos($screen->id, 'wp-desa') !== false) {
+            remove_all_actions('admin_notices');
+            remove_all_actions('all_admin_notices');
+        }
+    }
+
     public function render_dashboard()
     {
         require_once WP_DESA_PATH . 'templates/admin/dashboard.php';

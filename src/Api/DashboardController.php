@@ -57,11 +57,70 @@ class DashboardController extends WP_REST_Controller {
         // Marital Status Stats
         $marital_stats = $wpdb->get_results("SELECT status_perkawinan as label, COUNT(*) as count FROM $table_name GROUP BY status_perkawinan");
 
+        // Potensi Desa Stats
+        $total_potensi = wp_count_posts('desa_potensi')->publish;
+
+        // UMKM Desa Stats
+        $total_umkm = wp_count_posts('desa_umkm')->publish;
+
+        // Letter Stats
+        $table_letters = $wpdb->prefix . 'desa_letters';
+        $total_letters = $wpdb->get_var("SELECT COUNT(*) FROM $table_letters");
+        $pending_letters = $wpdb->get_var("SELECT COUNT(*) FROM $table_letters WHERE status = 'pending'");
+        $letter_stats = $wpdb->get_results("SELECT status as label, COUNT(*) as count FROM $table_letters GROUP BY status");
+
+        // Complaints Stats (Recent 5)
+        $table_complaints = $wpdb->prefix . 'desa_complaints';
+        $recent_complaints = $wpdb->get_results("SELECT id, subject, status, created_at FROM $table_complaints ORDER BY created_at DESC LIMIT 5");
+        
+        // Financial Stats (Current Year)
+        $table_finances = $wpdb->prefix . 'desa_finances';
+        $current_year = date('Y');
+        $finance_summary = $wpdb->get_results($wpdb->prepare(
+            "SELECT type, SUM(realization_amount) as total FROM $table_finances WHERE year = %d GROUP BY type",
+            $current_year
+        ));
+
+        $income = 0;
+        $expense = 0;
+        foreach ($finance_summary as $row) {
+            if ($row->type === 'income') $income = $row->total;
+            if ($row->type === 'expense') $expense = $row->total;
+        }
+
+        // Program Aid Stats
+        $table_programs = $wpdb->prefix . 'desa_programs';
+        $table_recipients = $wpdb->prefix . 'desa_program_recipients';
+        
+        $program_stats = $wpdb->get_results("
+            SELECT 
+                p.name, 
+                p.quota, 
+                COUNT(r.id) as distributed
+            FROM $table_programs p 
+            LEFT JOIN $table_recipients r ON p.id = r.program_id AND r.status = 'distributed'
+            WHERE p.status = 'active'
+            GROUP BY p.id
+            LIMIT 5
+        ");
+
         return rest_ensure_response([
             'total_residents' => $total_residents,
             'gender_stats' => $gender_stats,
             'job_stats' => $job_stats,
             'marital_stats' => $marital_stats,
+            'total_potensi' => $total_potensi,
+            'total_umkm' => $total_umkm,
+            'total_letters' => $total_letters,
+            'pending_letters' => $pending_letters,
+            'letter_stats' => $letter_stats,
+            'recent_complaints' => $recent_complaints,
+            'finance_stats' => [
+                'income' => $income,
+                'expense' => $expense,
+                'year' => $current_year
+            ],
+            'program_stats' => $program_stats,
         ]);
     }
 }
