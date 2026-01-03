@@ -6,8 +6,10 @@ use WP_REST_Controller;
 use WP_REST_Server;
 use WP_Error;
 
-class LetterController extends WP_REST_Controller {
-    public function register_routes() {
+class LetterController extends WP_REST_Controller
+{
+    public function register_routes()
+    {
         $namespace = 'wp-desa/v1';
         $base = 'letters';
 
@@ -66,11 +68,13 @@ class LetterController extends WP_REST_Controller {
         ]);
     }
 
-    public function permissions_check() {
+    public function permissions_check()
+    {
         return current_user_can('manage_options');
     }
 
-    public function seed_items($request) {
+    public function seed_items($request)
+    {
         global $wpdb;
         $table_residents = $wpdb->prefix . 'desa_residents';
         $table_types = $wpdb->prefix . 'desa_letter_types';
@@ -98,14 +102,16 @@ class LetterController extends WP_REST_Controller {
         return rest_ensure_response(['message' => "$inserted data permohonan surat berhasil dibuat.", 'count' => $inserted]);
     }
 
-    public function get_types() {
+    public function get_types()
+    {
         global $wpdb;
         $table_name = $wpdb->prefix . 'desa_letter_types';
         $results = $wpdb->get_results("SELECT * FROM $table_name");
         return rest_ensure_response($results);
     }
 
-    public function create_letter($request) {
+    public function create_letter($request)
+    {
         global $wpdb;
         $table_letters = $wpdb->prefix . 'desa_letters';
         $table_residents = $wpdb->prefix . 'desa_residents';
@@ -121,12 +127,12 @@ class LetterController extends WP_REST_Controller {
         }
 
         $nik = sanitize_text_field($params['nik']);
-        
+
         // Verify Resident Exists (Optional, but good practice)
         // If resident doesn't exist, we might still allow request but mark as 'Unverified' or require name input.
         // For now, let's require name input if NIK not found, or just fetch name if found.
         $resident = $wpdb->get_row($wpdb->prepare("SELECT nama_lengkap FROM $table_residents WHERE nik = %s", $nik));
-        
+
         $name = '';
         if ($resident) {
             $name = $resident->nama_lengkap;
@@ -137,7 +143,7 @@ class LetterController extends WP_REST_Controller {
         }
 
         $tracking_code = strtoupper(wp_generate_password(8, false));
-        
+
         $data = [
             'tracking_code' => $tracking_code,
             'letter_type_id' => intval($params['letter_type_id']),
@@ -162,7 +168,8 @@ class LetterController extends WP_REST_Controller {
         ]);
     }
 
-    public function track_letter($request) {
+    public function track_letter($request)
+    {
         global $wpdb;
         $table_letters = $wpdb->prefix . 'desa_letters';
         $table_types = $wpdb->prefix . 'desa_letter_types';
@@ -176,7 +183,7 @@ class LetterController extends WP_REST_Controller {
                 FROM $table_letters l 
                 JOIN $table_types t ON l.letter_type_id = t.id 
                 WHERE l.tracking_code = %s";
-        
+
         $letter = $wpdb->get_row($wpdb->prepare($sql, $code));
 
         if (!$letter) {
@@ -186,28 +193,68 @@ class LetterController extends WP_REST_Controller {
         return rest_ensure_response($letter);
     }
 
-    public function get_letters($request) {
+    public function get_letters($request)
+    {
         global $wpdb;
         $table_letters = $wpdb->prefix . 'desa_letters';
         $table_types = $wpdb->prefix . 'desa_letter_types';
 
         $status = $request->get_param('status');
+        $page = $request->get_param('page') ? intval($request->get_param('page')) : 1;
+        $per_page = $request->get_param('per_page') ? intval($request->get_param('per_page')) : 20;
+        $offset = ($page - 1) * $per_page;
+
         $where = '';
         if (!empty($status)) {
             $where = $wpdb->prepare("WHERE l.status = %s", $status);
         }
 
+        // Count total items
+        $count_sql = "SELECT COUNT(*) FROM $table_letters l $where";
+        $total_items = (int) $wpdb->get_var($count_sql);
+        $total_pages = ceil($total_items / $per_page);
+
         $sql = "SELECT l.*, t.name as type_name 
                 FROM $table_letters l 
                 JOIN $table_types t ON l.letter_type_id = t.id 
                 $where
-                ORDER BY l.created_at DESC";
-        
-        $results = $wpdb->get_results($sql);
-        return rest_ensure_response($results);
+                ORDER BY l.created_at DESC
+                LIMIT %d OFFSET %d";
+
+        $prepared_sql = $wpdb->prepare($sql, $per_page, $offset);
+        $results = $wpdb->get_results($prepared_sql);
+
+        // Get counts for all statuses
+        $counts_sql = "SELECT status, COUNT(*) as count FROM $table_letters GROUP BY status";
+        $counts_results = $wpdb->get_results($counts_sql);
+        $status_counts = [
+            'all' => 0,
+            'pending' => 0,
+            'processed' => 0,
+            'completed' => 0,
+            'rejected' => 0
+        ];
+        foreach ($counts_results as $row) {
+            if (isset($status_counts[$row->status])) {
+                $status_counts[$row->status] = (int)$row->count;
+            }
+            $status_counts['all'] += (int)$row->count;
+        }
+
+        return rest_ensure_response([
+            'data' => $results,
+            'meta' => [
+                'current_page' => $page,
+                'per_page' => $per_page,
+                'total_items' => $total_items,
+                'total_pages' => $total_pages
+            ],
+            'counts' => $status_counts
+        ]);
     }
 
-    public function update_status($request) {
+    public function update_status($request)
+    {
         global $wpdb;
         $table_letters = $wpdb->prefix . 'desa_letters';
         $id = $request['id'];
