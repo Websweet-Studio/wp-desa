@@ -311,32 +311,39 @@ class Shortcode
     ?>
         <div class="wp-desa-wrapper">
             <?php if ($query->have_posts()): ?>
-                <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px;">
                     <?php while ($query->have_posts()): $query->the_post(); ?>
-                        <div class="wp-desa-card" style="padding: 20px; display: flex; gap: 20px; align-items: start; flex-wrap: wrap;">
-                            <div style="width: 200px; height: 150px; background: #f1f5f9; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+                        <div class="wp-desa-stat-card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; text-align: left; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid #f1f5f9; background: white; border-radius: 12px;">
+                            <div style="height: 200px; background: #f8fafc; overflow: hidden; position: relative;">
                                 <?php if (has_post_thumbnail()): ?>
-                                    <?php the_post_thumbnail('medium', ['style' => 'width: 100%; height: 100%; object-fit: cover;']); ?>
+                                    <a href="<?php the_permalink(); ?>" style="display: block; width: 100%; height: 100%;">
+                                        <?php the_post_thumbnail('medium', ['style' => 'width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;']); ?>
+                                    </a>
                                 <?php else: ?>
-                                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #cbd5e1;">
-                                        <span class="dashicons dashicons-carrot" style="font-size: 48px; width: 48px; height: 48px;"></span>
+                                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #cbd5e1; background: #f1f5f9;">
+                                        <span class="dashicons dashicons-carrot" style="font-size: 64px; width: 64px; height: 64px; opacity: 0.5;"></span>
                                     </div>
                                 <?php endif; ?>
                             </div>
-                            <div style="flex: 1; min-width: 250px;">
-                                <h3 style="margin: 0 0 10px 0;">
-                                    <a href="<?php the_permalink(); ?>" style="text-decoration: none; color: #2271b1;"><?php the_title(); ?></a>
+                            <div style="padding: 20px; flex: 1; display: flex; flex-direction: column;">
+                                <h3 style="margin: 0 0 10px 0; font-size: 1.15em; line-height: 1.4;">
+                                    <a href="<?php the_permalink(); ?>" style="text-decoration: none; color: #1e293b; font-weight: 700; transition: color 0.2s;"><?php the_title(); ?></a>
                                 </h3>
-                                <div style="color: #64748b; line-height: 1.6;">
-                                    <?php echo wp_trim_words(get_the_excerpt(), 30); ?>
+                                <div style="font-size: 0.9em; color: #64748b; margin-bottom: 20px; flex: 1; line-height: 1.6;">
+                                    <?php echo wp_trim_words(get_the_excerpt(), 20); ?>
                                 </div>
-                                <a href="<?php the_permalink(); ?>" style="display: inline-block; margin-top: 10px; font-weight: 500; color: #2563eb; text-decoration: none;">Baca Selengkapnya &rarr;</a>
+                                <a href="<?php the_permalink(); ?>" style="font-size: 0.9em; font-weight: 500; color: #2563eb; text-decoration: none; display: flex; align-items: center; gap: 4px; margin-top: auto;">
+                                    Baca Selengkapnya <span class="dashicons dashicons-arrow-right-alt2" style="font-size: 16px; width: 16px; height: 16px; margin-top: 2px;"></span>
+                                </a>
                             </div>
                         </div>
                     <?php endwhile; ?>
                 </div>
             <?php else: ?>
-                <p style="text-align: center; color: #666;">Belum ada data Potensi Desa.</p>
+                <div style="text-align: center; padding: 60px 20px; background: #f8fafc; border-radius: 12px; border: 2px dashed #e2e8f0; color: #94a3b8;">
+                    <span class="dashicons dashicons-carrot" style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 10px; opacity: 0.5;"></span>
+                    <p style="margin: 0; font-size: 1.1em;">Belum ada data Potensi Desa.</p>
+                </div>
             <?php endif;
             wp_reset_postdata(); ?>
         </div>
@@ -360,35 +367,53 @@ class Shortcode
         ob_start();
     ?>
         <div class="wp-desa-wrapper">
-            <div class="wp-desa-card" style="text-align: center; padding: 30px;">
+            <div class="wp-desa-stat-card" style="text-align: center; padding: 40px 30px; position: relative; overflow: hidden;">
+                <!-- Decorative Background -->
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: linear-gradient(90deg, #2563eb, #06b6d4);"></div>
+
                 <?php if ($logo): ?>
-                    <img src="<?php echo esc_url($logo); ?>" alt="Logo Kabupaten" style="max-width: 100px; height: auto; margin-bottom: 20px;">
+                    <img src="<?php echo esc_url($logo); ?>" alt="Logo Kabupaten" style="max-width: 100px; height: auto; margin-bottom: 25px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));">
                 <?php endif; ?>
 
-                <h2 style="margin: 0; color: #2271b1;"><?php echo esc_html('Desa ' . $nama_desa); ?></h2>
-                <h4 style="margin: 5px 0 20px 0; color: #666;">
+                <h2 style="margin: 0 0 5px 0; color: #1e293b; font-weight: 800; font-size: 1.8em;"><?php echo esc_html('Desa ' . $nama_desa); ?></h2>
+                <h4 style="margin: 0 0 30px 0; color: #64748b; font-weight: 500; font-size: 1.1em;">
                     <?php echo esc_html('Kecamatan ' . $nama_kecamatan . ', ' . $nama_kabupaten); ?>
                 </h4>
 
-                <div style="display: flex; flex-direction: column; gap: 10px; align-items: center; max-width: 600px; margin: 0 auto;">
+                <div style="display: inline-flex; flex-direction: column; gap: 15px; text-align: left; background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; width: 100%; max-width: 500px;">
                     <?php if ($alamat): ?>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <span class="dashicons dashicons-location-alt" style="color: #666;"></span>
-                            <span><?php echo esc_html($alamat); ?></span>
+                        <div style="display: flex; gap: 15px; align-items: flex-start;">
+                            <div style="width: 32px; height: 32px; background: #eff6ff; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #2563eb; flex-shrink: 0;">
+                                <span class="dashicons dashicons-location-alt" style="font-size: 18px; width: 18px; height: 18px;"></span>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.85em; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Alamat Kantor</div>
+                                <div style="color: #334155; line-height: 1.5;"><?php echo esc_html($alamat); ?></div>
+                            </div>
                         </div>
                     <?php endif; ?>
 
                     <?php if ($email): ?>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <span class="dashicons dashicons-email" style="color: #666;"></span>
-                            <a href="mailto:<?php echo esc_attr($email); ?>" style="color: #2271b1; text-decoration: none;"><?php echo esc_html($email); ?></a>
+                        <div style="display: flex; gap: 15px; align-items: flex-start;">
+                            <div style="width: 32px; height: 32px; background: #eff6ff; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #2563eb; flex-shrink: 0;">
+                                <span class="dashicons dashicons-email" style="font-size: 18px; width: 18px; height: 18px;"></span>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.85em; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Email</div>
+                                <a href="mailto:<?php echo esc_attr($email); ?>" style="color: #2563eb; text-decoration: none; font-weight: 500;"><?php echo esc_html($email); ?></a>
+                            </div>
                         </div>
                     <?php endif; ?>
 
                     <?php if ($telepon): ?>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <span class="dashicons dashicons-phone" style="color: #666;"></span>
-                            <a href="tel:<?php echo esc_attr($telepon); ?>" style="color: #2271b1; text-decoration: none;"><?php echo esc_html($telepon); ?></a>
+                        <div style="display: flex; gap: 15px; align-items: flex-start;">
+                            <div style="width: 32px; height: 32px; background: #eff6ff; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #2563eb; flex-shrink: 0;">
+                                <span class="dashicons dashicons-phone" style="font-size: 18px; width: 18px; height: 18px;"></span>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.85em; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Telepon</div>
+                                <a href="tel:<?php echo esc_attr($telepon); ?>" style="color: #2563eb; text-decoration: none; font-weight: 500;"><?php echo esc_html($telepon); ?></a>
+                            </div>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -413,25 +438,29 @@ class Shortcode
         ob_start();
     ?>
         <div class="wp-desa-wrapper">
-            <div class="wp-desa-card" style="text-align: center; padding: 30px; max-width: 400px; margin: 0 auto;">
-                <div style="width: 150px; height: 150px; border-radius: 50%; overflow: hidden; margin: 0 auto 20px auto; border: 4px solid #f1f5f9;">
+            <div class="wp-desa-stat-card" style="text-align: center; padding: 40px 30px; max-width: 400px; margin: 0 auto; position: relative;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 80px; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); border-radius: 12px 12px 0 0;"></div>
+
+                <div style="width: 160px; height: 160px; border-radius: 50%; overflow: hidden; margin: 0 auto 20px auto; border: 5px solid #fff; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); position: relative; z-index: 1;">
                     <?php if ($foto_kades): ?>
                         <img src="<?php echo esc_url($foto_kades); ?>" alt="Foto Kepala Desa" style="width: 100%; height: 100%; object-fit: cover;">
                     <?php else: ?>
-                        <div style="width: 100%; height: 100%; background: #e2e8f0; display: flex; align-items: center; justify-content: center;">
-                            <span class="dashicons dashicons-admin-users" style="font-size: 64px; width: 64px; height: 64px; color: #94a3b8;"></span>
+                        <div style="width: 100%; height: 100%; background: #cbd5e1; display: flex; align-items: center; justify-content: center;">
+                            <span class="dashicons dashicons-admin-users" style="font-size: 80px; width: 80px; height: 80px; color: #94a3b8;"></span>
                         </div>
                     <?php endif; ?>
                 </div>
 
-                <h3 style="margin: 0; color: #1e293b;"><?php echo esc_html($nama_kades); ?></h3>
-                <p style="margin: 5px 0; color: #2271b1; font-weight: 500;">Kepala Desa <?php echo esc_html($nama_desa); ?></p>
+                <div style="position: relative; z-index: 1;">
+                    <h3 style="margin: 0 0 5px 0; color: #1e293b; font-size: 1.5em; font-weight: 700;"><?php echo esc_html($nama_kades); ?></h3>
+                    <p style="margin: 0 0 15px 0; color: #2563eb; font-weight: 600;">Kepala Desa <?php echo esc_html($nama_desa); ?></p>
 
-                <?php if ($nip_kades): ?>
-                    <p style="margin-top: 10px; color: #64748b; font-size: 0.9em; background: #f8fafc; display: inline-block; padding: 4px 12px; border-radius: 12px;">
-                        NIP: <?php echo esc_html($nip_kades); ?>
-                    </p>
-                <?php endif; ?>
+                    <?php if ($nip_kades): ?>
+                        <div style="display: inline-block; padding: 6px 16px; border-radius: 20px; background: #f1f5f9; color: #64748b; font-size: 0.9em; font-weight: 500;">
+                            NIP. <?php echo esc_html($nip_kades); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     <?php
@@ -443,65 +472,83 @@ class Shortcode
         ob_start();
     ?>
         <div id="wp-desa-bantuan" class="wp-desa-wrapper" x-data="bantuanDesa()">
-            <h2 class="wp-desa-title" style="text-align:center;">Program & Bantuan Sosial</h2>
+            <h2 class="wp-desa-title" style="text-align:center; margin-bottom: 30px; font-size: 2em; color: #1e293b;">Program & Bantuan Sosial</h2>
 
             <!-- Program List -->
-            <div style="margin-bottom: 30px;">
+            <div style="display: grid; gap: 20px;">
                 <template x-for="p in programs" :key="p.id">
-                    <div class="wp-desa-card" style="margin-bottom: 15px; padding: 20px;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
-                            <div style="flex: 1; min-width: 250px;">
-                                <h3 style="margin: 0; color: #2271b1;" x-text="p.name"></h3>
-                                <p style="margin: 5px 0; color: #666;" x-text="p.description"></p>
-                                <div style="margin-top: 10px; font-size: 0.9em; color: #555;">
-                                    <span style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; margin-right: 10px;" x-text="p.origin"></span>
-                                    <span x-text="'Tahun: ' + p.year"></span>
+                    <div class="wp-desa-stat-card" style="text-align: left; padding: 0; overflow: hidden; border: 1px solid #f1f5f9;">
+                        <div style="padding: 25px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap;">
+                                <div style="flex: 1; min-width: 250px;">
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                        <span class="dashicons dashicons-awards" style="color: #2563eb; font-size: 24px; width: 24px; height: 24px;"></span>
+                                        <h3 style="margin: 0; color: #1e293b; font-size: 1.25em;" x-text="p.name"></h3>
+                                    </div>
+                                    <p style="margin: 0 0 15px 0; color: #64748b; line-height: 1.6;" x-text="p.description"></p>
+                                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                        <span style="background: #eff6ff; color: #1d4ed8; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
+                                            <span class="dashicons dashicons-location" style="font-size: 14px; width: 14px; height: 14px;"></span>
+                                            <span x-text="p.origin"></span>
+                                        </span>
+                                        <span style="background: #f1f5f9; color: #475569; padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
+                                            <span class="dashicons dashicons-calendar-alt" style="font-size: 14px; width: 14px; height: 14px;"></span>
+                                            <span x-text="p.year"></span>
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div style="text-align: right; min-width: 150px;">
-                                <div style="font-weight: bold; font-size: 1.2em; color: #059669;" x-text="formatCurrency(p.amount_per_recipient)"></div>
-                                <div style="font-size: 0.9em; color: #666; margin-top: 5px;" x-text="'Kuota: ' + p.quota"></div>
-                                <button @click="viewRecipients(p)" class="wp-desa-btn" style="margin-top: 10px; font-size: 0.9em;">
-                                    <span x-text="activeProgramId === p.id ? 'Tutup' : 'Lihat Penerima'"></span>
-                                </button>
+                                <div style="text-align: right; min-width: 150px; display: flex; flex-direction: column; align-items: flex-end;">
+                                    <div style="font-weight: 700; font-size: 1.5em; color: #059669;" x-text="formatCurrency(p.amount_per_recipient)"></div>
+                                    <div style="font-size: 0.9em; color: #64748b; margin-top: 5px; margin-bottom: 15px;" x-text="'Kuota: ' + p.quota + ' Penerima'"></div>
+
+                                    <button @click="viewRecipients(p)" class="wp-desa-btn" :class="activeProgramId === p.id ? 'wp-desa-btn-secondary' : 'wp-desa-btn-primary'" style="font-size: 0.9em; padding: 8px 16px;">
+                                        <span x-text="activeProgramId === p.id ? 'Tutup Daftar' : 'Lihat Penerima'"></span>
+                                        <span class="dashicons" :class="activeProgramId === p.id ? 'dashicons-arrow-up-alt2' : 'dashicons-arrow-down-alt2'" style="margin-left: 5px; font-size: 14px; width: 14px; height: 14px; margin-top: 3px;"></span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Recipients List (Collapsible) -->
-                        <div x-show="activeProgramId === p.id" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
-                            <h4 style="margin-top: 0;">Daftar Penerima</h4>
-                            <div style="overflow-x: auto;">
-                                <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
-                                    <thead>
-                                        <tr style="background: #f8fafc;">
-                                            <th style="text-align: left; padding: 8px;">Nama</th>
-                                            <th style="text-align: left; padding: 8px;">Alamat</th>
-                                            <th style="text-align: center; padding: 8px;">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <template x-for="r in recipients" :key="r.id">
-                                            <tr style="border-bottom: 1px solid #eee;">
-                                                <td style="padding: 8px;" x-text="r.nama_lengkap"></td>
-                                                <td style="padding: 8px;" x-text="r.alamat"></td>
-                                                <td style="text-align: center; padding: 8px;">
-                                                    <span :class="'status-badge status-' + r.status" x-text="formatStatus(r.status)"></span>
-                                                </td>
+                        <div x-show="activeProgramId === p.id" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-y-90" x-transition:enter-end="opacity-100 transform scale-y-100" style="border-top: 1px solid #f1f5f9; background: #f8fafc;">
+                            <div style="padding: 20px;">
+                                <h4 style="margin: 0 0 15px 0; color: #334155;">Daftar Penerima Bantuan</h4>
+                                <div style="overflow-x: auto; background: white; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                    <table style="width: 100%; border-collapse: collapse; font-size: 0.95em;">
+                                        <thead>
+                                            <tr style="background: #f1f5f9; color: #475569; text-transform: uppercase; font-size: 0.85em; letter-spacing: 0.5px;">
+                                                <th style="text-align: left; padding: 12px 15px; font-weight: 600;">Nama</th>
+                                                <th style="text-align: left; padding: 12px 15px; font-weight: 600;">Alamat</th>
+                                                <th style="text-align: center; padding: 12px 15px; font-weight: 600;">Status</th>
                                             </tr>
-                                        </template>
-                                        <template x-if="recipients.length === 0">
-                                            <tr>
-                                                <td colspan="3" style="text-align: center; padding: 15px;">Belum ada data penerima.</td>
-                                            </tr>
-                                        </template>
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            <template x-for="(r, index) in recipients" :key="r.id">
+                                                <tr :style="index % 2 === 0 ? 'background: white;' : 'background: #fcfcfc;'" style="border-bottom: 1px solid #f1f5f9;">
+                                                    <td style="padding: 12px 15px; color: #1e293b; font-weight: 500;" x-text="r.nama_lengkap"></td>
+                                                    <td style="padding: 12px 15px; color: #64748b;" x-text="r.alamat"></td>
+                                                    <td style="text-align: center; padding: 12px 15px;">
+                                                        <span :class="'status-badge status-' + r.status" x-text="formatStatus(r.status)"></span>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                            <template x-if="recipients.length === 0">
+                                                <tr>
+                                                    <td colspan="3" style="text-align: center; padding: 30px; color: #94a3b8;">Belum ada data penerima yang ditampilkan.</td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </template>
                 <template x-if="programs.length === 0">
-                    <div style="text-align: center; padding: 30px; color: #666;">Belum ada program bantuan aktif.</div>
+                    <div style="text-align: center; padding: 60px 20px; background: #f8fafc; border-radius: 12px; border: 2px dashed #e2e8f0; color: #94a3b8;">
+                        <span class="dashicons dashicons-awards" style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 10px; opacity: 0.5;"></span>
+                        <p style="margin: 0; font-size: 1.1em;">Belum ada program bantuan aktif saat ini.</p>
+                    </div>
                 </template>
             </div>
         </div>
@@ -823,27 +870,165 @@ class Shortcode
         ob_start();
     ?>
         <div id="wp-desa-aduan" class="wp-desa-wrapper" x-data="aduanWarga()">
-            <div class="wp-desa-tabs">
-                <button @click="tab = 'form'" :class="{'active': tab === 'form'}" class="wp-desa-tab-btn">Buat Laporan</button>
-                <button @click="tab = 'track'" :class="{'active': tab === 'track'}" class="wp-desa-tab-btn">Cek Status Laporan</button>
+            <style>
+                #wp-desa-aduan .wp-desa-tab-btn {
+                    padding: 12px 20px;
+                    background: transparent;
+                    border: none;
+                    border-bottom: 2px solid transparent;
+                    font-weight: 600;
+                    color: #64748b;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    font-size: 1em;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+
+                #wp-desa-aduan .wp-desa-tab-btn.active {
+                    color: #2563eb;
+                    border-bottom-color: #2563eb;
+                }
+
+                #wp-desa-aduan .wp-desa-tab-btn:hover {
+                    color: #1e293b;
+                    background: #f8fafc;
+                }
+
+                #wp-desa-aduan .wp-desa-input,
+                #wp-desa-aduan .wp-desa-select,
+                #wp-desa-aduan .wp-desa-textarea {
+                    width: 100%;
+                    padding: 12px 16px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 0.95em;
+                    transition: border-color 0.2s, box-shadow 0.2s;
+                    box-sizing: border-box;
+                    background: #fff;
+                    font-family: inherit;
+                    color: #1e293b;
+                }
+
+                #wp-desa-aduan .wp-desa-input:focus,
+                #wp-desa-aduan .wp-desa-select:focus,
+                #wp-desa-aduan .wp-desa-textarea:focus {
+                    outline: none;
+                    border-color: #3b82f6;
+                    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                }
+
+                #wp-desa-aduan .wp-desa-label {
+                    display: block;
+                    margin-bottom: 8px;
+                    font-weight: 500;
+                    color: #334155;
+                    font-size: 0.95em;
+                }
+
+                #wp-desa-aduan .wp-desa-form-group {
+                    margin-bottom: 24px;
+                }
+
+                #wp-desa-aduan .wp-desa-btn {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    border: none;
+                    font-size: 1em;
+                    gap: 8px;
+                }
+
+                #wp-desa-aduan .wp-desa-btn-primary {
+                    background: #2563eb;
+                    color: white;
+                    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+                }
+
+                #wp-desa-aduan .wp-desa-btn-primary:hover {
+                    background: #1d4ed8;
+                    transform: translateY(-1px);
+                    box-shadow: 0 6px 8px -1px rgba(37, 99, 235, 0.3);
+                }
+
+                #wp-desa-aduan .wp-desa-btn:disabled {
+                    opacity: 0.7;
+                    cursor: not-allowed;
+                    transform: none;
+                    box-shadow: none;
+                    background: #94a3b8;
+                }
+
+                #wp-desa-aduan .wp-desa-result-card {
+                    background: #fff;
+                    border-radius: 12px;
+                    padding: 25px;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                    border: 1px solid #f1f5f9;
+                }
+
+                #wp-desa-aduan .wp-desa-card-row {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 12px 0;
+                    border-bottom: 1px solid #f1f5f9;
+                }
+
+                #wp-desa-aduan .wp-desa-card-row:last-child {
+                    border-bottom: none;
+                }
+
+                #wp-desa-aduan .wp-desa-card-label {
+                    color: #64748b;
+                    font-weight: 500;
+                }
+
+                #wp-desa-aduan .wp-desa-card-value {
+                    color: #1e293b;
+                    font-weight: 600;
+                    text-align: right;
+                }
+
+                #wp-desa-aduan .wp-desa-helper {
+                    font-size: 0.85em;
+                    color: #64748b;
+                    margin-top: 6px;
+                    display: block;
+                }
+            </style>
+
+            <div class="wp-desa-tabs" style="display: flex; border-bottom: 1px solid #e2e8f0; margin-bottom: 30px;">
+                <button @click="tab = 'form'" :class="{'active': tab === 'form'}" class="wp-desa-tab-btn">
+                    <span class="dashicons dashicons-edit"></span> Buat Laporan
+                </button>
+                <button @click="tab = 'track'" :class="{'active': tab === 'track'}" class="wp-desa-tab-btn">
+                    <span class="dashicons dashicons-search"></span> Cek Status Laporan
+                </button>
             </div>
 
             <div class="wp-desa-content">
                 <!-- Form Aduan -->
-                <div x-show="tab === 'form'">
+                <div x-show="tab === 'form'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100">
                     <div x-show="message.content"
-                        :class="message.type === 'success' ? 'wp-desa-alert wp-desa-alert-success' : 'wp-desa-alert wp-desa-alert-error'">
-                        <span x-text="message.content"></span>
+                        style="padding: 15px; border-radius: 8px; margin-bottom: 20px;"
+                        :style="message.type === 'success' ? 'background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;' : 'background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;'">
+                        <span x-text="message.content" style="font-weight: 500;"></span>
                         <template x-if="trackingCode">
-                            <div style="margin-top: 10px;">
-                                <div style="font-size: 0.9em; margin-bottom: 5px;">Kode Tracking Anda:</div>
-                                <div class="wp-desa-tracking-code" x-text="trackingCode"></div>
-                                <p class="wp-desa-helper">Simpan kode ini untuk mengecek status laporan.</p>
+                            <div style="margin-top: 15px; background: white; padding: 15px; border-radius: 8px; border: 1px dashed #166534;">
+                                <div style="font-size: 0.9em; margin-bottom: 5px; color: #166534;">Kode Tracking Anda:</div>
+                                <div class="wp-desa-tracking-code" x-text="trackingCode" style="font-family: monospace; font-size: 1.5em; font-weight: 700; color: #1e293b; letter-spacing: 1px;"></div>
+                                <p class="wp-desa-helper" style="margin: 5px 0 0 0;">Simpan kode ini untuk mengecek status laporan.</p>
                             </div>
                         </template>
                     </div>
 
-                    <form @submit.prevent="submitComplaint" enctype="multipart/form-data">
+                    <form @submit.prevent="submitComplaint" enctype="multipart/form-data" style="background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #f1f5f9;">
                         <div class="wp-desa-form-group">
                             <label class="wp-desa-label">Nama Pelapor (Opsional)</label>
                             <input type="text" x-model="form.reporter_name" class="wp-desa-input" placeholder="Nama Anda (Boleh dikosongkan)">
@@ -878,31 +1063,42 @@ class Shortcode
 
                         <div class="wp-desa-form-group">
                             <label class="wp-desa-label">Upload Foto Bukti</label>
-                            <input type="file" @change="handleFileUpload" accept="image/*" class="wp-desa-input">
-                            <small class="wp-desa-helper">Format: JPG, PNG. Maks 2MB.</small>
+                            <div style="border: 2px dashed #cbd5e1; padding: 20px; border-radius: 8px; text-align: center; background: #f8fafc; transition: all 0.2s;" class="wp-desa-upload-area">
+                                <input type="file" @change="handleFileUpload" accept="image/*" class="wp-desa-input" style="border: none; padding: 0; background: transparent; width: auto;">
+                                <small class="wp-desa-helper">Format: JPG, PNG. Maks 2MB.</small>
+                            </div>
                         </div>
 
-                        <button type="submit" :disabled="submitting" class="wp-desa-btn wp-desa-btn-primary">
+                        <button type="submit" :disabled="submitting" class="wp-desa-btn wp-desa-btn-primary" style="width: 100%;">
                             <span x-show="!submitting">Kirim Laporan</span>
-                            <span x-show="submitting">Mengirim...</span>
+                            <span x-show="submitting" style="display: flex; align-items: center; gap: 8px;">
+                                <span class="dashicons dashicons-update" style="animation: spin 2s linear infinite;"></span> Mengirim...
+                            </span>
                         </button>
                     </form>
                 </div>
 
                 <!-- Tracking Form -->
-                <div x-show="tab === 'track'">
-                    <form @submit.prevent="checkStatus" style="margin-bottom: 1.5rem;">
-                        <div style="display: flex; gap: 0.75rem;">
-                            <input type="text" x-model="trackCode" placeholder="Masukkan Kode Tracking (Contoh: ADU-XXXXXX)" required class="wp-desa-input" style="flex: 1;">
-                            <button type="submit" :disabled="tracking" class="wp-desa-btn wp-desa-btn-primary" style="width: auto;">
+                <div x-show="tab === 'track'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100">
+                    <form @submit.prevent="checkStatus" style="margin-bottom: 1.5rem; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #f1f5f9;">
+                        <label class="wp-desa-label" style="margin-bottom: 12px;">Masukkan Kode Tracking</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" x-model="trackCode" placeholder="Contoh: ADU-XXXXXX" required class="wp-desa-input" style="flex: 1; font-family: monospace; letter-spacing: 1px; font-weight: 600;">
+                            <button type="submit" :disabled="tracking" class="wp-desa-btn wp-desa-btn-primary" style="width: auto; min-width: 100px;">
                                 <span x-show="!tracking">Cek</span>
-                                <span x-show="tracking">...</span>
+                                <span x-show="tracking" class="dashicons dashicons-update" style="animation: spin 2s linear infinite;"></span>
                             </button>
                         </div>
                     </form>
 
-                    <div x-show="trackResult" class="wp-desa-card">
-                        <h4 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem;">Status Laporan</h4>
+                    <div x-show="trackResult" class="wp-desa-result-card">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div style="width: 60px; height: 60px; background: #eff6ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: #2563eb;">
+                                <span class="dashicons dashicons-clipboard" style="font-size: 30px; width: 30px; height: 30px;"></span>
+                            </div>
+                            <h4 style="margin: 0; color: #1e293b; font-size: 1.2em;">Status Laporan</h4>
+                            <p style="margin: 5px 0 0 0; color: #64748b; font-family: monospace;" x-text="trackResult.code"></p>
+                        </div>
 
                         <div class="wp-desa-card-row">
                             <span class="wp-desa-card-label">Judul</span>
@@ -918,21 +1114,27 @@ class Shortcode
                         </div>
                         <div class="wp-desa-card-row">
                             <span class="wp-desa-card-label">Status</span>
-                            <span :class="'wp-desa-badge wp-desa-badge-' + trackResult.status" x-text="formatStatus(trackResult.status)"></span>
+                            <span :class="'wp-desa-badge wp-desa-badge-' + trackResult.status" x-text="formatStatus(trackResult.status)"
+                                style="padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; background: #e2e8f0; color: #475569;"
+                                :style="{'pending': 'background: #fef3c7; color: #92400e;', 'in_progress': 'background: #dbeafe; color: #1e40af;', 'resolved': 'background: #dcfce7; color: #166534;', 'rejected': 'background: #fee2e2; color: #991b1b;'}[trackResult.status]">
+                            </span>
                         </div>
 
                         <template x-if="trackResult.response">
-                            <div style="margin-top: 1rem; background: #f9fafb; padding: 1rem; border-radius: 0.5rem;">
-                                <strong style="display: block; margin-bottom: 0.5rem; color: #374151;">Tanggapan Admin:</strong>
-                                <p style="margin: 0; color: #4b5563;" x-text="trackResult.response"></p>
+                            <div style="margin-top: 20px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                <strong style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; color: #334155;">
+                                    <span class="dashicons dashicons-admin-comments"></span> Tanggapan Admin:
+                                </strong>
+                                <p style="margin: 0; color: #4b5563; line-height: 1.6;" x-text="trackResult.response"></p>
                             </div>
                         </template>
                     </div>
 
-                    <div x-show="trackError" class="wp-desa-alert wp-desa-alert-error" x-text="trackError"></div>
+                    <div x-show="trackError" style="padding: 15px; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px; margin-top: 15px;" x-text="trackError"></div>
                 </div>
             </div>
         </div>
+
 
         <script>
             document.addEventListener('alpine:init', () => {
@@ -1051,7 +1253,7 @@ class Shortcode
 
                     formatStatus(status) {
                         const map = {
-                            'pending': 'Pending',
+                            'pending': 'Menunggu',
                             'in_progress': 'Diproses',
                             'resolved': 'Selesai',
                             'rejected': 'Ditolak'
@@ -1082,31 +1284,169 @@ class Shortcode
         ob_start();
     ?>
         <div id="wp-desa-layanan" class="wp-desa-wrapper" x-data="layananSurat()">
+            <style>
+                #wp-desa-layanan .wp-desa-tab-btn {
+                    padding: 12px 20px;
+                    background: transparent;
+                    border: none;
+                    border-bottom: 2px solid transparent;
+                    font-weight: 600;
+                    color: #64748b;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    font-size: 1em;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+
+                #wp-desa-layanan .wp-desa-tab-btn.active {
+                    color: #2563eb;
+                    border-bottom-color: #2563eb;
+                }
+
+                #wp-desa-layanan .wp-desa-tab-btn:hover {
+                    color: #1e293b;
+                    background: #f8fafc;
+                }
+
+                #wp-desa-layanan .wp-desa-input,
+                #wp-desa-layanan .wp-desa-select,
+                #wp-desa-layanan .wp-desa-textarea {
+                    width: 100%;
+                    padding: 12px 16px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 0.95em;
+                    transition: border-color 0.2s, box-shadow 0.2s;
+                    box-sizing: border-box;
+                    background: #fff;
+                    font-family: inherit;
+                    color: #1e293b;
+                }
+
+                #wp-desa-layanan .wp-desa-input:focus,
+                #wp-desa-layanan .wp-desa-select:focus,
+                #wp-desa-layanan .wp-desa-textarea:focus {
+                    outline: none;
+                    border-color: #3b82f6;
+                    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                }
+
+                #wp-desa-layanan .wp-desa-label {
+                    display: block;
+                    margin-bottom: 8px;
+                    font-weight: 500;
+                    color: #334155;
+                    font-size: 0.95em;
+                }
+
+                #wp-desa-layanan .wp-desa-form-group {
+                    margin-bottom: 24px;
+                }
+
+                #wp-desa-layanan .wp-desa-btn {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    border: none;
+                    font-size: 1em;
+                    gap: 8px;
+                }
+
+                #wp-desa-layanan .wp-desa-btn-primary {
+                    background: #2563eb;
+                    color: white;
+                    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+                }
+
+                #wp-desa-layanan .wp-desa-btn-primary:hover {
+                    background: #1d4ed8;
+                    transform: translateY(-1px);
+                    box-shadow: 0 6px 8px -1px rgba(37, 99, 235, 0.3);
+                }
+
+                #wp-desa-layanan .wp-desa-btn:disabled {
+                    opacity: 0.7;
+                    cursor: not-allowed;
+                    transform: none;
+                    box-shadow: none;
+                    background: #94a3b8;
+                }
+
+                #wp-desa-layanan .wp-desa-result-card {
+                    background: #fff;
+                    border-radius: 12px;
+                    padding: 25px;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                    border: 1px solid #f1f5f9;
+                }
+
+                #wp-desa-layanan .wp-desa-card-row {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 12px 0;
+                    border-bottom: 1px solid #f1f5f9;
+                }
+
+                #wp-desa-layanan .wp-desa-card-row:last-child {
+                    border-bottom: none;
+                }
+
+                #wp-desa-layanan .wp-desa-card-label {
+                    color: #64748b;
+                    font-weight: 500;
+                }
+
+                #wp-desa-layanan .wp-desa-card-value {
+                    color: #1e293b;
+                    font-weight: 600;
+                    text-align: right;
+                }
+
+                #wp-desa-layanan .wp-desa-helper {
+                    font-size: 0.85em;
+                    color: #64748b;
+                    margin-top: 6px;
+                    display: block;
+                }
+            </style>
 
             <!-- Tabs -->
-            <div class="wp-desa-tabs">
-                <button @click="tab = 'request'" :class="{'active': tab === 'request'}" class="wp-desa-tab-btn">Ajukan Surat</button>
-                <button @click="tab = 'track'" :class="{'active': tab === 'track'}" class="wp-desa-tab-btn">Cek Status</button>
+            <div class="wp-desa-tabs" style="display: flex; border-bottom: 1px solid #e2e8f0; margin-bottom: 30px;">
+                <button @click="tab = 'request'" :class="{'active': tab === 'request'}" class="wp-desa-tab-btn">
+                    <span class="dashicons dashicons-email"></span> Ajukan Surat
+                </button>
+                <button @click="tab = 'track'" :class="{'active': tab === 'track'}" class="wp-desa-tab-btn">
+                    <span class="dashicons dashicons-search"></span> Cek Status
+                </button>
             </div>
 
             <div class="wp-desa-content">
                 <!-- Request Form -->
-                <div x-show="tab === 'request'">
-                    <h3 class="wp-desa-title">Form Permohonan Surat</h3>
+                <div x-show="tab === 'request'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100">
 
                     <div x-show="message.content"
-                        :class="message.type === 'success' ? 'wp-desa-alert wp-desa-alert-success' : 'wp-desa-alert wp-desa-alert-error'">
-                        <span x-text="message.content"></span>
+                        style="padding: 15px; border-radius: 8px; margin-bottom: 20px;"
+                        :style="message.type === 'success' ? 'background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;' : 'background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;'">
+                        <span x-text="message.content" style="font-weight: 500;"></span>
                         <template x-if="trackingCode">
-                            <div style="margin-top: 10px;">
-                                <div style="font-size: 0.9em; margin-bottom: 5px;">Kode Tracking Anda:</div>
-                                <div class="wp-desa-tracking-code" x-text="trackingCode"></div>
-                                <p class="wp-desa-helper">Simpan kode ini untuk mengecek status surat.</p>
+                            <div style="margin-top: 15px; background: white; padding: 15px; border-radius: 8px; border: 1px dashed #166534;">
+                                <div style="font-size: 0.9em; margin-bottom: 5px; color: #166534;">Kode Tracking Anda:</div>
+                                <div class="wp-desa-tracking-code" x-text="trackingCode" style="font-family: monospace; font-size: 1.5em; font-weight: 700; color: #1e293b; letter-spacing: 1px;"></div>
+                                <p class="wp-desa-helper" style="margin: 5px 0 0 0;">Simpan kode ini untuk mengecek status surat.</p>
                             </div>
                         </template>
                     </div>
 
-                    <form @submit.prevent="submitRequest">
+                    <form @submit.prevent="submitRequest" style="background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #f1f5f9;">
+                        <h3 class="wp-desa-title" style="margin-top: 0; margin-bottom: 20px; font-size: 1.25em; color: #1e293b;">Form Permohonan Surat</h3>
+
                         <div class="wp-desa-form-group">
                             <label class="wp-desa-label">NIK</label>
                             <input type="text" x-model="form.nik" required class="wp-desa-input" placeholder="Masukkan 16 digit NIK">
@@ -1132,7 +1472,7 @@ class Shortcode
                                 </template>
                             </select>
                             <template x-if="selectedTypeDescription">
-                                <p class="wp-desa-helper" x-text="selectedTypeDescription"></p>
+                                <p class="wp-desa-helper" x-text="selectedTypeDescription" style="margin-top: 8px; color: #2563eb; background: #eff6ff; padding: 10px; border-radius: 6px;"></p>
                             </template>
                         </div>
 
@@ -1141,29 +1481,37 @@ class Shortcode
                             <textarea x-model="form.details" rows="4" class="wp-desa-textarea" placeholder="Contoh: Untuk persyaratan melamar pekerjaan"></textarea>
                         </div>
 
-                        <button type="submit" :disabled="submitting" class="wp-desa-btn wp-desa-btn-primary">
+                        <button type="submit" :disabled="submitting" class="wp-desa-btn wp-desa-btn-primary" style="width: 100%;">
                             <span x-show="!submitting">Kirim Permohonan</span>
-                            <span x-show="submitting">Mengirim...</span>
+                            <span x-show="submitting" style="display: flex; align-items: center; gap: 8px;">
+                                <span class="dashicons dashicons-update" style="animation: spin 2s linear infinite;"></span> Mengirim...
+                            </span>
                         </button>
                     </form>
                 </div>
 
                 <!-- Tracking Form -->
-                <div x-show="tab === 'track'">
-                    <h3 class="wp-desa-title">Cek Status Surat</h3>
-
-                    <form @submit.prevent="checkStatus" style="margin-bottom: 1.5rem;">
-                        <div style="display: flex; gap: 0.75rem;">
-                            <input type="text" x-model="trackCode" placeholder="Masukkan Kode Tracking" required class="wp-desa-input" style="flex: 1;">
-                            <button type="submit" :disabled="tracking" class="wp-desa-btn wp-desa-btn-primary" style="width: auto;">
+                <div x-show="tab === 'track'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100">
+                    <form @submit.prevent="checkStatus" style="margin-bottom: 1.5rem; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #f1f5f9;">
+                        <h3 class="wp-desa-title" style="margin-top: 0; margin-bottom: 15px; font-size: 1.25em; color: #1e293b;">Cek Status Surat</h3>
+                        <label class="wp-desa-label" style="margin-bottom: 12px;">Masukkan Kode Tracking</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" x-model="trackCode" placeholder="Contoh: SUR-XXXXXX" required class="wp-desa-input" style="flex: 1; font-family: monospace; letter-spacing: 1px; font-weight: 600;">
+                            <button type="submit" :disabled="tracking" class="wp-desa-btn wp-desa-btn-primary" style="width: auto; min-width: 100px;">
                                 <span x-show="!tracking">Cek</span>
-                                <span x-show="tracking">...</span>
+                                <span x-show="tracking" class="dashicons dashicons-update" style="animation: spin 2s linear infinite;"></span>
                             </button>
                         </div>
                     </form>
 
-                    <div x-show="trackResult" class="wp-desa-card">
-                        <h4 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem;">Status Permohonan</h4>
+                    <div x-show="trackResult" class="wp-desa-result-card">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div style="width: 60px; height: 60px; background: #eff6ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: #2563eb;">
+                                <span class="dashicons dashicons-email-alt" style="font-size: 30px; width: 30px; height: 30px;"></span>
+                            </div>
+                            <h4 style="margin: 0; color: #1e293b; font-size: 1.2em;">Status Permohonan</h4>
+                            <p style="margin: 5px 0 0 0; color: #64748b; font-family: monospace;" x-text="trackResult.code"></p>
+                        </div>
 
                         <div class="wp-desa-card-row">
                             <span class="wp-desa-card-label">Jenis Surat</span>
@@ -1179,11 +1527,14 @@ class Shortcode
                         </div>
                         <div class="wp-desa-card-row">
                             <span class="wp-desa-card-label">Status</span>
-                            <span :class="'wp-desa-badge wp-desa-badge-' + trackResult.status" x-text="trackResult.status"></span>
+                            <span :class="'wp-desa-badge wp-desa-badge-' + trackResult.status" x-text="formatStatus(trackResult.status)"
+                                style="padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; background: #e2e8f0; color: #475569;"
+                                :style="{'pending': 'background: #fef3c7; color: #92400e;', 'processed': 'background: #dbeafe; color: #1e40af;', 'ready': 'background: #dcfce7; color: #166534;', 'completed': 'background: #d1fae5; color: #065f46;', 'rejected': 'background: #fee2e2; color: #991b1b;'}[trackResult.status]">
+                            </span>
                         </div>
                     </div>
 
-                    <div x-show="trackError" class="wp-desa-alert wp-desa-alert-error" x-text="trackError"></div>
+                    <div x-show="trackError" style="padding: 15px; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px; margin-top: 15px;" x-text="trackError"></div>
                 </div>
             </div>
 
@@ -1304,6 +1655,17 @@ class Shortcode
                             month: 'long',
                             year: 'numeric'
                         });
+                    },
+
+                    formatStatus(status) {
+                        const map = {
+                            'pending': 'Menunggu',
+                            'processed': 'Diproses',
+                            'ready': 'Siap Diambil',
+                            'completed': 'Selesai',
+                            'rejected': 'Ditolak'
+                        };
+                        return map[status] || status;
                     }
                 }));
             });
