@@ -363,7 +363,7 @@ input:checked + .slider:before {
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
   animation: modalSlideIn 0.2s ease-out;
@@ -459,4 +459,31 @@ input:checked + .slider:before {
   font-size: 13px;
   color: #475569;
   font-weight: 500;
+}
+
+/* Detail Info Styles (from complaints) */
+.wp-desa-info-row {
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.wp-desa-info-label {
+  font-weight: 600;
+  color: #64748b;
+  width: 120px;
+  display: inline-block;
+}
+
+.wp-desa-info-value {
+  color: #1e293b;
+}
+
+.wp-desa-detail-box {
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+  color: #334155;
+  margin-top: 4px;
 }
