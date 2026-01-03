@@ -22,60 +22,140 @@ class Shortcode
     {
         global $wpdb;
         $table = $wpdb->prefix . 'desa_residents';
-        
+
         // Cache results for 1 hour to reduce DB load
         $stats = get_transient('wp_desa_quick_stats');
-        
+
         if (false === $stats) {
-            $total = $wpdb->get_var("SELECT COUNT(*) FROM $table");
-            $male = $wpdb->get_var("SELECT COUNT(*) FROM $table WHERE jenis_kelamin = 'Laki-laki'");
-            $female = $wpdb->get_var("SELECT COUNT(*) FROM $table WHERE jenis_kelamin = 'Perempuan'");
-            $families = $wpdb->get_var("SELECT COUNT(DISTINCT no_kk) FROM $table WHERE no_kk != ''");
-            
-            $stats = [
-                'total' => $total,
-                'male' => $male,
-                'female' => $female,
-                'families' => $families
-            ];
-            
-            set_transient('wp_desa_quick_stats', $stats, HOUR_IN_SECONDS);
+            // Check if table exists to prevent errors on fresh install
+            if ($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+                $stats = [
+                    'total' => 0,
+                    'male' => 0,
+                    'female' => 0,
+                    'families' => 0
+                ];
+            } else {
+                $total = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table");
+                $male = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table WHERE jenis_kelamin = 'Laki-laki'");
+                $female = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table WHERE jenis_kelamin = 'Perempuan'");
+                $families = (int) $wpdb->get_var("SELECT COUNT(DISTINCT no_kk) FROM $table WHERE no_kk != ''");
+
+                $stats = [
+                    'total' => $total,
+                    'male' => $male,
+                    'female' => $female,
+                    'families' => $families
+                ];
+
+                set_transient('wp_desa_quick_stats', $stats, HOUR_IN_SECONDS);
+            }
         }
 
+        // Ensure stats are integers and exist
+        $total_val = isset($stats['total']) ? (int) $stats['total'] : 0;
+        $families_val = isset($stats['families']) ? (int) $stats['families'] : 0;
+        $male_val = isset($stats['male']) ? (int) $stats['male'] : 0;
+        $female_val = isset($stats['female']) ? (int) $stats['female'] : 0;
+
         ob_start();
-        ?>
+?>
         <div class="wp-desa-wrapper">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px;">
+            <style>
+                .wp-desa-stats-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 25px;
+                    margin: 20px 0;
+                }
+
+                .wp-desa-stat-card {
+                    background: #fff;
+                    border-radius: 12px;
+                    padding: 25px 20px;
+                    text-align: center;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                    transition: transform 0.2s, box-shadow 0.2s;
+                    border: 1px solid #f1f5f9;
+                }
+
+                .wp-desa-stat-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                }
+
+                .wp-desa-stat-icon {
+                    width: 60px;
+                    height: 60px;
+                    margin: 0 auto 15px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .wp-desa-stat-icon .dashicons {
+                    font-size: 30px;
+                    width: 30px;
+                    height: 30px;
+                }
+
+                .wp-desa-stat-number {
+                    font-size: 2.5em;
+                    font-weight: 700;
+                    color: #1e293b;
+                    line-height: 1;
+                    margin-bottom: 5px;
+                }
+
+                .wp-desa-stat-label {
+                    color: #64748b;
+                    font-size: 0.95em;
+                    font-weight: 500;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+            </style>
+
+            <div class="wp-desa-stats-grid">
                 <!-- Total -->
-                <div class="wp-desa-card" style="text-align: center; padding: 20px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white;">
-                    <div class="dashicons dashicons-groups" style="font-size: 32px; width: 32px; height: 32px; margin-bottom: 10px;"></div>
-                    <div style="font-size: 2em; font-weight: bold;"><?php echo number_format_i18n($stats['total']); ?></div>
-                    <div style="font-size: 0.9em; opacity: 0.9;">Total Penduduk</div>
+                <div class="wp-desa-stat-card">
+                    <div class="wp-desa-stat-icon" style="background: #eff6ff; color: #3b82f6;">
+                        <span class="dashicons dashicons-groups"></span>
+                    </div>
+                    <div class="wp-desa-stat-number"><?php echo number_format_i18n($total_val); ?></div>
+                    <div class="wp-desa-stat-label">Total Penduduk</div>
                 </div>
-                
+
                 <!-- KK -->
-                <div class="wp-desa-card" style="text-align: center; padding: 20px; background: white;">
-                    <div class="dashicons dashicons-admin-home" style="font-size: 32px; width: 32px; height: 32px; margin-bottom: 10px; color: #f59e0b;"></div>
-                    <div style="font-size: 2em; font-weight: bold; color: #333;"><?php echo number_format_i18n($stats['families']); ?></div>
-                    <div style="font-size: 0.9em; color: #666;">Kepala Keluarga</div>
+                <div class="wp-desa-stat-card">
+                    <div class="wp-desa-stat-icon" style="background: #fffbeb; color: #f59e0b;">
+                        <span class="dashicons dashicons-admin-home"></span>
+                    </div>
+                    <div class="wp-desa-stat-number"><?php echo number_format_i18n($families_val); ?></div>
+                    <div class="wp-desa-stat-label">Kepala Keluarga</div>
                 </div>
 
                 <!-- Laki-laki -->
-                <div class="wp-desa-card" style="text-align: center; padding: 20px; background: white;">
-                    <div class="dashicons dashicons-businessman" style="font-size: 32px; width: 32px; height: 32px; margin-bottom: 10px; color: #0ea5e9;"></div>
-                    <div style="font-size: 2em; font-weight: bold; color: #333;"><?php echo number_format_i18n($stats['male']); ?></div>
-                    <div style="font-size: 0.9em; color: #666;">Laki-laki</div>
+                <div class="wp-desa-stat-card">
+                    <div class="wp-desa-stat-icon" style="background: #e0f2fe; color: #0ea5e9;">
+                        <span class="dashicons dashicons-businessman"></span>
+                    </div>
+                    <div class="wp-desa-stat-number"><?php echo number_format_i18n($male_val); ?></div>
+                    <div class="wp-desa-stat-label">Laki-laki</div>
                 </div>
 
                 <!-- Perempuan -->
-                <div class="wp-desa-card" style="text-align: center; padding: 20px; background: white;">
-                    <div class="dashicons dashicons-businesswoman" style="font-size: 32px; width: 32px; height: 32px; margin-bottom: 10px; color: #ec4899;"></div>
-                    <div style="font-size: 2em; font-weight: bold; color: #333;"><?php echo number_format_i18n($stats['female']); ?></div>
-                    <div style="font-size: 0.9em; color: #666;">Perempuan</div>
+                <div class="wp-desa-stat-card">
+                    <div class="wp-desa-stat-icon" style="background: #fce7f3; color: #ec4899;">
+                        <span class="dashicons dashicons-businesswoman"></span>
+                    </div>
+                    <div class="wp-desa-stat-number"><?php echo number_format_i18n($female_val); ?></div>
+                    <div class="wp-desa-stat-label">Perempuan</div>
                 </div>
             </div>
         </div>
-        <?php
+    <?php
         return ob_get_clean();
     }
 
@@ -93,11 +173,11 @@ class Shortcode
         ]);
 
         ob_start();
-        ?>
+    ?>
         <div class="wp-desa-wrapper">
             <?php if ($query->have_posts()): ?>
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
-                    <?php while ($query->have_posts()): $query->the_post(); 
+                    <?php while ($query->have_posts()): $query->the_post();
                         $phone = get_post_meta(get_the_ID(), '_desa_umkm_phone', true);
                         $location = get_post_meta(get_the_ID(), '_desa_umkm_location', true);
                     ?>
@@ -131,9 +211,10 @@ class Shortcode
                 </div>
             <?php else: ?>
                 <p style="text-align: center; color: #666;">Belum ada data UMKM.</p>
-            <?php endif; wp_reset_postdata(); ?>
+            <?php endif;
+            wp_reset_postdata(); ?>
         </div>
-        <?php
+    <?php
         return ob_get_clean();
     }
 
@@ -150,7 +231,7 @@ class Shortcode
         ]);
 
         ob_start();
-        ?>
+    ?>
         <div class="wp-desa-wrapper">
             <?php if ($query->have_posts()): ?>
                 <div style="display: flex; flex-direction: column; gap: 20px;">
@@ -179,12 +260,14 @@ class Shortcode
                 </div>
             <?php else: ?>
                 <p style="text-align: center; color: #666;">Belum ada data Potensi Desa.</p>
-            <?php endif; wp_reset_postdata(); ?>
+            <?php endif;
+            wp_reset_postdata(); ?>
         </div>
-        <?php
+    <?php
         return ob_get_clean();
     }
 
+    public function render_profil()
     {
         $settings = get_option('wp_desa_settings');
         if (!$settings) return '';
@@ -198,7 +281,7 @@ class Shortcode
         $telepon = isset($settings['telepon_desa']) ? $settings['telepon_desa'] : '';
 
         ob_start();
-?>
+    ?>
         <div class="wp-desa-wrapper">
             <div class="wp-desa-card" style="text-align: center; padding: 30px;">
                 <?php if ($logo): ?>

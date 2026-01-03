@@ -63,5 +63,8 @@ class Plugin
     {
         $shortcode = new \WpDesa\Frontend\Shortcode();
         $shortcode->register();
+
+        $bb_loader = new \WpDesa\Integrations\BeaverBuilder\Loader();
+        add_action('init', [$bb_loader, 'load']);
     }
 }
