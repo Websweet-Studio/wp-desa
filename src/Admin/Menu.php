@@ -56,6 +56,16 @@ class Menu
             'wp-desa-finances',
             [$this, 'render_finances_page']
         );
+
+        // Submenu Program Bantuan
+        add_submenu_page(
+            'wp-desa',
+            'Program Bantuan',
+            'Program Bantuan',
+            'manage_options',
+            'wp-desa-aid',
+            [$this, 'render_aid_page']
+        );
     }
 
     public function enqueue_scripts($hook)
@@ -66,7 +76,8 @@ class Menu
             'wp-desa_page_wp-desa-residents',
             'wp-desa_page_wp-desa-letters',
             'wp-desa_page_wp-desa-complaints',
-            'wp-desa_page_wp-desa-finances'
+            'wp-desa_page_wp-desa-finances',
+            'wp-desa_page_wp-desa-aid'
         ];
 
         if (in_array($hook, $allowed_pages)) {
@@ -106,5 +117,10 @@ class Menu
     public function render_finances_page()
     {
         require_once WP_DESA_PATH . 'templates/admin/finances.php';
+    }
+
+    public function render_aid_page()
+    {
+        require_once WP_DESA_PATH . 'templates/admin/aid.php';
     }
 }

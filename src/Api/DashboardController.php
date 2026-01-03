@@ -36,7 +36,7 @@ class DashboardController extends WP_REST_Controller {
         $count = \WpDesa\Database\Seeder::run(50);
         return rest_ensure_response([
             'success' => true,
-            'message' => 'Berhasil membuat data dummy (Penduduk, Surat, Aduan, Keuangan).',
+            'message' => 'Berhasil membuat data dummy (Penduduk, Surat, Aduan, Keuangan, Bantuan).',
             'count' => $count
         ]);
     }

@@ -93,12 +93,47 @@ class Activator
             KEY type (type)
         ) $charset_collate;";
 
+        // 6. Aid Programs Table
+        $table_programs = $wpdb->prefix . 'desa_programs';
+        $sql_programs = "CREATE TABLE $table_programs (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            name varchar(100) NOT NULL,
+            description text,
+            origin varchar(100) NOT NULL,
+            year int(4) NOT NULL,
+            status enum('active', 'closed') DEFAULT 'active',
+            quota int(9) DEFAULT 0,
+            amount_per_recipient decimal(15,2) DEFAULT 0,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY  (id)
+        ) $charset_collate;";
+
+        // 7. Aid Recipients Table
+        $table_recipients = $wpdb->prefix . 'desa_program_recipients';
+        $sql_recipients = "CREATE TABLE $table_recipients (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            program_id mediumint(9) NOT NULL,
+            resident_id mediumint(9) NOT NULL,
+            status enum('pending', 'approved', 'rejected', 'distributed') DEFAULT 'pending',
+            distributed_at datetime,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY  (id),
+            KEY program_id (program_id),
+            KEY resident_id (resident_id),
+            UNIQUE KEY program_resident (program_id, resident_id)
+        ) $charset_collate;";
+
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql_residents);
         dbDelta($sql_letter_types);
         dbDelta($sql_letters);
         dbDelta($sql_complaints);
         dbDelta($sql_finances);
+        dbDelta($sql_programs);
+        dbDelta($sql_recipients);
+    }
+}
 
         // Seed Letter Types if empty (Force check)
         // Using $wpdb->get_var directly sometimes fails in activation hook context if dbDelta just ran

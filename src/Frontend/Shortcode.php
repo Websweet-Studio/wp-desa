@@ -9,13 +9,164 @@ class Shortcode
         add_shortcode('wp_desa_layanan', [$this, 'render_layanan']);
         add_shortcode('wp_desa_aduan', [$this, 'render_aduan']);
         add_shortcode('wp_desa_keuangan', [$this, 'render_keuangan']);
+        add_shortcode('wp_desa_bantuan', [$this, 'render_bantuan']);
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
+    }
+
+    public function render_bantuan()
+    {
+        ob_start();
+?>
+        <div id="wp-desa-bantuan" class="wp-desa-wrapper" x-data="bantuanDesa()">
+            <h2 class="wp-desa-title" style="text-align:center;">Program & Bantuan Sosial</h2>
+
+            <!-- Program List -->
+            <div style="margin-bottom: 30px;">
+                <template x-for="p in programs" :key="p.id">
+                    <div class="wp-desa-card" style="margin-bottom: 15px; padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                            <div style="flex: 1; min-width: 250px;">
+                                <h3 style="margin: 0; color: #2271b1;" x-text="p.name"></h3>
+                                <p style="margin: 5px 0; color: #666;" x-text="p.description"></p>
+                                <div style="margin-top: 10px; font-size: 0.9em; color: #555;">
+                                    <span style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; margin-right: 10px;" x-text="p.origin"></span>
+                                    <span x-text="'Tahun: ' + p.year"></span>
+                                </div>
+                            </div>
+                            <div style="text-align: right; min-width: 150px;">
+                                <div style="font-weight: bold; font-size: 1.2em; color: #059669;" x-text="formatCurrency(p.amount_per_recipient)"></div>
+                                <div style="font-size: 0.9em; color: #666; margin-top: 5px;" x-text="'Kuota: ' + p.quota"></div>
+                                <button @click="viewRecipients(p)" class="wp-desa-btn" style="margin-top: 10px; font-size: 0.9em;">
+                                    <span x-text="activeProgramId === p.id ? 'Tutup' : 'Lihat Penerima'"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Recipients List (Collapsible) -->
+                        <div x-show="activeProgramId === p.id" style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+                            <h4 style="margin-top: 0;">Daftar Penerima</h4>
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                                    <thead>
+                                        <tr style="background: #f8fafc;">
+                                            <th style="text-align: left; padding: 8px;">Nama</th>
+                                            <th style="text-align: left; padding: 8px;">Alamat</th>
+                                            <th style="text-align: center; padding: 8px;">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template x-for="r in recipients" :key="r.id">
+                                            <tr style="border-bottom: 1px solid #eee;">
+                                                <td style="padding: 8px;" x-text="r.nama_lengkap"></td>
+                                                <td style="padding: 8px;" x-text="r.alamat"></td>
+                                                <td style="text-align: center; padding: 8px;">
+                                                    <span :class="'status-badge status-' + r.status" x-text="formatStatus(r.status)"></span>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                        <template x-if="recipients.length === 0">
+                                            <tr>
+                                                <td colspan="3" style="text-align: center; padding: 15px;">Belum ada data penerima.</td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template x-if="programs.length === 0">
+                    <div style="text-align: center; padding: 30px; color: #666;">Belum ada program bantuan aktif.</div>
+                </template>
+            </div>
+        </div>
+
+        <script>
+            function bantuanDesa() {
+                return {
+                    programs: [],
+                    activeProgramId: null,
+                    recipients: [],
+
+                    init() {
+                        this.fetchPrograms();
+                    },
+
+                    fetchPrograms() {
+                        fetch('<?php echo esc_url_raw(rest_url('wp-desa/v1/aid-programs')); ?>')
+                            .then(res => res.json())
+                            .then(data => this.programs = data);
+                    },
+
+                    viewRecipients(program) {
+                        if (this.activeProgramId === program.id) {
+                            this.activeProgramId = null;
+                            return;
+                        }
+                        this.activeProgramId = program.id;
+                        this.recipients = []; // Clear
+
+                        fetch('<?php echo esc_url_raw(rest_url('wp-desa/v1/aid-programs/')); ?>' + program.id + '/recipients')
+                            .then(res => res.json())
+                            .then(data => this.recipients = data);
+                    },
+
+                    formatCurrency(value) {
+                        return new Intl.NumberFormat('id-ID', {
+                            style: 'currency',
+                            currency: 'IDR'
+                        }).format(value);
+                    },
+
+                    formatStatus(status) {
+                        const map = {
+                            'pending': 'Menunggu',
+                            'approved': 'Disetujui',
+                            'rejected': 'Ditolak',
+                            'distributed': 'Disalurkan'
+                        };
+                        return map[status] || status;
+                    }
+                }
+            }
+        </script>
+
+        <style>
+            .status-badge {
+                padding: 2px 8px;
+                border-radius: 10px;
+                font-size: 0.8em;
+                font-weight: 500;
+            }
+
+            .status-pending {
+                background: #fef3c7;
+                color: #92400e;
+            }
+
+            .status-approved {
+                background: #dbeafe;
+                color: #1e40af;
+            }
+
+            .status-rejected {
+                background: #fee2e2;
+                color: #991b1b;
+            }
+
+            .status-distributed {
+                background: #d1fae5;
+                color: #065f46;
+            }
+        </style>
+    <?php
+        return ob_get_clean();
     }
 
     public function render_keuangan()
     {
         ob_start();
-?>
+    ?>
         <div id="wp-desa-keuangan" class="wp-desa-wrapper" x-data="keuanganDesa()">
             <h2 class="wp-desa-title" style="text-align:center;">Transparansi Keuangan Desa</h2>
 

@@ -40,6 +40,9 @@ class Plugin
 
         $finances = new \WpDesa\Api\FinanceController();
         add_action('rest_api_init', [$finances, 'register_routes']);
+
+        $aid = new \WpDesa\Api\AidController();
+        add_action('rest_api_init', [$aid, 'register_routes']);
     }
 
     private function load_frontend()

@@ -56,7 +56,75 @@ class Seeder {
         // Seed Finances
         self::seed_finances(intval($count / 2));
 
+        // Seed Aid
+        self::seed_aid(intval($count / 2));
+
         return $inserted;
+    }
+
+    public static function seed_aid($count = 50) {
+        global $wpdb;
+        $table_programs = $wpdb->prefix . 'desa_programs';
+        $table_recipients = $wpdb->prefix . 'desa_program_recipients';
+        $table_residents = $wpdb->prefix . 'desa_residents';
+
+        // 1. Create Programs
+        $programs = [
+            ['name' => 'BLT Dana Desa 2024', 'origin' => 'Dana Desa', 'amount' => 300000, 'quota' => 100],
+            ['name' => 'PKH (Program Keluarga Harapan)', 'origin' => 'Kemensos', 'amount' => 750000, 'quota' => 50],
+            ['name' => 'Bantuan UMKM', 'origin' => 'Kemenkop', 'amount' => 2400000, 'quota' => 30],
+            ['name' => 'Bantuan Sembako', 'origin' => 'Pemda', 'amount' => 200000, 'quota' => 150]
+        ];
+
+        $program_ids = [];
+        foreach ($programs as $prog) {
+            // Check if exists
+            $existing = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_programs WHERE name = %s", $prog['name']));
+            if ($existing) {
+                $program_ids[] = $existing;
+                continue;
+            }
+
+            $wpdb->insert($table_programs, [
+                'name' => $prog['name'],
+                'description' => 'Bantuan ' . $prog['name'],
+                'origin' => $prog['origin'],
+                'year' => date('Y'),
+                'status' => 'active',
+                'quota' => $prog['quota'],
+                'amount_per_recipient' => $prog['amount'],
+                'created_at' => current_time('mysql')
+            ]);
+            $program_ids[] = $wpdb->insert_id;
+        }
+
+        // 2. Add Recipients
+        $residents = $wpdb->get_col("SELECT id FROM $table_residents ORDER BY RAND() LIMIT $count");
+        if (empty($residents)) return;
+
+        $statuses = ['pending', 'approved', 'rejected', 'distributed'];
+
+        foreach ($residents as $resident_id) {
+            $program_id = $program_ids[array_rand($program_ids)];
+            
+            // Check uniqueness
+            $exists = $wpdb->get_var($wpdb->prepare(
+                "SELECT id FROM $table_recipients WHERE program_id = %d AND resident_id = %d",
+                $program_id, $resident_id
+            ));
+            if ($exists) continue;
+
+            $status = $statuses[array_rand($statuses)];
+            $distributed_at = ($status === 'distributed') ? current_time('mysql') : null;
+
+            $wpdb->insert($table_recipients, [
+                'program_id' => $program_id,
+                'resident_id' => $resident_id,
+                'status' => $status,
+                'distributed_at' => $distributed_at,
+                'created_at' => current_time('mysql')
+            ]);
+        }
     }
 
     public static function seed_letters($count = 50) {
