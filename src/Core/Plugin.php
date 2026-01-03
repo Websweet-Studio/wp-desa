@@ -6,13 +6,17 @@ use WpDesa\Admin\Menu;
 use WpDesa\Api\ResidentController;
 use WpDesa\Api\DashboardController;
 
-class Plugin {
-    public function run() {
+class Plugin
+{
+    public function run()
+    {
         $this->load_admin();
         $this->load_api();
+        $this->load_frontend();
     }
 
-    private function load_admin() {
+    private function load_admin()
+    {
         if (is_admin()) {
             $menu = new Menu();
             add_action('admin_menu', [$menu, 'register_menus']);
@@ -20,11 +24,21 @@ class Plugin {
         }
     }
 
-    private function load_api() {
+    private function load_api()
+    {
         $api = new ResidentController();
         add_action('rest_api_init', [$api, 'register_routes']);
-        
+
         $dashboard = new DashboardController();
         add_action('rest_api_init', [$dashboard, 'register_routes']);
+
+        $letters = new \WpDesa\Api\LetterController();
+        add_action('rest_api_init', [$letters, 'register_routes']);
+    }
+
+    private function load_frontend()
+    {
+        $shortcode = new \WpDesa\Frontend\Shortcode();
+        $shortcode->register();
     }
 }

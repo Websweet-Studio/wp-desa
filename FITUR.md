@@ -9,9 +9,9 @@ Dokumen ini berisi daftar rencana fitur yang akan dikembangkan untuk sistem info
 - [ ] **Mutasi Penduduk**: Pencatatan kelahiran, kematian, pindah masuk, dan pindah keluar.
 
 ## 2. Layanan Surat Menyurat (E-Surat)
-- [ ] **Template Surat**: Generator surat otomatis (SKTM, Surat Pengantar, Surat Domisili, dll).
-- [ ] **Permohonan Surat Online**: Form frontend bagi warga untuk mengajukan surat.
-- [ ] **Tracking Surat**: Status permohonan surat (Diajukan -> Diproses -> Selesai).
+- [x] **Template Surat**: Generator surat otomatis (SKTM, Surat Pengantar, Surat Domisili, dll).
+- [x] **Permohonan Surat Online**: Form frontend bagi warga untuk mengajukan surat.
+- [x] **Tracking Surat**: Status permohonan surat (Diajukan -> Diproses -> Selesai).
 - [ ] **Tanda Tangan Digital/QR Code**: Verifikasi keaslian surat.
 
 ## 3. Transparansi & Pemerintahan
