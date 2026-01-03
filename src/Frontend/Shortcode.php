@@ -58,6 +58,8 @@ class Shortcode
         $male_val = isset($stats['male']) ? (int) $stats['male'] : 0;
         $female_val = isset($stats['female']) ? (int) $stats['female'] : 0;
 
+        $chart_id = 'wpDesaStatChart_' . uniqid();
+
         ob_start();
 ?>
         <div class="wp-desa-wrapper">
@@ -115,7 +117,27 @@ class Shortcode
                     text-transform: uppercase;
                     letter-spacing: 0.5px;
                 }
+
+                .wp-desa-chart-container {
+                    background: white;
+                    padding: 20px;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                    margin-bottom: 30px;
+                    border: 1px solid #f1f5f9;
+                    max-width: 500px;
+                    margin-left: auto;
+                    margin-right: auto;
+                }
             </style>
+
+            <!-- Chart Section -->
+            <div class="wp-desa-chart-container">
+                <h3 style="text-align: center; margin-top: 0; color: #1e293b; font-size: 1.1em; margin-bottom: 15px;">Komposisi Penduduk</h3>
+                <div style="position: relative; height: 250px;">
+                    <canvas id="<?php echo esc_attr($chart_id); ?>"></canvas>
+                </div>
+            </div>
 
             <div class="wp-desa-stats-grid">
                 <!-- Total -->
@@ -155,6 +177,41 @@ class Shortcode
                 </div>
             </div>
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const ctx = document.getElementById('<?php echo esc_js($chart_id); ?>');
+                if (ctx) {
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Laki-laki', 'Perempuan'],
+                            datasets: [{
+                                data: [<?php echo (int)$male_val; ?>, <?php echo (int)$female_val; ?>],
+                                backgroundColor: [
+                                    '#0ea5e9', // Blue for Male
+                                    '#ec4899' // Pink for Female
+                                ],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 20,
+                                        usePointStyle: true
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        </script>
     <?php
         return ob_get_clean();
     }
@@ -176,32 +233,49 @@ class Shortcode
     ?>
         <div class="wp-desa-wrapper">
             <?php if ($query->have_posts()): ?>
-                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px;">
                     <?php while ($query->have_posts()): $query->the_post();
                         $phone = get_post_meta(get_the_ID(), '_desa_umkm_phone', true);
                         $location = get_post_meta(get_the_ID(), '_desa_umkm_location', true);
+                        $categories = get_the_terms(get_the_ID(), 'desa_umkm_cat');
+                        $cat_name = !empty($categories) ? $categories[0]->name : 'UMKM';
                     ?>
-                        <div class="wp-desa-card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
-                            <div style="height: 180px; background: #f1f5f9; overflow: hidden;">
+                        <div class="wp-desa-stat-card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column; text-align: left; transition: transform 0.2s, box-shadow 0.2s; border: 1px solid #f1f5f9; background: white; border-radius: 12px;">
+                            <div style="height: 200px; background: #f8fafc; overflow: hidden; position: relative;">
+                                <div style="position: absolute; top: 15px; right: 15px; background: rgba(255, 255, 255, 0.9); padding: 4px 10px; border-radius: 20px; font-size: 0.75em; font-weight: 600; color: #475569; z-index: 2; backdrop-filter: blur(4px);">
+                                    <?php echo esc_html($cat_name); ?>
+                                </div>
                                 <?php if (has_post_thumbnail()): ?>
-                                    <?php the_post_thumbnail('medium', ['style' => 'width: 100%; height: 100%; object-fit: cover;']); ?>
+                                    <a href="<?php the_permalink(); ?>" style="display: block; width: 100%; height: 100%;">
+                                        <?php the_post_thumbnail('medium', ['style' => 'width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;']); ?>
+                                    </a>
                                 <?php else: ?>
-                                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #cbd5e1;">
-                                        <span class="dashicons dashicons-store" style="font-size: 48px; width: 48px; height: 48px;"></span>
+                                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #cbd5e1; background: #f1f5f9;">
+                                        <span class="dashicons dashicons-store" style="font-size: 64px; width: 64px; height: 64px; opacity: 0.5;"></span>
                                     </div>
                                 <?php endif; ?>
                             </div>
                             <div style="padding: 20px; flex: 1; display: flex; flex-direction: column;">
-                                <h3 style="margin: 0 0 10px 0; font-size: 1.2em;">
-                                    <a href="<?php the_permalink(); ?>" style="text-decoration: none; color: #1e293b;"><?php the_title(); ?></a>
+                                <h3 style="margin: 0 0 10px 0; font-size: 1.15em; line-height: 1.4;">
+                                    <a href="<?php the_permalink(); ?>" style="text-decoration: none; color: #1e293b; font-weight: 700; transition: color 0.2s;"><?php the_title(); ?></a>
                                 </h3>
-                                <div style="font-size: 0.9em; color: #64748b; margin-bottom: 15px; flex: 1;">
+                                <div style="font-size: 0.9em; color: #64748b; margin-bottom: 20px; flex: 1; line-height: 1.6;">
                                     <?php echo wp_trim_words(get_the_excerpt(), 15); ?>
                                 </div>
-                                <div style="border-top: 1px solid #f1f5f9; pt: 15px; margin-top: auto; display: flex; gap: 10px;">
-                                    <?php if ($phone): ?>
-                                        <a href="https://wa.me/<?php echo esc_attr($phone); ?>" target="_blank" class="button" style="background: #25D366; color: white; border: none; font-size: 0.85em; display: flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 4px; text-decoration: none;">
-                                            <span class="dashicons dashicons-whatsapp"></span> WhatsApp
+
+                                <div style="border-top: 1px solid #f1f5f9; padding-top: 15px; margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
+                                    <a href="<?php the_permalink(); ?>" style="font-size: 0.9em; font-weight: 500; color: #64748b; text-decoration: none; display: flex; align-items: center; gap: 4px;">
+                                        Detail <span class="dashicons dashicons-arrow-right-alt2" style="font-size: 16px; width: 16px; height: 16px; margin-top: 2px;"></span>
+                                    </a>
+
+                                    <?php if ($phone):
+                                        $clean_phone = preg_replace('/[^0-9]/', '', $phone);
+                                        if (substr($clean_phone, 0, 1) == '0') {
+                                            $clean_phone = '62' . substr($clean_phone, 1);
+                                        }
+                                    ?>
+                                        <a href="https://wa.me/<?php echo esc_attr($clean_phone); ?>" target="_blank" style="background: #25D366; color: white; border: none; font-size: 0.85em; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; text-decoration: none; font-weight: 500; transition: background 0.2s;">
+                                            <span class="dashicons dashicons-whatsapp" style="font-size: 16px; width: 16px; height: 16px;"></span> Chat
                                         </a>
                                     <?php endif; ?>
                                 </div>
@@ -210,7 +284,10 @@ class Shortcode
                     <?php endwhile; ?>
                 </div>
             <?php else: ?>
-                <p style="text-align: center; color: #666;">Belum ada data UMKM.</p>
+                <div style="text-align: center; padding: 60px 20px; background: #f8fafc; border-radius: 12px; border: 2px dashed #e2e8f0; color: #94a3b8;">
+                    <span class="dashicons dashicons-store" style="font-size: 48px; width: 48px; height: 48px; margin-bottom: 10px; opacity: 0.5;"></span>
+                    <p style="margin: 0; font-size: 1.1em;">Belum ada data UMKM yang ditampilkan.</p>
+                </div>
             <?php endif;
             wp_reset_postdata(); ?>
         </div>
@@ -516,70 +593,112 @@ class Shortcode
         ob_start();
     ?>
         <div id="wp-desa-keuangan" class="wp-desa-wrapper" x-data="keuanganDesa()">
-            <h2 class="wp-desa-title" style="text-align:center;">Transparansi Keuangan Desa</h2>
-
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
-                <select x-model="filterYear" @change="fetchSummary" class="wp-desa-select" style="width: auto;">
-                    <template x-for="y in years" :key="y">
-                        <option :value="y" x-text="y"></option>
-                    </template>
-                </select>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+                <h2 class="wp-desa-title" style="margin:0; text-align: left;">Transparansi Keuangan</h2>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label style="font-weight: 500; color: #64748b;">Tahun Anggaran:</label>
+                    <select x-model="filterYear" @change="fetchSummary" class="wp-desa-select" style="width: auto; padding: 6px 30px 6px 12px; border-radius: 6px; border-color: #cbd5e1;">
+                        <template x-for="y in years" :key="y">
+                            <option :value="y" x-text="y"></option>
+                        </template>
+                    </select>
+                </div>
             </div>
 
             <!-- Summary Cards -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                <div class="wp-desa-card" style="text-align: center;">
-                    <h4 style="margin: 0; color: #555;">Pendapatan</h4>
-                    <h3 style="margin: 10px 0; color: #2271b1; font-size: 1.5rem;" x-text="formatCurrency(summary.totals.find(t => t.type === 'income')?.total_realization || 0)"></h3>
-                    <small style="color: #777;">Anggaran: <span x-text="formatCurrency(summary.totals.find(t => t.type === 'income')?.total_budget || 0)"></span></small>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 35px;">
+                <!-- Pendapatan -->
+                <div class="wp-desa-stat-card" style="text-align: left; position: relative; overflow: hidden;">
+                    <div style="position: absolute; right: -10px; top: -10px; opacity: 0.1;">
+                        <span class="dashicons dashicons-money-alt" style="font-size: 100px; width: 100px; height: 100px; color: #2271b1;"></span>
+                    </div>
+                    <h4 style="margin: 0 0 10px 0; color: #64748b; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px;">Total Pendapatan</h4>
+                    <h3 style="margin: 0 0 5px 0; color: #1e293b; font-size: 1.8rem; font-weight: 700;" x-text="formatCurrency(summary.totals.find(t => t.type === 'income')?.total_realization || 0)"></h3>
+                    <div style="font-size: 0.85em; color: #64748b; background: #f1f5f9; display: inline-block; padding: 4px 10px; border-radius: 4px;">
+                        Target: <span x-text="formatCurrency(summary.totals.find(t => t.type === 'income')?.total_budget || 0)"></span>
+                    </div>
                 </div>
-                <div class="wp-desa-card" style="text-align: center;">
-                    <h4 style="margin: 0; color: #555;">Belanja</h4>
-                    <h3 style="margin: 10px 0; color: #d63638; font-size: 1.5rem;" x-text="formatCurrency(summary.totals.find(t => t.type === 'expense')?.total_realization || 0)"></h3>
-                    <small style="color: #777;">Anggaran: <span x-text="formatCurrency(summary.totals.find(t => t.type === 'expense')?.total_budget || 0)"></span></small>
+
+                <!-- Belanja -->
+                <div class="wp-desa-stat-card" style="text-align: left; position: relative; overflow: hidden;">
+                    <div style="position: absolute; right: -10px; top: -10px; opacity: 0.1;">
+                        <span class="dashicons dashicons-cart" style="font-size: 100px; width: 100px; height: 100px; color: #d63638;"></span>
+                    </div>
+                    <h4 style="margin: 0 0 10px 0; color: #64748b; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px;">Total Belanja</h4>
+                    <h3 style="margin: 0 0 5px 0; color: #1e293b; font-size: 1.8rem; font-weight: 700;" x-text="formatCurrency(summary.totals.find(t => t.type === 'expense')?.total_realization || 0)"></h3>
+                    <div style="font-size: 0.85em; color: #64748b; background: #f1f5f9; display: inline-block; padding: 4px 10px; border-radius: 4px;">
+                        Pagu: <span x-text="formatCurrency(summary.totals.find(t => t.type === 'expense')?.total_budget || 0)"></span>
+                    </div>
                 </div>
-                <div class="wp-desa-card" style="text-align: center;">
-                    <h4 style="margin: 0; color: #555;">Surplus/Defisit</h4>
-                    <h3 style="margin: 10px 0; font-size: 1.5rem;" :style="{color: getSurplus() >= 0 ? '#00a32a' : '#d63638'}" x-text="formatCurrency(getSurplus())"></h3>
+
+                <!-- Surplus/Defisit -->
+                <div class="wp-desa-stat-card" style="text-align: left; position: relative; overflow: hidden;">
+                    <div style="position: absolute; right: -10px; top: -10px; opacity: 0.1;">
+                        <span class="dashicons dashicons-chart-line" style="font-size: 100px; width: 100px; height: 100px; color: #00a32a;"></span>
+                    </div>
+                    <h4 style="margin: 0 0 10px 0; color: #64748b; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px;">Sisa Lebih (SiLPA)</h4>
+                    <h3 style="margin: 0; font-size: 1.8rem; font-weight: 700;" :style="{color: getSurplus() >= 0 ? '#16a34a' : '#dc2626'}" x-text="formatCurrency(getSurplus())"></h3>
+                    <div style="margin-top: 5px; font-size: 0.85em; color: #64748b;">
+                        Realisasi Pendapatan - Belanja
+                    </div>
                 </div>
             </div>
 
             <!-- Charts -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 30px;">
-                <div class="wp-desa-card">
-                    <h4 style="text-align: center; margin-bottom: 15px;">Sumber Pendapatan</h4>
-                    <canvas id="publicIncomeChart"></canvas>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 35px;">
+                <div class="wp-desa-chart-container" style="margin: 0; max-width: none;">
+                    <h4 style="text-align: center; margin-bottom: 20px; color: #334155;">Sumber Pendapatan</h4>
+                    <div style="position: relative; height: 250px;">
+                        <canvas id="publicIncomeChart"></canvas>
+                    </div>
                 </div>
-                <div class="wp-desa-card">
-                    <h4 style="text-align: center; margin-bottom: 15px;">Penggunaan Dana</h4>
-                    <canvas id="publicExpenseChart"></canvas>
+                <div class="wp-desa-chart-container" style="margin: 0; max-width: none;">
+                    <h4 style="text-align: center; margin-bottom: 20px; color: #334155;">Penggunaan Anggaran</h4>
+                    <div style="position: relative; height: 250px;">
+                        <canvas id="publicExpenseChart"></canvas>
+                    </div>
                 </div>
             </div>
 
             <!-- Detail Table -->
-            <div class="wp-desa-card">
-                <h4 style="margin-top:0; margin-bottom: 15px;">Rincian Realisasi APBDes</h4>
+            <div class="wp-desa-stat-card" style="padding: 0; overflow: hidden; text-align: left;">
+                <div style="padding: 20px; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+                    <h4 style="margin: 0; color: #334155; font-size: 1.1em;">Rincian Realisasi APBDes</h4>
+                </div>
                 <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.95em;">
                         <thead>
-                            <tr style="border-bottom: 2px solid #eee;">
-                                <th style="text-align: left; padding: 10px;">Uraian</th>
-                                <th style="text-align: right; padding: 10px;">Anggaran</th>
-                                <th style="text-align: right; padding: 10px;">Realisasi</th>
-                                <th style="text-align: right; padding: 10px;">%</th>
+                            <tr style="background: #f1f5f9; color: #475569; text-transform: uppercase; font-size: 0.85em; letter-spacing: 0.5px;">
+                                <th style="text-align: left; padding: 15px 20px; font-weight: 600;">Uraian</th>
+                                <th style="text-align: right; padding: 15px 20px; font-weight: 600;">Anggaran</th>
+                                <th style="text-align: right; padding: 15px 20px; font-weight: 600;">Realisasi</th>
+                                <th style="text-align: center; padding: 15px 20px; font-weight: 600;">%</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <template x-for="item in items" :key="item.id">
-                                <tr style="border-bottom: 1px solid #eee;">
-                                    <td style="padding: 10px;">
-                                        <strong x-text="item.category"></strong><br>
-                                        <small x-text="item.description"></small>
+                        <tbody style="color: #334155;">
+                            <template x-for="(item, index) in items" :key="item.id">
+                                <tr :style="index % 2 === 0 ? 'background: white;' : 'background: #fcfcfc;'" style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;">
+                                    <td style="padding: 15px 20px;">
+                                        <div style="font-weight: 600; color: #1e293b;" x-text="item.category"></div>
+                                        <div style="font-size: 0.9em; color: #64748b; margin-top: 4px;" x-text="item.description"></div>
                                     </td>
-                                    <td style="text-align: right; padding: 10px;" x-text="formatCurrency(item.budget_amount)"></td>
-                                    <td style="text-align: right; padding: 10px;" x-text="formatCurrency(item.realization_amount)"></td>
-                                    <td style="text-align: right; padding: 10px;">
-                                        <span x-text="calculatePercentage(item.realization_amount, item.budget_amount) + '%'"></span>
+                                    <td style="text-align: right; padding: 15px 20px; white-space: nowrap;" x-text="formatCurrency(item.budget_amount)"></td>
+                                    <td style="text-align: right; padding: 15px 20px; white-space: nowrap; font-weight: 500;" x-text="formatCurrency(item.realization_amount)"></td>
+                                    <td style="text-align: center; padding: 15px 20px;">
+                                        <div style="display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.85em; font-weight: 600;"
+                                            :style="{
+                                                 background: calculatePercentage(item.realization_amount, item.budget_amount) > 90 ? '#dcfce7' : (calculatePercentage(item.realization_amount, item.budget_amount) > 50 ? '#fef9c3' : '#fee2e2'),
+                                                 color: calculatePercentage(item.realization_amount, item.budget_amount) > 90 ? '#166534' : (calculatePercentage(item.realization_amount, item.budget_amount) > 50 ? '#854d0e' : '#991b1b')
+                                             }"
+                                            x-text="calculatePercentage(item.realization_amount, item.budget_amount) + '%'">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                            <template x-if="items.length === 0">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; padding: 40px; color: #94a3b8;">
+                                        Belum ada data keuangan untuk tahun ini.
                                     </td>
                                 </tr>
                             </template>
