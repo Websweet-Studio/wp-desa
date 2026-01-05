@@ -539,6 +539,215 @@
     display: block;
 }
 
+/* --- Keuangan Shortcode --- */
+#wp-desa-keuangan .wp-desa-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+#wp-desa-keuangan .wp-desa-title {
+    margin: 0;
+    text-align: left;
+}
+
+#wp-desa-keuangan .wp-desa-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#wp-desa-keuangan .wp-desa-filter-label {
+    font-weight: 500;
+    color: #64748b;
+}
+
+#wp-desa-keuangan .wp-desa-select-year {
+    width: auto;
+    padding: 6px 30px 6px 12px;
+    border-radius: 6px;
+    border-color: #cbd5e1;
+}
+
+#wp-desa-keuangan .wp-desa-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 35px;
+}
+
+#wp-desa-keuangan .wp-desa-stat-card {
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+
+#wp-desa-keuangan .wp-desa-stat-icon-bg {
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    opacity: 0.1;
+}
+
+#wp-desa-keuangan .wp-desa-stat-icon-bg .dashicons {
+    font-size: 100px;
+    width: 100px;
+    height: 100px;
+}
+
+#wp-desa-keuangan .wp-desa-stat-label {
+    margin: 0 0 10px 0;
+    color: #64748b;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#wp-desa-keuangan .wp-desa-stat-value {
+    margin: 0 0 5px 0;
+    color: #1e293b;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+#wp-desa-keuangan .wp-desa-stat-sub {
+    font-size: 0.85em;
+    color: #64748b;
+    background: #f1f5f9;
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+}
+
+#wp-desa-keuangan .wp-desa-chart-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 35px;
+}
+
+#wp-desa-keuangan .wp-desa-chart-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #334155;
+}
+
+#wp-desa-keuangan .wp-desa-chart-box {
+    position: relative;
+    height: 250px;
+}
+
+#wp-desa-keuangan .wp-desa-table-header {
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+#wp-desa-keuangan .wp-desa-table-title {
+    margin: 0;
+    color: #334155;
+    font-size: 1.1em;
+}
+
+#wp-desa-keuangan .wp-desa-table-wrapper {
+    overflow-x: auto;
+}
+
+#wp-desa-keuangan table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95em;
+}
+
+#wp-desa-keuangan th {
+    background: #f1f5f9;
+    color: #475569;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 0.5px;
+    padding: 15px 20px;
+    font-weight: 600;
+}
+
+#wp-desa-keuangan td {
+    padding: 15px 20px;
+}
+
+#wp-desa-keuangan .wp-desa-percentage {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+#wp-desa-keuangan .wp-desa-empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #94a3b8;
+}
+
+/* --- Layanan Shortcode Extra --- */
+#wp-desa-layanan .wp-desa-message {
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid;
+    margin-bottom: 20px;
+}
+
+#wp-desa-layanan .wp-desa-tracking-box {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#wp-desa-layanan .wp-desa-tracking-label {
+    color: #1e40af;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+#wp-desa-layanan .wp-desa-tracking-number {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #1e3a8a;
+    letter-spacing: 2px;
+}
+
+#wp-desa-layanan .wp-desa-tracking-note {
+    font-size: 0.9em;
+    color: #60a5fa;
+    margin-top: 10px;
+}
+
+#wp-desa-layanan .wp-desa-tracking-input-group {
+    display: flex;
+    gap: 10px;
+}
+
+#wp-desa-layanan .wp-desa-status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    background: #e2e8f0;
+    color: #475569;
+}
+
+#wp-desa-layanan .wp-desa-error-box {
+    padding: 15px;
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    margin-top: 15px;
+}
 /* --- Layanan Shortcode --- */
 #wp-desa-layanan .wp-desa-tab-btn {
     padding: 12px 20px;
