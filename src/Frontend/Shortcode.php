@@ -15,6 +15,7 @@ class Shortcode
         add_shortcode('wp_desa_statistik', [$this, 'render_statistik']);
         add_shortcode('wp_desa_umkm', [$this, 'render_umkm']);
         add_shortcode('wp_desa_potensi', [$this, 'render_potensi']);
+        add_shortcode('single-umkm', [$this, 'render_single_umkm']);
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
     }
 
@@ -231,6 +232,153 @@ class Shortcode
                 </div>
             <?php endif;
             wp_reset_postdata(); ?>
+        </div>
+    <?php
+        return ob_get_clean();
+    }
+
+    public function render_single_umkm($atts)
+    {
+        $atts = shortcode_atts([
+            'id' => 0
+        ], $atts);
+
+        $post_id = $atts['id'] ? intval($atts['id']) : get_the_ID();
+
+        if (!$post_id || get_post_type($post_id) !== 'desa_umkm') {
+            return '';
+        }
+
+        $post = get_post($post_id);
+
+        $phone = get_post_meta($post_id, '_desa_umkm_phone', true);
+        $location = get_post_meta($post_id, '_desa_umkm_location', true);
+        $gallery_ids = get_post_meta($post_id, '_desa_umkm_gallery', true);
+        $categories = get_the_terms($post_id, 'desa_umkm_cat');
+        $cat_name = !empty($categories) ? $categories[0]->name : 'UMKM';
+
+        $thumb_url = get_the_post_thumbnail_url($post_id, 'large');
+
+        ob_start();
+    ?>
+        <div class="wp-desa-single-umkm wp-desa-wrapper">
+            <div style="background: white; border-radius: 12px; overflow: hidden; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+
+                <!-- Header Image / Featured -->
+                <?php if ($thumb_url): ?>
+                    <div style="width: 100%; height: 400px; overflow: hidden; position: relative;">
+                        <img src="<?php echo esc_url($thumb_url); ?>" alt="<?php echo esc_attr($post->post_title); ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                        <div style="position: absolute; top: 20px; right: 20px; background: white; padding: 6px 14px; border-radius: 20px; font-weight: 600; color: #475569; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <?php echo esc_html($cat_name); ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <div style="padding: 30px;">
+                    <h1 style="margin: 0 0 15px 0; color: #1e293b; font-size: 2em;"><?php echo esc_html($post->post_title); ?></h1>
+
+                    <div style="display: flex; flex-wrap: wrap; gap: 40px; margin-top: 30px;">
+                        <!-- Main Content -->
+                        <div style="flex: 2; min-width: 300px;">
+                            <div style="color: #475569; line-height: 1.8; font-size: 1.1em;">
+                                <?php echo wpautop($post->post_content); ?>
+                            </div>
+
+                            <!-- Gallery -->
+                            <?php if ($gallery_ids):
+                                $ids = explode(',', $gallery_ids);
+                            ?>
+                                <h3 style="margin: 40px 0 20px 0; color: #334155; font-size: 1.3em; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">
+                                    <i data-lucide="image" style="width: 24px; height: 24px;"></i> Galeri Produk
+                                </h3>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px;">
+                                    <?php foreach ($ids as $id):
+                                        $img = wp_get_attachment_image_url($id, 'medium');
+                                        $full = wp_get_attachment_image_url($id, 'full');
+                                        if (!$img) continue;
+                                    ?>
+                                        <a href="<?php echo esc_url($full); ?>" class="glightbox" data-gallery="umkm-gallery" style="display: block; aspect-ratio: 1; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                            <img src="<?php echo esc_url($img); ?>" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Sidebar Info -->
+                        <div style="flex: 1; min-width: 280px;">
+                            <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; position: sticky; top: 20px;">
+                                <h3 style="margin-top: 0; color: #334155; font-size: 1.2em; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; font-weight: 700;">Informasi Kontak</h3>
+
+                                <?php if ($phone):
+                                    $clean_phone = preg_replace('/[^0-9]/', '', $phone);
+                                    if (substr($clean_phone, 0, 1) == '0') {
+                                        $clean_phone = '62' . substr($clean_phone, 1);
+                                    }
+                                ?>
+                                    <div style="margin-bottom: 25px;">
+                                        <div style="font-size: 0.9em; color: #64748b; margin-bottom: 8px; font-weight: 600;">WhatsApp</div>
+                                        <a href="https://wa.me/<?php echo esc_attr($clean_phone); ?>" target="_blank" style="display: flex; align-items: center; gap: 10px; text-decoration: none; background: #dcfce7; color: #166534; padding: 12px 15px; border-radius: 8px; font-weight: 600; transition: background 0.2s; justify-content: center;" onmouseover="this.style.background='#bbf7d0'" onmouseout="this.style.background='#dcfce7'">
+                                            <i data-lucide="message-circle" style="width: 20px; height: 20px;"></i>
+                                            Hubungi Penjual
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if ($location):
+                                    $lat = '';
+                                    $lon = '';
+                                    $parts = explode(',', $location);
+                                    if (count($parts) >= 2) {
+                                        $lat = trim($parts[0]);
+                                        $lon = trim($parts[1]);
+                                    }
+                                ?>
+                                    <div style="margin-bottom: 25px;">
+                                        <div style="font-size: 0.9em; color: #64748b; margin-bottom: 8px; font-weight: 600;">Lokasi</div>
+                                        <div style="color: #334155;">
+
+                                            <?php if ($lat && $lon): ?>
+                                                <div style="border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+                                                    <iframe
+                                                        width="100%"
+                                                        height="200"
+                                                        frameborder="0"
+                                                        scrolling="no"
+                                                        marginheight="0"
+                                                        marginwidth="0"
+                                                        src="https://maps.google.com/maps?q=<?php echo esc_attr($lat); ?>,<?php echo esc_attr($lon); ?>&hl=es&z=14&amp;output=embed">
+                                                    </iframe>
+                                                </div>
+                                            <?php else: ?>
+                                                <a href="https://www.google.com/maps/search/?api=1&query=<?php echo urlencode($location); ?>" target="_blank" style="font-size: 0.9em; color: #2563eb; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+                                                    Lihat di Google Maps <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+                                                </a>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+
+                                <!-- Share -->
+                                <div>
+                                    <div style="font-size: 0.9em; color: #64748b; margin-bottom: 10px; font-weight: 600;">Bagikan</div>
+                                    <div style="display: flex; gap: 10px;">
+                                        <a href="https://www.facebook.com/sharer/sharer.php?u=<?php the_permalink($post_id); ?>" target="_blank" style="width: 40px; height: 40px; background: #1877f2; color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                                            <i data-lucide="facebook" style="width: 20px; height: 20px;"></i>
+                                        </a>
+                                        <a href="https://twitter.com/intent/tweet?url=<?php the_permalink($post_id); ?>&text=<?php echo urlencode($post->post_title); ?>" target="_blank" style="width: 40px; height: 40px; background: #000000; color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                                            <i data-lucide="twitter" style="width: 20px; height: 20px;"></i>
+                                        </a>
+                                        <button onclick="navigator.clipboard.writeText('<?php the_permalink($post_id); ?>'); alert('Link disalin!');" style="width: 40px; height: 40px; background: #64748b; color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: none; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#475569'" onmouseout="this.style.background='#64748b'">
+                                            <i data-lucide="link" style="width: 20px; height: 20px;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     <?php
         return ob_get_clean();
@@ -1060,6 +1208,11 @@ class Shortcode
 
         // Enqueue Chart.js for Finances (conditionally ideally, but globally for now to ensure it works)
         wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', [], '4.0.0', true);
+
+        // Enqueue GLightbox for Gallery
+        wp_enqueue_style('glightbox', 'https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css', [], '3.3.0');
+        wp_enqueue_script('glightbox', 'https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js', [], '3.3.0', true);
+        wp_add_inline_script('glightbox', 'document.addEventListener("DOMContentLoaded", function() { const lightbox = GLightbox({ selector: ".glightbox" }); });');
 
         wp_enqueue_script('lucide', 'https://unpkg.com/lucide@latest/dist/umd/lucide.min.js', [], null, true);
         wp_add_inline_script('lucide', 'document.addEventListener("DOMContentLoaded",function(){try{if(window.lucide&&lucide.createIcons){lucide.createIcons();}}catch(e){}});');

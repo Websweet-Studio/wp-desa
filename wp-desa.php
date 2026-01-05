@@ -4,7 +4,7 @@
  * Plugin Name: WP Desa
  * Plugin URI:  https://websweetstudio.com/wp-desa
  * Description: Plugin WordPress untuk fitur web desa dengan REST API dan Alpine.js
- * Version:     1.0.0
+ * Version:     1.0.1
  * Author:      Aditya Kristyanto
  * Author URI:  https://websweetstudio.com
  * License:     GPL-2.0+
