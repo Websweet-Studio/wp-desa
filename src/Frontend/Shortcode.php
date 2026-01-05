@@ -1312,7 +1312,6 @@ class Shortcode
                 <div x-show="trackError" style="padding: 15px; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px; margin-top: 15px;" x-text="trackError"></div>
             </div>
         </div>
-        </div>
         <script>
             document.addEventListener('alpine:init', () => {
                 Alpine.data('layananSurat', () => ({
