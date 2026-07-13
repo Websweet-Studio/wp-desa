@@ -398,7 +398,7 @@
             },
 
             printLetter(id) {
-                const url = '<?php echo admin_url('admin-post.php'); ?>?action=wp_desa_print_letter&id=' + id;
+                const url = '<?php echo admin_url('admin-post.php'); ?>?action=wp_desa_print_letter&id=' + id + '&_wpnonce=<?php echo wp_create_nonce('wp_desa_print_letter'); ?>';
                 window.open(url, '_blank');
             },
 

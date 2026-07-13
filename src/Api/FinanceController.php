@@ -174,7 +174,6 @@ class FinanceController extends WP_REST_Controller
         $table = $wpdb->prefix . 'desa_finances';
 
         // Ensure table exists
-        \WpDesa\Database\Activator::activate();
 
         $params = $request->get_json_params();
 

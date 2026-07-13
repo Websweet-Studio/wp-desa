@@ -15,6 +15,10 @@ class PrintHandler
             wp_die('Invalid ID');
         }
 
+        if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'wp_desa_print_letter')) {
+            wp_die('Security check failed.');
+        }
+
         global $wpdb;
         $table_letters = $wpdb->prefix . 'desa_letters';
         $table_types = $wpdb->prefix . 'desa_letter_types';
@@ -23,7 +27,7 @@ class PrintHandler
         // Fetch Letter + Type + Resident Details (Full JOIN to get resident details)
         // We join residents table on NIK to get details for the letter body
         $sql = "SELECT l.*, t.name as type_name, t.code as type_code, 
-                       r.tempat_lahir, r.tanggal_lahir, r.jenis_kelamin, r.pekerjaan, r.alamat, r.status_perkawinan, r.agama
+                       r.tempat_lahir, r.tanggal_lahir, r.jenis_kelamin, r.pekerjaan, r.alamat, r.status_perkawinan
                 FROM $table_letters l 
                 LEFT JOIN $table_types t ON l.letter_type_id = t.id 
                 LEFT JOIN $table_residents r ON l.nik = r.nik

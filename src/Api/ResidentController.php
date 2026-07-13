@@ -109,7 +109,6 @@ class ResidentController extends WP_REST_Controller
         $table_name = $wpdb->prefix . 'desa_residents';
 
         // Self-healing: Ensure table structure is up to date
-        \WpDesa\Database\Activator::activate();
 
         $params = $request->get_params();
 
@@ -132,12 +131,16 @@ class ResidentController extends WP_REST_Controller
         ];
 
         // Debug Log
-        error_log('WP Desa Insert Data: ' . print_r($data, true));
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('WP Desa Insert Data: ' . print_r($data, true));
+        }
 
         $result = $wpdb->insert($table_name, $data);
 
         if ($result === false) {
-            error_log('WP Desa Insert Error: ' . $wpdb->last_error);
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('WP Desa Insert Error: ' . $wpdb->last_error);
+            }
             return new WP_Error('db_insert_error', 'Gagal menyimpan data: ' . $wpdb->last_error, ['status' => 500]);
         }
 
@@ -195,6 +198,11 @@ class ResidentController extends WP_REST_Controller
 
     public function export_items($request)
     {
+        $nonce = $request->get_param('_wpnonce');
+        if (!wp_verify_nonce($nonce, 'wp_rest')) {
+            return new WP_Error('invalid_nonce', 'Session expired. Please refresh the page.', ['status' => 403]);
+        }
+
         global $wpdb;
         $table_name = $wpdb->prefix . 'desa_residents';
         $results = $wpdb->get_results("SELECT * FROM $table_name ORDER BY created_at DESC", ARRAY_A);

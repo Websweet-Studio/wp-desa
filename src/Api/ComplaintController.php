@@ -70,7 +70,6 @@ class ComplaintController extends WP_REST_Controller
         $table_complaints = $wpdb->prefix . 'desa_complaints';
 
         // Self-healing
-        \WpDesa\Database\Activator::activate();
 
         $params = $request->get_params();
 

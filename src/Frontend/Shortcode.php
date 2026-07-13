@@ -1393,8 +1393,12 @@ class Shortcode
 
     public function enqueue_scripts()
     {
-        // Enqueue Alpine.js for frontend
+        global $post;
+
+        // Enqueue Alpine.js for frontend (always needed for interactive components)
         wp_enqueue_script('alpinejs', 'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js', [], '3.0.0', true);
+        // CDN fallback
+        wp_add_inline_script('alpinejs', 'if(typeof Alpine==="undefined"){var e=document.createElement("script");e.src="' . WP_DESA_URL . 'assets/js/alpine.min.js";document.head.appendChild(e);}');
 
         add_filter('rocket_delay_js_exclusions', function ($excluded) {
             $excluded[] = 'alpinejs';
@@ -1411,16 +1415,41 @@ class Shortcode
         // Enqueue Frontend Styles
         wp_enqueue_style('wp-desa-frontend', WP_DESA_URL . 'assets/css/frontend/style.css', [], '1.0.0');
 
-        // Enqueue Chart.js for Finances (conditionally ideally, but globally for now to ensure it works)
-        wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', [], '4.0.0', true);
+        // Load conditional assets only when shortcodes are present on the page
+        if (is_a($post, 'WP_Post')) {
+            $content = $post->post_content;
 
-        // Enqueue GLightbox for Gallery
-        wp_enqueue_style('glightbox', 'https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css', [], '3.3.0');
-        wp_enqueue_script('glightbox', 'https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js', [], '3.3.0', true);
-        wp_add_inline_script('glightbox', 'document.addEventListener("DOMContentLoaded", function() { const lightbox = GLightbox({ selector: ".glightbox" }); });');
+            // Chart.js - needed for statistik and keuangan
+            if (has_shortcode($content, 'wp_desa_statistik') || has_shortcode($content, 'wp_desa_keuangan')) {
+                wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', [], '4.0.0', true);
+                // CDN fallback
+                wp_add_inline_script('chartjs', 'if(typeof Chart==="undefined"){var e=document.createElement("script");e.src="' . WP_DESA_URL . 'assets/js/chart.min.js";document.head.appendChild(e);}');
+            }
 
-        wp_enqueue_script('lucide', 'https://unpkg.com/lucide@latest/dist/umd/lucide.min.js', [], null, true);
-        wp_add_inline_script('lucide', 'document.addEventListener("DOMContentLoaded",function(){try{if(window.lucide&&lucide.createIcons){lucide.createIcons();}}catch(e){}});');
+            // Glightbox - needed for single-umkm gallery and umkm listing
+            if (has_shortcode($content, 'single-umkm') || has_shortcode($content, 'wp_desa_umkm')) {
+                wp_enqueue_style('glightbox', 'https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css', [], '3.3.0');
+                wp_enqueue_script('glightbox', 'https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js', [], '3.3.0', true);
+                wp_add_inline_script('glightbox', 'if(typeof GLightbox==="undefined"){var e=document.createElement("script");e.src="' . WP_DESA_URL . 'assets/js/glightbox.min.js";document.head.appendChild(e);}');
+                wp_add_inline_script('glightbox', 'document.addEventListener("DOMContentLoaded", function() { if(typeof GLightbox !== "undefined") { const lightbox = GLightbox({ selector: ".glightbox" }); } });');
+            }
+
+            // Lucide icons - needed by most shortcodes
+            $desa_shortcodes = [
+                'wp_desa_layanan', 'wp_desa_aduan', 'wp_desa_keuangan', 'wp_desa_bantuan',
+                'wp_desa_profil', 'wp_desa_kepala_desa', 'wp_desa_statistik', 'wp_desa_umkm',
+                'wp_desa_potensi', 'single-umkm'
+            ];
+            foreach ($desa_shortcodes as $sc) {
+                if (has_shortcode($content, $sc)) {
+                    wp_enqueue_script('lucide', 'https://unpkg.com/lucide@latest/dist/umd/lucide.min.js', [], null, true);
+                    // CDN fallback
+                    wp_add_inline_script('lucide', 'if(typeof lucide==="undefined"){var e=document.createElement("script");e.src="' . WP_DESA_URL . 'assets/js/lucide.min.js";document.head.appendChild(e);}');
+                    wp_add_inline_script('lucide', 'document.addEventListener("DOMContentLoaded",function(){try{if(window.lucide&&lucide.createIcons){lucide.createIcons();}}catch(e){}});');
+                    break;
+                }
+            }
+        }
     }
 
     public function render_layanan()
@@ -1508,10 +1537,9 @@ class Shortcode
                     </div>
                     <div class="wp-desa-card-row"><span class="wp-desa-card-label">Tanggal</span><span class="wp-desa-card-value" x-text="formatDate(trackResult.created_at)"></span></div>
                     <div class="wp-desa-card-row"><span class="wp-desa-card-label">Status</span>
-                        <span: class="'wp-desa-badge wp-desa-badge-' + trackResult.status" x-text="formatStatus(trackResult.status)"
+                        <span :class="'wp-desa-badge wp-desa-badge-' + trackResult.status" x-text="formatStatus(trackResult.status)"
                             style="padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; background: #e2e8f0; color: #475569;"
-
-                            :style="{'pending': 'background: #fef3c7; color: #92400e;', 'processed': 'background: #dbeafe; color: #1e40af;', 'ready': 'background: #dcfce7; color: #166534;', 'completed': 'background: #d1fae5; color: #065f46;', 'rejected': 'background: #fee2e2; color: #991b1b;'}[trackResult.status]"> </span>
+                            :style="{'pending': 'background: #fef3c7; color: #92400e;', 'processed': 'background: #dbeafe; color: #1e40af;', 'ready': 'background: #dcfce7; color: #166534;', 'completed': 'background: #d1fae5; color: #065f46;', 'rejected': 'background: #fee2e2; color: #991b1b;'}[trackResult.status]"></span>
                     </div>
                 </div>
                 <div x-show="trackError" style="padding: 15px; background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; border-radius: 8px; margin-top: 15px;" x-text="trackError"></div>

@@ -117,7 +117,6 @@ class LetterController extends WP_REST_Controller
         $table_residents = $wpdb->prefix . 'desa_residents';
 
         // Self-healing: Ensure tables exist
-        \WpDesa\Database\Activator::activate();
 
         $params = $request->get_params();
 
