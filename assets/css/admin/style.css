@@ -1235,6 +1235,8 @@ input:checked + .slider:before {
   border-bottom: 1px solid var(--hairline);
   margin: 0 -20px;
   flex-wrap: wrap;
+  position: relative;
+  top: 10px;
 }
 
 .wp-desa__subnav-title {
