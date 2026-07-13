@@ -10,8 +10,7 @@ class AdminLayout
             ['page' => 'wp-desa', 'label' => 'Dashboard'],
             ['page' => 'wp-desa-residents', 'label' => 'Penduduk'],
             ['page' => 'wp-desa-layanan', 'label' => 'Layanan'],
-            ['page' => 'wp-desa-finances', 'label' => 'Keuangan'],
-            ['page' => 'wp-desa-aid', 'label' => 'Bantuan'],
+            ['page' => 'wp-desa-keuangan', 'label' => 'Keuangan'],
             ['page' => 'wp-desa-settings', 'label' => 'Pengaturan'],
         ];
     }
@@ -75,7 +74,7 @@ class AdminLayout
     {
         global $plugin_page;
 
-        $wp_desa_pages = ['wp-desa', 'wp-desa-residents', 'wp-desa-layanan', 'wp-desa-finances', 'wp-desa-aid', 'wp-desa-settings'];
+        $wp_desa_pages = ['wp-desa', 'wp-desa-residents', 'wp-desa-layanan', 'wp-desa-keuangan', 'wp-desa-settings'];
 
         if (in_array($plugin_page, $wp_desa_pages)) {
             $parent_file = 'wp-desa';
@@ -91,7 +90,7 @@ class AdminLayout
     {
         global $plugin_page;
 
-        $wp_desa_pages = ['wp-desa', 'wp-desa-residents', 'wp-desa-layanan', 'wp-desa-finances', 'wp-desa-aid', 'wp-desa-settings'];
+        $wp_desa_pages = ['wp-desa', 'wp-desa-residents', 'wp-desa-layanan', 'wp-desa-keuangan', 'wp-desa-settings'];
 
         if (in_array($plugin_page, $wp_desa_pages)) {
             $submenu_file = $plugin_page;

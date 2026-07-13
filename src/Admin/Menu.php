@@ -39,24 +39,14 @@ class Menu
             [$this, 'render_layanan_page']
         );
 
-        // Submenu Keuangan Desa
+        // Submenu Keuangan (Keuangan & Bantuan)
         add_submenu_page(
             'wp-desa',
-            'Keuangan Desa',
-            'Keuangan Desa',
+            'Keuangan',
+            'Keuangan',
             'manage_options',
-            'wp-desa-finances',
-            [$this, 'render_finances_page']
-        );
-
-        // Submenu Program Bantuan
-        add_submenu_page(
-            'wp-desa',
-            'Program Bantuan',
-            'Program Bantuan',
-            'manage_options',
-            'wp-desa-aid',
-            [$this, 'render_aid_page']
+            'wp-desa-keuangan',
+            [$this, 'render_keuangan_page']
         );
 
         // Submenu Pengaturan
@@ -68,6 +58,16 @@ class Menu
             'wp-desa-settings',
             [$this, 'render_settings_page']
         );
+
+        // Submenu Dokumentasi
+        add_submenu_page(
+            'wp-desa',
+            'Dokumentasi',
+            'Dokumentasi',
+            'manage_options',
+            'wp-desa-dokumentasi',
+            [$this, 'render_dokumentasi_page']
+        );
     }
 
     public function enqueue_scripts($hook)
@@ -77,9 +77,9 @@ class Menu
             'toplevel_page_wp-desa',
             'wp-desa_page_wp-desa-residents',
             'wp-desa_page_wp-desa-layanan',
-            'wp-desa_page_wp-desa-finances',
-            'wp-desa_page_wp-desa-aid',
-            'wp-desa_page_wp-desa-settings'
+            'wp-desa_page_wp-desa-keuangan',
+            'wp-desa_page_wp-desa-settings',
+            'wp-desa_page_wp-desa-dokumentasi'
         ];
 
         if (in_array($hook, $allowed_pages)) {
@@ -98,7 +98,7 @@ class Menu
         }
 
         // Dashboard and Finance (Need Chart.js)
-        if ($hook === 'toplevel_page_wp-desa' || $hook === 'wp-desa_page_wp-desa-finances') {
+        if ($hook === 'toplevel_page_wp-desa' || $hook === 'wp-desa_page_wp-desa-keuangan') {
             wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', [], '4.0.0', true);
             // CDN fallback
             wp_add_inline_script('chartjs', 'if(typeof Chart==="undefined"){var e=document.createElement("script");e.src="' . WP_DESA_URL . 'assets/js/chart.min.js";document.head.appendChild(e);}');
@@ -147,17 +147,23 @@ class Menu
         AdminLayout::close();
     }
 
-    public function render_finances_page()
+    public function render_keuangan_page()
     {
-        AdminLayout::open('Keuangan Desa', 'wp-desa-finances');
-        require_once WP_DESA_PATH . 'templates/admin/finances.php';
-        AdminLayout::close();
-    }
+        $subnav = [
+            ['tab' => 'keuangan', 'label' => 'Keuangan'],
+            ['tab' => 'bantuan', 'label' => 'Bantuan'],
+        ];
 
-    public function render_aid_page()
-    {
-        AdminLayout::open('Program Bantuan', 'wp-desa-aid');
-        require_once WP_DESA_PATH . 'templates/admin/aid.php';
+        $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'keuangan';
+
+        AdminLayout::open('Keuangan', 'wp-desa-keuangan', $subnav);
+
+        if ($current_tab === 'bantuan') {
+            require_once WP_DESA_PATH . 'templates/admin/aid.php';
+        } else {
+            require_once WP_DESA_PATH . 'templates/admin/finances.php';
+        }
+
         AdminLayout::close();
     }
 
@@ -189,10 +195,16 @@ class Menu
 
         update_option('wp_desa_settings', $data);
 
-        $redirect_url = add_query_arg([
+        $redirect_args = [
             'page' => 'wp-desa-settings',
             'settings-updated' => 'true',
-        ], admin_url('admin.php'));
+        ];
+
+        if (!empty($_POST['_current_tab'])) {
+            $redirect_args['tab'] = sanitize_key($_POST['_current_tab']);
+        }
+
+        $redirect_url = add_query_arg($redirect_args, admin_url('admin.php'));
 
         wp_redirect($redirect_url);
         exit;
@@ -200,8 +212,35 @@ class Menu
 
     public function render_settings_page()
     {
-        AdminLayout::open('Pengaturan', 'wp-desa-settings');
+        $subnav = [
+            ['tab' => 'identitas', 'label' => 'Identitas & Kontak'],
+            ['tab' => 'media', 'label' => 'Logo & Media'],
+            ['tab' => 'pejabat', 'label' => 'Kepala Desa'],
+            ['tab' => 'sistem', 'label' => 'Pengaturan Sistem'],
+        ];
+
+        AdminLayout::open('Pengaturan', 'wp-desa-settings', $subnav);
         require_once WP_DESA_PATH . 'templates/admin/settings.php';
+        AdminLayout::close();
+    }
+
+    public function render_dokumentasi_page()
+    {
+        $subnav = [
+            ['tab' => 'penggunaan', 'label' => 'Cara Penggunaan'],
+            ['tab' => 'shortcode', 'label' => 'Shortcode'],
+        ];
+
+        $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'penggunaan';
+
+        AdminLayout::open('Dokumentasi', 'wp-desa-dokumentasi', $subnav);
+
+        if ($current_tab === 'shortcode') {
+            require_once WP_DESA_PATH . 'templates/admin/docs-shortcode.php';
+        } else {
+            require_once WP_DESA_PATH . 'templates/admin/docs-penggunaan.php';
+        }
+
         AdminLayout::close();
     }
 }

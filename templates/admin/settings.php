@@ -1,36 +1,16 @@
 <?php
 $settings = get_option('wp_desa_settings', []);
+$current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
 ?>
-<div class="wrap wp-desa-wrapper" x-data="settingsManager()">
-    <div class="wp-desa-header">
-        <div>
-            <h1 class="wp-desa-title">Pengaturan Identitas Desa</h1>
-            <p class="wp-desa-helper">Kelola informasi dasar desa, kontak, dan pejabat desa.</p>
-        </div>
-    </div>
-
+<div class="wrap wp-desa-wrapper" x-data="settingsNotif()">
     <div class="wp-desa-card wp-desa-card-settings">
-        <!-- Tabs Navigation -->
-        <div class="wp-desa-tabs">
-            <div class="wp-desa-tab" :class="{'active': activeTab === 'identitas'}" @click="activeTab = 'identitas'">
-                Identitas & Kontak
-            </div>
-            <div class="wp-desa-tab" :class="{'active': activeTab === 'media'}" @click="activeTab = 'media'">
-                Logo & Media
-            </div>
-            <div class="wp-desa-tab" :class="{'active': activeTab === 'pejabat'}" @click="activeTab = 'pejabat'">
-                Kepala Desa
-            </div>
-            <div class="wp-desa-tab" :class="{'active': activeTab === 'sistem'}" @click="activeTab = 'sistem'">
-                Pengaturan Sistem
-            </div>
-        </div>
 
         <form method="post" action="">
             <?php wp_nonce_field('wp_desa_settings_action', 'wp_desa_settings_nonce'); ?>
+            <input type="hidden" name="_current_tab" value="<?php echo esc_attr($current_tab); ?>">
 
             <!-- Tab: Identitas & Kontak -->
-            <div x-show="activeTab === 'identitas'" class="wp-desa-tab-content" x-cloak>
+            <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'identitas' ? 'display:none;' : ''; ?>">
                 <div class="wp-desa-form-grid">
                     <div>
                         <label class="wp-desa-label" for="nama_desa">Nama Desa</label>
@@ -68,7 +48,7 @@ $settings = get_option('wp_desa_settings', []);
             </div>
 
             <!-- Tab: Logo & Media -->
-            <div x-show="activeTab === 'media'" class="wp-desa-tab-content" x-cloak>
+            <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'media' ? 'display:none;' : ''; ?>">
                 <div class="wp-desa-form-grid">
                     <div>
                         <label class="wp-desa-label">Logo Kabupaten</label>
@@ -97,7 +77,7 @@ $settings = get_option('wp_desa_settings', []);
             </div>
 
             <!-- Tab: Kepala Desa -->
-            <div x-show="activeTab === 'pejabat'" class="wp-desa-tab-content" x-cloak>
+            <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'pejabat' ? 'display:none;' : ''; ?>">
                 <div class="wp-desa-form-grid">
                     <div class="wp-desa-grid-2">
                         <div>
@@ -135,7 +115,7 @@ $settings = get_option('wp_desa_settings', []);
             </div>
 
             <!-- Tab: Pengaturan Sistem -->
-            <div x-show="activeTab === 'sistem'" class="wp-desa-tab-content" x-cloak>
+            <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'sistem' ? 'display:none;' : ''; ?>">
                 <div class="wp-desa-form-grid">
                     <div class="wp-desa-box-gray">
                         <div class="wp-desa-flex-between-center">
@@ -180,21 +160,18 @@ $settings = get_option('wp_desa_settings', []);
 
 <script>
     document.addEventListener('alpine:init', () => {
-        Alpine.data('settingsManager', () => ({
-            activeTab: 'identitas',
+        Alpine.data('settingsNotif', () => ({
             notification: {
                 show: false,
                 message: '',
                 type: 'success'
             },
             init() {
-                // Check for settings-updated query param
                 const urlParams = new URLSearchParams(window.location.search);
                 if (urlParams.get('settings-updated') === 'true') {
                     this.showNotification('Pengaturan berhasil disimpan!', 'success');
 
-                    // Remove param from URL without reload
-                    const newUrl = window.location.pathname + '?page=wp-desa-settings';
+                    const newUrl = window.location.pathname + '?page=wp-desa-settings&tab=<?php echo esc_js($current_tab); ?>';
                     window.history.replaceState({}, document.title, newUrl);
                 }
             },
