@@ -6,14 +6,14 @@
     <div class="wp-desa-header">
         <div>
             <h1 class="wp-desa-title">Aspirasi & Pengaduan Warga</h1>
-            <p style="color: #64748b; margin: 4px 0 0 0; font-size: 14px;">Kelola aspirasi dan pengaduan dari warga.</p>
+            <p class="wp-desa-helper">Kelola aspirasi dan pengaduan dari warga.</p>
         </div>
         <div class="wp-desa-actions">
             <?php
             $settings = get_option('wp_desa_settings', []);
             if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1):
             ?>
-                <button @click="generateDummy" class="wp-desa-btn wp-desa-btn-danger" style="background: #fff1f2; color: #e11d48; border-color: #fecdd3;">
+                <button @click="generateDummy" class="wp-desa-btn wp-desa-btn-danger">
                     <span class="dashicons dashicons-database"></span> Generate Dummy
                 </button>
             <?php endif; ?>
@@ -56,16 +56,16 @@
             <tbody>
                 <template x-if="loading">
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">
-                            <span class="dashicons dashicons-update" style="animation: spin 2s linear infinite; font-size: 24px; width: 24px; height: 24px;"></span>
-                            <div style="margin-top: 8px;">Memuat data...</div>
+                        <td colspan="7" class="wp-desa-empty-state">
+                            <span class="dashicons dashicons-update wp-desa-spinner"></span>
+                            <div class="wp-desa-mt-8">Memuat data...</div>
                         </td>
                     </tr>
                 </template>
                 <template x-if="!loading && complaints.length === 0">
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">
-                            <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
+                        <td colspan="7" class="wp-desa-empty-state">
+                            <div class="wp-desa-empty-icon">📭</div>
                             <div>Tidak ada aduan.</div>
                         </td>
                     </tr>
@@ -74,15 +74,15 @@
                     <tr>
                         <td>
                             <div x-text="formatDate(item.created_at)"></div>
-                            <div style="font-size: 11px; color: #94a3b8;" x-text="timeAgo(item.created_at)"></div>
+                            <div class="wp-desa-row-subtitle" x-text="timeAgo(item.created_at)"></div>
                         </td>
-                        <td class="font-mono text-xs" style="font-family: monospace; color: #64748b;">
-                            <strong x-text="item.tracking_code" style="color: #1e293b;"></strong>
+                        <td class="wp-desa-mono">
+                            <strong x-text="item.tracking_code" style="color: var(--ink);"></strong>
                         </td>
                         <td x-text="item.category"></td>
                         <td>
-                            <div style="font-weight: 600; color: #1e293b;" x-text="item.reporter_name"></div>
-                            <div style="font-size: 12px; color: #64748b;" x-text="item.reporter_contact"></div>
+                            <div style="font-weight: 600; color: var(--ink);" x-text="item.reporter_name"></div>
+                            <div class="wp-desa-row-subtitle" x-text="item.reporter_contact"></div>
                         </td>
                         <td x-text="item.subject"></td>
                         <td>
@@ -92,7 +92,7 @@
                             </span>
                         </td>
                         <td style="text-align: right;">
-                            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                            <div class="wp-desa-inline-actions-end">
                                 <button @click="openDetail(item)" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">
                                     Lihat Detail
                                 </button>
@@ -133,8 +133,8 @@
         <div class="wp-desa-modal-content" @click.outside="isModalOpen = false">
             <div class="wp-desa-modal-header">
                 <h2 class="wp-desa-modal-title">Detail Aduan</h2>
-                <button type="button" @click="isModalOpen = false" style="background:none; border:none; cursor:pointer; color: #94a3b8; display: flex;">
-                    <span class="dashicons dashicons-no-alt" style="font-size: 20px;"></span>
+                <button type="button" @click="isModalOpen = false" class="wp-desa-icon-btn">
+                    <span class="dashicons dashicons-no-alt wp-desa-icon-md"></span>
                 </button>
             </div>
 
@@ -177,12 +177,12 @@
                         <div style="margin-bottom: 20px;">
                             <span class="wp-desa-info-label" style="margin-bottom: 4px; display: block;">Foto Lampiran:</span>
                             <a :href="selectedItem.photo_url" target="_blank" style="display: block;">
-                                <img :src="selectedItem.photo_url" style="max-width: 100%; max-height: 200px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                                <img :src="selectedItem.photo_url" style="max-width: 100%; max-height: 200px; border-radius: var(--r-sm); border: 1px solid var(--hairline);">
                             </a>
                         </div>
                     </template>
 
-                    <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
+                    <hr style="border: 0; border-top: 1px solid var(--hairline); margin: 20px 0;">
 
                     <div class="wp-desa-form-grid">
                         <div>
@@ -223,7 +223,7 @@
         style="display: none;">
         <span class="dashicons" :class="notification.type === 'error' ? 'dashicons-warning' : 'dashicons-yes'"></span>
         <span x-text="notification.message"></span>
-        <button @click="notification.show = false" style="background:none; border:none; color:white; cursor:pointer; margin-left: 10px; opacity: 0.8;">
+        <button @click="notification.show = false" class="wp-desa-toast-close">
             <span class="dashicons dashicons-no"></span>
         </button>
     </div>

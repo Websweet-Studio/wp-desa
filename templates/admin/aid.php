@@ -104,7 +104,7 @@
 
     <!-- View: Recipients List -->
     <div x-show="view === 'recipients'">
-        <div style="margin-bottom: 20px;">
+        <div class="wp-desa-mb-20">
             <h2 class="wp-desa-section-title">
                 Penerima: <span x-text="activeProgram?.name" class="wp-desa-accent-blue"></span>
             </h2>
@@ -195,7 +195,7 @@
                             <label class="wp-desa-label">Asal Dana</label>
                             <input type="text" x-model="form.origin" class="wp-desa-input" required placeholder="Contoh: Dana Desa / Kemensos">
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="wp-desa-grid-2-16">
                             <div>
                                 <label class="wp-desa-label">Tahun Anggaran</label>
                                 <input type="number" x-model="form.year" class="wp-desa-input" required>

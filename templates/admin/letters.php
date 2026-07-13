@@ -6,14 +6,14 @@
     <div class="wp-desa-header">
         <div>
             <h1 class="wp-desa-title">Layanan Surat Online</h1>
-            <p style="color: #64748b; margin: 4px 0 0 0; font-size: 14px;">Kelola permohonan surat dari warga desa.</p>
+            <p class="wp-desa-helper">Kelola permohonan surat dari warga desa.</p>
         </div>
         <div class="wp-desa-actions">
             <?php
             $settings = get_option('wp_desa_settings', []);
             if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1):
             ?>
-                <button @click="generateDummy" class="wp-desa-btn wp-desa-btn-danger" style="background: #fff1f2; color: #e11d48; border-color: #fecdd3;">
+                <button @click="generateDummy" class="wp-desa-btn wp-desa-btn-danger">
                     <span class="dashicons dashicons-database"></span> Generate Dummy
                 </button>
             <?php endif; ?>
@@ -55,16 +55,16 @@
             <tbody>
                 <template x-if="loading">
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
-                            <span class="dashicons dashicons-update" style="animation: spin 2s linear infinite; font-size: 24px; width: 24px; height: 24px;"></span>
-                            <div style="margin-top: 8px;">Memuat data...</div>
+                        <td colspan="6" class="wp-desa-empty-state">
+                            <span class="dashicons dashicons-update wp-desa-spinner"></span>
+                            <div class="wp-desa-mt-8">Memuat data...</div>
                         </td>
                     </tr>
                 </template>
                 <template x-if="!loading && letters.length === 0">
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
-                            <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
+                        <td colspan="6" class="wp-desa-empty-state">
+                            <div class="wp-desa-empty-icon">📭</div>
                             <div>Tidak ada permohonan surat.</div>
                         </td>
                     </tr>
@@ -73,15 +73,15 @@
                     <tr>
                         <td>
                             <div x-text="formatDate(letter.created_at)"></div>
-                            <div style="font-size: 11px; color: #94a3b8;" x-text="timeAgo(letter.created_at)"></div>
+                            <div class="wp-desa-row-subtitle" x-text="timeAgo(letter.created_at)"></div>
                         </td>
-                        <td class="font-mono text-xs" style="font-family: monospace; color: #64748b;">
-                            <strong x-text="letter.tracking_code" style="color: #1e293b;"></strong>
+                        <td class="wp-desa-mono">
+                            <strong x-text="letter.tracking_code" style="color: var(--ink);"></strong>
                         </td>
                         <td x-text="letter.type_name"></td>
                         <td>
-                            <div style="font-weight: 600; color: #1e293b;" x-text="letter.name"></div>
-                            <div style="font-size: 12px; color: #64748b;">
+                            <div style="font-weight: 600; color: var(--ink);" x-text="letter.name"></div>
+                            <div class="wp-desa-row-subtitle">
                                 NIK: <span x-text="letter.nik"></span>
                             </div>
                         </td>
@@ -92,7 +92,7 @@
                             </span>
                         </td>
                         <td style="text-align: right;">
-                            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                            <div class="wp-desa-inline-actions-end">
                                 <button @click="openDetail(letter)" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">
                                     Lihat Detail
                                 </button>
@@ -136,8 +136,8 @@
         <div class="wp-desa-modal-content" @click.outside="isModalOpen = false">
             <div class="wp-desa-modal-header">
                 <h2 class="wp-desa-modal-title">Detail Permohonan</h2>
-                <button type="button" @click="isModalOpen = false" style="background:none; border:none; cursor:pointer; color: #94a3b8; display: flex;">
-                    <span class="dashicons dashicons-no-alt" style="font-size: 20px;"></span>
+                <button type="button" @click="isModalOpen = false" class="wp-desa-icon-btn">
+                    <span class="dashicons dashicons-no-alt wp-desa-icon-md"></span>
                 </button>
             </div>
 
@@ -155,7 +155,7 @@
                         <span class="wp-desa-info-label">Pemohon:</span>
                         <span class="wp-desa-info-value">
                             <span x-text="selectedLetter.name"></span>
-                            <span style="color: #64748b;">(NIK: <span x-text="selectedLetter.nik"></span>)</span>
+                            <span class="wp-desa-row-subtitle">(NIK: <span x-text="selectedLetter.nik"></span>)</span>
                         </span>
                     </div>
                     <div class="wp-desa-info-row">
@@ -204,7 +204,7 @@
         style="display: none;">
         <span class="dashicons" :class="notification.type === 'error' ? 'dashicons-warning' : 'dashicons-yes-alt'"></span>
         <span x-text="notification.message"></span>
-        <button @click="notification.show = false" style="background:none; border:none; color:white; cursor:pointer; margin-left: 10px; opacity: 0.8;">
+        <button @click="notification.show = false" class="wp-desa-toast-close">
             <span class="dashicons dashicons-no"></span>
         </button>
     </div>

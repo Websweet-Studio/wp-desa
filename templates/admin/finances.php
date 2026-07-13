@@ -9,11 +9,11 @@
             <p class="wp-desa-helper">Kelola anggaran dan realisasi APBDes.</p>
         </div>
         <div class="wp-desa-actions">
-            <?php 
+            <?php
             $settings = get_option('wp_desa_settings', []);
-            if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1): 
+            if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1):
             ?>
-            <button @click="generateDummy" class="wp-desa-btn wp-desa-btn-danger wp-desa-btn-danger-soft">
+            <button @click="generateDummy" class="wp-desa-btn wp-desa-btn-danger">
                 <span class="dashicons dashicons-database"></span> Generate Dummy
             </button>
             <?php endif; ?>
@@ -392,7 +392,7 @@
                             labels: this.summary.income_sources.map(i => i.category),
                             datasets: [{
                                 data: this.summary.income_sources.map(i => i.total),
-                                backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6']
+                                backgroundColor: ['#003c33', '#1863dc', '#ff7759', '#b30000', '#93939f']
                             }]
                         },
                         options: {
@@ -410,7 +410,7 @@
                             labels: this.summary.expense_sources.map(i => i.category),
                             datasets: [{
                                 data: this.summary.expense_sources.map(i => i.total),
-                                backgroundColor: ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6']
+                                backgroundColor: ['#b30000', '#ff7759', '#003c33', '#1863dc', '#93939f']
                             }]
                         },
                         options: {

@@ -6,14 +6,14 @@
     <div class="wp-desa-header">
         <div>
             <h1 class="wp-desa-title">Data Penduduk</h1>
-            <p style="color: #64748b; margin: 4px 0 0 0; font-size: 14px;">Kelola data kependudukan desa dengan mudah.</p>
+            <p class="wp-desa-helper">Kelola data kependudukan desa dengan mudah.</p>
         </div>
         <div class="wp-desa-actions">
             <?php
             $settings = get_option('wp_desa_settings', []);
             if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1):
             ?>
-                <button @click="generateDummy" class="wp-desa-btn wp-desa-btn-danger" style="background: #fff1f2; color: #e11d48; border-color: #fecdd3;">
+                <button @click="generateDummy" class="wp-desa-btn wp-desa-btn-danger">
                     <span class="dashicons dashicons-database"></span> Generate Dummy
                 </button>
             <?php endif; ?>
@@ -52,47 +52,46 @@
             <tbody>
                 <template x-if="loading">
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">
-                            <span class="dashicons dashicons-update" style="animation: spin 2s linear infinite; font-size: 24px; width: 24px; height: 24px;"></span>
-                            <div style="margin-top: 8px;">Memuat data...</div>
+                        <td colspan="7" class="wp-desa-empty-state">
+                            <span class="dashicons dashicons-update wp-desa-spinner"></span>
+                            <div class="wp-desa-mt-8">Memuat data...</div>
                         </td>
                     </tr>
                 </template>
                 <template x-if="!loading && residents.length === 0">
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 40px; color: #64748b;">
-                            <div style="font-size: 48px; margin-bottom: 16px;">📂</div>
+                        <td colspan="7" class="wp-desa-empty-state">
+                            <div class="wp-desa-empty-icon">📂</div>
                             <div>Belum ada data penduduk.</div>
-                            <button @click="openModal('add')" style="color: #2563eb; background: none; border: none; cursor: pointer; text-decoration: underline; margin-top: 8px;">Tambah sekarang</button>
+                            <button @click="openModal('add')" class="wp-desa-btn wp-desa-btn-primary" style="margin-top: 8px;">Tambah sekarang</button>
                         </td>
                     </tr>
                 </template>
                 <template x-for="resident in residents" :key="resident.id">
                     <tr>
-                        <td class="font-mono text-xs" style="font-family: monospace; color: #64748b;" x-text="resident.nik"></td>
-                        <td class="font-mono text-xs" style="font-family: monospace; color: #64748b;" x-text="resident.no_kk || '-'"></td>
+                        <td class="wp-desa-mono" x-text="resident.nik"></td>
+                        <td class="wp-desa-mono" x-text="resident.no_kk || '-'"></td>
                         <td>
-                            <div style="font-weight: 600; color: #1e293b;" x-text="resident.nama_lengkap"></div>
-                            <div style="font-size: 12px; color: #64748b; margin-top: 2px;" x-text="resident.status_perkawinan"></div>
+                            <div style="font-weight: 600; color: var(--ink);" x-text="resident.nama_lengkap"></div>
+                            <div class="wp-desa-row-subtitle" x-text="resident.status_perkawinan"></div>
                         </td>
                         <td>
                             <span class="wp-desa-badge"
-                                :style="resident.jenis_kelamin === 'Laki-laki' ? 'background: #eff6ff; color: #2563eb;' : 'background: #fdf2f8; color: #db2777;'"
-                                style="padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600;"
+                                :class="resident.jenis_kelamin === 'Laki-laki' ? 'wp-desa-badge-default' : 'wp-desa-badge-danger'"
                                 x-text="resident.jenis_kelamin">
                             </span>
                         </td>
                         <td>
                             <div x-text="resident.tempat_lahir"></div>
-                            <div style="font-size: 12px; color: #64748b;" x-text="formatDate(resident.tanggal_lahir)"></div>
+                            <div class="wp-desa-row-subtitle" x-text="formatDate(resident.tanggal_lahir)"></div>
                         </td>
                         <td x-text="resident.pekerjaan"></td>
                         <td style="text-align: right;">
-                            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                            <div class="wp-desa-inline-actions-end">
                                 <button @click="openModal('edit', resident)" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" title="Edit">
                                     <span class="dashicons dashicons-edit"></span>
                                 </button>
-                                <button @click="deleteResident(resident.id)" class="wp-desa-btn wp-desa-btn-danger wp-desa-btn-sm" style="background: white; border-color: #fecaca; color: #ef4444;" title="Hapus">
+                                <button @click="deleteResident(resident.id)" class="wp-desa-btn wp-desa-btn-danger-outline wp-desa-btn-sm" title="Hapus">
                                     <span class="dashicons dashicons-trash"></span>
                                 </button>
                             </div>
@@ -132,8 +131,8 @@
         <div class="wp-desa-modal-content" @click.outside="closeModal">
             <div class="wp-desa-modal-header">
                 <h2 x-text="modalMode === 'add' ? 'Tambah Penduduk' : 'Edit Penduduk'" class="wp-desa-modal-title"></h2>
-                <button type="button" @click="closeModal" style="background:none; border:none; cursor:pointer; color: #94a3b8; display: flex;">
-                    <span class="dashicons dashicons-no-alt" style="font-size: 20px;"></span>
+                <button type="button" @click="closeModal" class="wp-desa-icon-btn">
+                    <span class="dashicons dashicons-no-alt wp-desa-icon-md"></span>
                 </button>
             </div>
 
@@ -141,7 +140,7 @@
                 <div class="wp-desa-modal-body">
                     <div class="wp-desa-form-grid">
                         <div class="wp-desa-form-group">
-                            <label class="wp-desa-label" for="nik">NIK <span style="color: #ef4444;">*</span></label>
+                            <label class="wp-desa-label" for="nik">NIK <span class="wp-desa-req">*</span></label>
                             <input type="text" id="nik" x-model="form.nik" required class="wp-desa-input" placeholder="16 digit NIK" maxlength="16">
                         </div>
                         <div class="wp-desa-form-group">
@@ -149,7 +148,7 @@
                             <input type="text" id="no_kk" x-model="form.no_kk" class="wp-desa-input" placeholder="16 digit No. KK" maxlength="16">
                         </div>
                         <div class="wp-desa-form-group full-width">
-                            <label class="wp-desa-label" for="nama_lengkap">Nama Lengkap <span style="color: #ef4444;">*</span></label>
+                            <label class="wp-desa-label" for="nama_lengkap">Nama Lengkap <span class="wp-desa-req">*</span></label>
                             <input type="text" id="nama_lengkap" x-model="form.nama_lengkap" required class="wp-desa-input" placeholder="Sesuai KTP">
                         </div>
                         <div class="wp-desa-form-group">
@@ -211,7 +210,7 @@
         style="display: none;">
         <span class="dashicons" :class="notification.type === 'error' ? 'dashicons-warning' : 'dashicons-yes-alt'"></span>
         <span x-text="notification.message"></span>
-        <button @click="notification.show = false" style="background:none; border:none; color:white; cursor:pointer; margin-left: 10px; opacity: 0.8;">
+        <button @click="notification.show = false" class="wp-desa-toast-close">
             <span class="dashicons dashicons-no"></span>
         </button>
     </div>
