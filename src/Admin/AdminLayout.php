@@ -12,6 +12,7 @@ class AdminLayout
             ['page' => 'wp-desa-layanan', 'label' => 'Layanan'],
             ['page' => 'wp-desa-keuangan', 'label' => 'Keuangan'],
             ['page' => 'wp-desa-settings', 'label' => 'Pengaturan'],
+            ['page' => 'wp-desa-dokumentasi', 'label' => 'Dokumentasi'],
         ];
     }
 
@@ -74,7 +75,7 @@ class AdminLayout
     {
         global $plugin_page;
 
-        $wp_desa_pages = ['wp-desa', 'wp-desa-residents', 'wp-desa-layanan', 'wp-desa-keuangan', 'wp-desa-settings'];
+        $wp_desa_pages = ['wp-desa', 'wp-desa-residents', 'wp-desa-layanan', 'wp-desa-keuangan', 'wp-desa-settings', 'wp-desa-dokumentasi'];
 
         if (in_array($plugin_page, $wp_desa_pages)) {
             $parent_file = 'wp-desa';
@@ -90,7 +91,7 @@ class AdminLayout
     {
         global $plugin_page;
 
-        $wp_desa_pages = ['wp-desa', 'wp-desa-residents', 'wp-desa-layanan', 'wp-desa-keuangan', 'wp-desa-settings'];
+        $wp_desa_pages = ['wp-desa', 'wp-desa-residents', 'wp-desa-layanan', 'wp-desa-keuangan', 'wp-desa-settings', 'wp-desa-dokumentasi'];
 
         if (in_array($plugin_page, $wp_desa_pages)) {
             $submenu_file = $plugin_page;

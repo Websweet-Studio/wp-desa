@@ -98,7 +98,7 @@ class Menu
         }
 
         // Dashboard and Finance (Need Chart.js)
-        if ($hook === 'toplevel_page_wp-desa' || $hook === 'wp-desa_page_wp-desa-keuangan') {
+        if ($hook === 'toplevel_page_wp-desa' || $hook === 'wp-desa_page_wp-desa-residents' || $hook === 'wp-desa_page_wp-desa-keuangan') {
             wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', [], '4.0.0', true);
             // CDN fallback
             wp_add_inline_script('chartjs', 'if(typeof Chart==="undefined"){var e=document.createElement("script");e.src="' . WP_DESA_URL . 'assets/js/chart.min.js";document.head.appendChild(e);}');
@@ -122,8 +122,24 @@ class Menu
 
     public function render_residents_page()
     {
-        AdminLayout::open('Data Penduduk', 'wp-desa-residents');
-        require_once WP_DESA_PATH . 'templates/admin/residents.php';
+        $subnav = [
+            ['tab' => 'daftar', 'label' => 'Daftar'],
+            ['tab' => 'kk', 'label' => 'Kartu Keluarga'],
+            ['tab' => 'statistik', 'label' => 'Statistik'],
+        ];
+
+        $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'daftar';
+
+        AdminLayout::open('Data Penduduk', 'wp-desa-residents', $subnav);
+
+        if ($current_tab === 'kk') {
+            require_once WP_DESA_PATH . 'templates/admin/residents-kk.php';
+        } elseif ($current_tab === 'statistik') {
+            require_once WP_DESA_PATH . 'templates/admin/residents-statistik.php';
+        } else {
+            require_once WP_DESA_PATH . 'templates/admin/residents.php';
+        }
+
         AdminLayout::close();
     }
 

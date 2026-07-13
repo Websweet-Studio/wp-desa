@@ -64,6 +64,33 @@ class ResidentController extends WP_REST_Controller
                 'permission_callback' => [$this, 'permissions_check'],
             ],
         ]);
+
+        // KK Route
+        register_rest_route($namespace, '/' . $base . '/kk', [
+            [
+                'methods' => WP_REST_Server::READABLE,
+                'callback' => [$this, 'get_kk_items'],
+                'permission_callback' => [$this, 'permissions_check'],
+            ],
+        ]);
+
+        // KK Detail Route
+        register_rest_route($namespace, '/' . $base . '/kk/(?P<no_kk>[^/]+)', [
+            [
+                'methods' => WP_REST_Server::READABLE,
+                'callback' => [$this, 'get_kk_detail'],
+                'permission_callback' => [$this, 'permissions_check'],
+            ],
+        ]);
+
+        // Stats Route
+        register_rest_route($namespace, '/' . $base . '/stats', [
+            [
+                'methods' => WP_REST_Server::READABLE,
+                'callback' => [$this, 'get_stats_items'],
+                'permission_callback' => [$this, 'permissions_check'],
+            ],
+        ]);
     }
 
     public function permissions_check()
@@ -325,6 +352,86 @@ class ResidentController extends WP_REST_Controller
             'success' => true,
             'message' => "Berhasil membuat $inserted data dummy.",
             'count' => $inserted
+        ]);
+    }
+
+    public function get_kk_items($request)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'desa_residents';
+
+        $page = $request->get_param('page') ? intval($request->get_param('page')) : 1;
+        $per_page = $request->get_param('per_page') ? intval($request->get_param('per_page')) : 20;
+        $offset = ($page - 1) * $per_page;
+
+        // Get distinct KK numbers
+        $total_items = (int) $wpdb->get_var("SELECT COUNT(DISTINCT no_kk) FROM $table_name WHERE no_kk != ''");
+        $total_pages = ceil($total_items / $per_page);
+
+        $kk_list = $wpdb->get_results($wpdb->prepare(
+            "SELECT no_kk, COUNT(*) as anggota, MIN(nama_lengkap) as nama_kepala, MIN(alamat) as alamat
+             FROM $table_name WHERE no_kk != ''
+             GROUP BY no_kk
+             ORDER BY no_kk ASC
+             LIMIT %d OFFSET %d",
+            $per_page,
+            $offset
+        ));
+
+        return rest_ensure_response([
+            'data' => $kk_list,
+            'meta' => [
+                'current_page' => $page,
+                'per_page' => $per_page,
+                'total_items' => $total_items,
+                'total_pages' => $total_pages
+            ]
+        ]);
+    }
+
+    public function get_kk_detail($request)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'desa_residents';
+        $no_kk = sanitize_text_field($request->get_param('no_kk'));
+
+        $anggota = $wpdb->get_results($wpdb->prepare(
+            "SELECT * FROM $table_name WHERE no_kk = %s ORDER BY nama_lengkap ASC",
+            $no_kk
+        ));
+
+        return rest_ensure_response($anggota);
+    }
+
+    public function get_stats_items($request)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'desa_residents';
+
+        $total = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+        $male = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE jenis_kelamin = 'Laki-laki'");
+        $female = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table_name WHERE jenis_kelamin = 'Perempuan'");
+        $families = (int) $wpdb->get_var("SELECT COUNT(DISTINCT no_kk) FROM $table_name WHERE no_kk != ''");
+
+        $age_groups = $wpdb->get_row("
+            SELECT
+                SUM(CASE WHEN TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) < 18 THEN 1 ELSE 0 END) AS anak,
+                SUM(CASE WHEN TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) BETWEEN 18 AND 60 THEN 1 ELSE 0 END) AS dewasa,
+                SUM(CASE WHEN TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) > 60 THEN 1 ELSE 0 END) AS lansia
+            FROM $table_name
+        ");
+
+        $job_stats = $wpdb->get_results("SELECT pekerjaan as label, COUNT(*) as count FROM $table_name WHERE pekerjaan != '' GROUP BY pekerjaan ORDER BY count DESC LIMIT 10");
+        $marital_stats = $wpdb->get_results("SELECT status_perkawinan as label, COUNT(*) as count FROM $table_name GROUP BY status_perkawinan");
+
+        return rest_ensure_response([
+            'total' => $total,
+            'male' => $male,
+            'female' => $female,
+            'families' => $families,
+            'age_groups' => $age_groups,
+            'jobs' => $job_stats,
+            'maritals' => $marital_stats,
         ]);
     }
 }
