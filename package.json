@@ -3,7 +3,8 @@
   "version": "1.0.2",
   "description": "Plugin WordPress untuk fitur web desa",
   "scripts": {
-    "build": "node build.js"
+    "build": "node build.js",
+    "zip": "node build.js"
   },
   "devDependencies": {
     "archiver": "^7.0.0"

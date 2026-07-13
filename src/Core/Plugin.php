@@ -3,6 +3,7 @@
 namespace WpDesa\Core;
 
 use WpDesa\Admin\Menu;
+use WpDesa\Admin\AdminLayout;
 use WpDesa\Api\ResidentController;
 use WpDesa\Api\DashboardController;
 
@@ -48,6 +49,10 @@ class Plugin
 
             $printer = new \WpDesa\Admin\PrintHandler();
             add_action('admin_post_wp_desa_print_letter', [$printer, 'handle_print']);
+
+            // Fix admin menu active states
+            add_filter('parent_file', [AdminLayout::class, 'fix_parent_file']);
+            add_filter('submenu_file', [AdminLayout::class, 'submenu_file']);
         }
     }
 

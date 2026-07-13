@@ -82,7 +82,7 @@ class Menu
 
     public function enqueue_scripts($hook)
     {
-        // Enqueue on Dashboard, Residents, and Letters page
+        // Enqueue on all WP Desa admin pages
         $allowed_pages = [
             'toplevel_page_wp-desa',
             'wp-desa_page_wp-desa-residents',
@@ -120,38 +120,50 @@ class Menu
     {
         $screen = get_current_screen();
         if ($screen && strpos($screen->id, 'wp-desa') !== false) {
-            echo '<style>.notice { display: none; }</style>';
+            echo '<style>.wp-desa-dashboard .notice { display: none; }</style>';
         }
     }
 
     public function render_dashboard()
     {
+        AdminLayout::open('Dashboard', 'wp-desa');
         require_once WP_DESA_PATH . 'templates/admin/dashboard.php';
+        AdminLayout::close();
     }
 
     public function render_residents_page()
     {
+        AdminLayout::open('Data Penduduk', 'wp-desa-residents');
         require_once WP_DESA_PATH . 'templates/admin/residents.php';
+        AdminLayout::close();
     }
 
     public function render_letters_page()
     {
+        AdminLayout::open('Layanan Surat', 'wp-desa-letters');
         require_once WP_DESA_PATH . 'templates/admin/letters.php';
+        AdminLayout::close();
     }
 
     public function render_complaints_page()
     {
+        AdminLayout::open('Aspirasi & Pengaduan', 'wp-desa-complaints');
         require_once WP_DESA_PATH . 'templates/admin/complaints.php';
+        AdminLayout::close();
     }
 
     public function render_finances_page()
     {
+        AdminLayout::open('Keuangan Desa', 'wp-desa-finances');
         require_once WP_DESA_PATH . 'templates/admin/finances.php';
+        AdminLayout::close();
     }
 
     public function render_aid_page()
     {
+        AdminLayout::open('Program Bantuan', 'wp-desa-aid');
         require_once WP_DESA_PATH . 'templates/admin/aid.php';
+        AdminLayout::close();
     }
 
     public function handle_settings_submit()
@@ -193,6 +205,8 @@ class Menu
 
     public function render_settings_page()
     {
+        AdminLayout::open('Pengaturan', 'wp-desa-settings');
         require_once WP_DESA_PATH . 'templates/admin/settings.php';
+        AdminLayout::close();
     }
 }

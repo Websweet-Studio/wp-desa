@@ -828,3 +828,129 @@ input:checked + .slider:before {
 .wp-desa-mb-12 {
   margin-bottom: 12px;
 }
+
+/* ========== Global Nav (Sweet Addons style) ========== */
+.wp-desa-dashboard {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.wp-desa__globalnav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 20px;
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  margin: -20px -20px 0;
+  position: sticky;
+  top: 32px;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.wp-desa__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.wp-desa__brand .dashicons {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #2563eb;
+}
+
+.wp-desa__nav {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.wp-desa__navlink {
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.wp-desa__navlink:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.wp-desa__navlink.is-active {
+  background: #eff6ff;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+/* Subnav */
+.wp-desa__subnav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  margin: 0 -20px;
+}
+
+.wp-desa__subnav-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.wp-desa__subnav-tabs {
+  display: flex;
+  gap: 2px;
+}
+
+.wp-desa__subnav-tab {
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.wp-desa__subnav-tab:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.wp-desa__subnav-tab.is-active {
+  background: #fff;
+  color: #2563eb;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Content area */
+.wp-desa__content {
+  padding-top: 16px;
+}
+
+/* Responsive */
+@media (max-width: 782px) {
+  .wp-desa__globalnav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .wp-desa__subnav {
+    flex-wrap: wrap;
+  }
+}
