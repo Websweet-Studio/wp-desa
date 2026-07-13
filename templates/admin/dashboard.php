@@ -140,7 +140,7 @@
         <div class="wp-desa-stat-card wp-desa-stat-wide">
             <div class="wp-desa-stat-top">
                 <p class="wp-desa-stat-title">Aspirasi Warga Terbaru</p>
-                <a href="<?php echo admin_url('admin.php?page=wp-desa-complaints'); ?>" class="wp-desa-stat-link">Lihat Semua</a>
+                <a href="<?php echo admin_url('admin.php?page=wp-desa-layanan&tab=aduan'); ?>" class="wp-desa-stat-link">Lihat Semua</a>
             </div>
 
             <div class="wp-desa-stat-list">

@@ -422,6 +422,7 @@
   background-repeat: no-repeat;
   background-size: 1.4em 1.4em;
   padding-right: 2.5rem;
+  line-height: 1;
 }
 
 .wp-desa-wrapper input[type="color"] {

@@ -29,24 +29,14 @@ class Menu
             [$this, 'render_residents_page']
         );
 
-        // Submenu Layanan Surat
+        // Submenu Layanan (Surat & Aduan)
         add_submenu_page(
             'wp-desa',
-            'Layanan Surat',
-            'Layanan Surat',
+            'Layanan',
+            'Layanan',
             'manage_options',
-            'wp-desa-letters',
-            [$this, 'render_letters_page']
-        );
-
-        // Submenu Aspirasi & Pengaduan
-        add_submenu_page(
-            'wp-desa',
-            'Aspirasi & Pengaduan',
-            'Aspirasi & Pengaduan',
-            'manage_options',
-            'wp-desa-complaints',
-            [$this, 'render_complaints_page']
+            'wp-desa-layanan',
+            [$this, 'render_layanan_page']
         );
 
         // Submenu Keuangan Desa
@@ -86,8 +76,7 @@ class Menu
         $allowed_pages = [
             'toplevel_page_wp-desa',
             'wp-desa_page_wp-desa-residents',
-            'wp-desa_page_wp-desa-letters',
-            'wp-desa_page_wp-desa-complaints',
+            'wp-desa_page_wp-desa-layanan',
             'wp-desa_page_wp-desa-finances',
             'wp-desa_page_wp-desa-aid',
             'wp-desa_page_wp-desa-settings'
@@ -138,17 +127,23 @@ class Menu
         AdminLayout::close();
     }
 
-    public function render_letters_page()
+    public function render_layanan_page()
     {
-        AdminLayout::open('Layanan Surat', 'wp-desa-letters');
-        require_once WP_DESA_PATH . 'templates/admin/letters.php';
-        AdminLayout::close();
-    }
+        $subnav = [
+            ['tab' => 'surat', 'label' => 'Surat'],
+            ['tab' => 'aduan', 'label' => 'Aduan'],
+        ];
 
-    public function render_complaints_page()
-    {
-        AdminLayout::open('Aspirasi & Pengaduan', 'wp-desa-complaints');
-        require_once WP_DESA_PATH . 'templates/admin/complaints.php';
+        $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'surat';
+
+        AdminLayout::open('Layanan', 'wp-desa-layanan', $subnav);
+
+        if ($current_tab === 'aduan') {
+            require_once WP_DESA_PATH . 'templates/admin/complaints.php';
+        } else {
+            require_once WP_DESA_PATH . 'templates/admin/letters.php';
+        }
+
         AdminLayout::close();
     }
 

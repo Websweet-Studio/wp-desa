@@ -176,7 +176,7 @@
     </div>
 
     <!-- Modal Program -->
-    <div x-show="showProgramModal" class="wp-desa-modal-overlay" x-transition.opacity>
+    <div x-cloak x-show="showProgramModal" class="wp-desa-modal-overlay" x-transition.opacity>
         <div class="wp-desa-modal-content" @click.away="showProgramModal = false">
             <div class="wp-desa-modal-header">
                 <h2 class="wp-desa-modal-title" x-text="editMode ? 'Edit Program' : 'Tambah Program'"></h2>
@@ -231,7 +231,7 @@
     </div>
 
     <!-- Modal Recipient -->
-    <div x-show="showRecipientModal" class="wp-desa-modal-overlay" x-transition.opacity>
+    <div x-cloak x-show="showRecipientModal" class="wp-desa-modal-overlay" x-transition.opacity>
         <div class="wp-desa-modal-content" @click.away="showRecipientModal = false">
             <div class="wp-desa-modal-header">
                 <h2 class="wp-desa-modal-title">Tambah Penerima</h2>
