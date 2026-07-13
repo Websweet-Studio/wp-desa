@@ -310,6 +310,11 @@ class ResidentController extends WP_REST_Controller
 
     public function seed_items($request)
     {
+        $settings = get_option('wp_desa_settings');
+        if (empty($settings['dev_mode'])) {
+            return new WP_Error('dev_mode_required', 'Fitur ini hanya tersedia saat Development Mode aktif.', ['status' => 403]);
+        }
+
         $count = $request->get_param('count') ?: 100;
 
         require_once WP_DESA_PATH . 'src/Database/Seeder.php';

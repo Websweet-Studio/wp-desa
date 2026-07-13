@@ -75,6 +75,11 @@ class LetterController extends WP_REST_Controller
 
     public function seed_items($request)
     {
+        $settings = get_option('wp_desa_settings');
+        if (empty($settings['dev_mode'])) {
+            return new WP_Error('dev_mode_required', 'Fitur ini hanya tersedia saat Development Mode aktif.', ['status' => 403]);
+        }
+
         global $wpdb;
         $table_residents = $wpdb->prefix . 'desa_residents';
         $table_types = $wpdb->prefix . 'desa_letter_types';

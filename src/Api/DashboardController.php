@@ -32,6 +32,11 @@ class DashboardController extends WP_REST_Controller {
     }
 
     public function seed_all() {
+        $settings = get_option('wp_desa_settings');
+        if (empty($settings['dev_mode'])) {
+            return new WP_Error('dev_mode_required', 'Fitur ini hanya tersedia saat Development Mode aktif.', ['status' => 403]);
+        }
+
         require_once plugin_dir_path(dirname(__FILE__)) . 'Database/Seeder.php';
         $count = \WpDesa\Database\Seeder::run(50);
         return rest_ensure_response([

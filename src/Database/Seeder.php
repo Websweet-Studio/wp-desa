@@ -105,7 +105,11 @@ class Seeder {
         }
 
         // 2. Add Recipients
-        $residents = $wpdb->get_col("SELECT id FROM $table_residents ORDER BY RAND() LIMIT $count");
+        $total = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table_residents");
+        if ($total === 0) return;
+        $count = min($count, $total);
+        $offset = rand(0, $total - $count);
+        $residents = $wpdb->get_col($wpdb->prepare("SELECT id FROM $table_residents ORDER BY id LIMIT %d OFFSET %d", $count, $offset));
         if (empty($residents)) return;
 
         $statuses = ['pending', 'approved', 'rejected', 'distributed'];
@@ -143,7 +147,11 @@ class Seeder {
         $table_types = $wpdb->prefix . 'desa_letter_types';
 
         // Get some residents
-        $residents = $wpdb->get_results("SELECT nik, nama_lengkap FROM $table_residents ORDER BY RAND() LIMIT $count");
+        $total = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table_residents");
+        if ($total === 0) return 0;
+        $count = min($count, $total);
+        $offset = rand(0, $total - $count);
+        $residents = $wpdb->get_results($wpdb->prepare("SELECT nik, nama_lengkap FROM $table_residents ORDER BY id LIMIT %d OFFSET %d", $count, $offset));
         if (empty($residents)) return 0;
 
         // Get letter types

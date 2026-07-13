@@ -236,6 +236,11 @@ class ComplaintController extends WP_REST_Controller
 
     public function seed_items($request)
     {
+        $settings = get_option('wp_desa_settings');
+        if (empty($settings['dev_mode'])) {
+            return new WP_Error('dev_mode_required', 'Fitur ini hanya tersedia saat Development Mode aktif.', ['status' => 403]);
+        }
+
         require_once plugin_dir_path(dirname(__FILE__)) . 'Database/Seeder.php';
 
         $count = \WpDesa\Database\Seeder::seed_complaints(20);

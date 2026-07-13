@@ -290,6 +290,11 @@ class AidController extends WP_REST_Controller {
     }
 
     public function seed_items($request) {
+        $settings = get_option('wp_desa_settings');
+        if (empty($settings['dev_mode'])) {
+            return new WP_Error('dev_mode_required', 'Fitur ini hanya tersedia saat Development Mode aktif.', ['status' => 403]);
+        }
+
         \WpDesa\Database\Seeder::seed_aid();
         return rest_ensure_response(['success' => true, 'message' => 'Data dummy Bantuan berhasil dibuat.']);
     }
