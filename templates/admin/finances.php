@@ -1,6 +1,6 @@
 <div class="wrap wp-desa-wrapper" x-data="financeManager()">
 
-    
+
 
     <!-- Header -->
     <div class="wp-desa-header">
@@ -13,9 +13,9 @@
             $settings = get_option('wp_desa_settings', []);
             if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1):
             ?>
-            <button @click="generateDummy" class="wp-desa-btn wp-desa-btn-danger">
-                <span class="dashicons dashicons-database"></span> Generate Dummy
-            </button>
+                <button @click="generateDummy" class="wp-desa-btn wp-desa-btn-danger">
+                    <span class="dashicons dashicons-database"></span> Generate Dummy
+                </button>
             <?php endif; ?>
         </div>
     </div>
@@ -392,7 +392,7 @@
                             labels: this.summary.income_sources.map(i => i.category),
                             datasets: [{
                                 data: this.summary.income_sources.map(i => i.total),
-                                backgroundColor: ['#003c33', '#1863dc', '#ff7759', '#b30000', '#93939f']
+                                backgroundColor: ['#1a1a1a', '#024ad8', '#ff5050', '#b3262b', '#636363']
                             }]
                         },
                         options: {
@@ -410,7 +410,7 @@
                             labels: this.summary.expense_sources.map(i => i.category),
                             datasets: [{
                                 data: this.summary.expense_sources.map(i => i.total),
-                                backgroundColor: ['#b30000', '#ff7759', '#003c33', '#1863dc', '#93939f']
+                                backgroundColor: ['#b3262b', '#ff5050', '#1a1a1a', '#024ad8', '#636363']
                             }]
                         },
                         options: {

@@ -31,7 +31,7 @@
                         <td colspan="5" class="wp-desa-empty-state">
                             <div class="wp-desa-empty-icon">📋</div>
                             <div>Belum ada data Kartu Keluarga.</div>
-                            <p style="color: #94a3b8; font-size: 0.9em; margin-top: 5px;">Data KK akan muncul otomatis saat penduduk diisi dengan No. KK yang sama.</p>
+                            <p style="color: #c2c2c2; font-size: 0.9em; margin-top: 5px;">Data KK akan muncul otomatis saat penduduk diisi dengan No. KK yang sama.</p>
                         </td>
                     </tr>
                 </template>

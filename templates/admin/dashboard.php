@@ -275,26 +275,26 @@
                 this.charts.gender = this.createChart('genderChart', 'doughnut',
                     this.stats.gender_stats.map(i => i.label),
                     this.stats.gender_stats.map(i => i.count),
-                    ['#1863dc', '#ff7759']
+                    ['#024ad8', '#ff5050']
                 );
 
                 this.charts.marital = this.createChart('maritalChart', 'pie',
                     this.stats.marital_stats.map(i => i.label),
                     this.stats.marital_stats.map(i => i.count),
-                    ['#003c33', '#ff7759', '#1863dc', '#93939f']
+                    ['#1a1a1a', '#ff5050', '#024ad8', '#636363']
                 );
 
                 this.charts.job = this.createChart('jobChart', 'bar',
                     this.stats.job_stats.map(i => i.label),
                     this.stats.job_stats.map(i => i.count),
-                    ['#17171c']
+                    ['#024ad8']
                 );
 
                 const letterColors = {
-                    'pending': '#ff7759',
-                    'processed': '#1863dc',
-                    'completed': '#003c33',
-                    'rejected': '#b30000'
+                    'pending': '#ff5050',
+                    'processed': '#024ad8',
+                    'completed': '#1f6b3c',
+                    'rejected': '#b3262b'
                 };
 
                 this.charts.letter = this.createChart('letterChart', 'doughnut',
@@ -321,13 +321,13 @@
                         datasets: [{
                                 label: 'Kuota',
                                 data: data1,
-                                backgroundColor: '#93939f',
+                                backgroundColor: '#636363',
                                 borderWidth: 0
                             },
                             {
                                 label: 'Tersalurkan',
                                 data: data2,
-                                backgroundColor: '#003c33',
+                                backgroundColor: '#024ad8',
                                 borderWidth: 0
                             }
                         ]

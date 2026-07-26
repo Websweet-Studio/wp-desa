@@ -1,165 +1,204 @@
-/* WP Desa Frontend Styles (Clean/Tailwind-like) */
+/* WP Desa Frontend Styles — HP Design Language */
+
+:root {
+  --primary: #024ad8;
+  --primary-soft: #c9e0fc;
+  --canvas: #ffffff;
+  --cloud: #f7f7f7;
+  --fog: #e8e8e8;
+  --steel: #c2c2c2;
+  --ink: #1a1a1a;
+  --on-ink: #ffffff;
+  --charcoal: #3d3d3d;
+  --graphite: #636363;
+  --error: #b3262b;
+  --success: #1f6b3c;
+  --warning: #9a5b1e;
+  --rounded-md: 4px;
+  --rounded-lg: 8px;
+  --rounded-xl: 16px;
+  --rounded-pill: 9999px;
+  --sp-xs: 8px;
+  --sp-sm: 12px;
+  --sp-md: 16px;
+  --sp-lg: 20px;
+  --sp-xl: 24px;
+  --shadow-soft-lift: 0 2px 8px rgba(26, 26, 26, 0.08);
+  --font-body:
+    "Forma DJR Micro", "Manrope", "Inter", Arial, ui-sans-serif, sans-serif;
+  --font-display:
+    "Forma DJR Micro", "Manrope", "Inter", Arial, ui-sans-serif, sans-serif;
+}
 
 .wp-desa-wrapper {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: #1f2937; /* gray-800 */
+  font-family: var(--font-body);
+  color: var(--ink);
 }
 
 /* Tabs */
 .wp-desa-tabs {
   display: flex;
-  border-bottom: 1px solid #e5e7eb;
-  background-color: #f9fafb; /* gray-50 */
+  border-bottom: 1px solid var(--fog);
+  background-color: var(--canvas);
 }
 
 .wp-desa-tab-btn {
   flex: 1;
-  padding: 1rem;
+  padding: var(--sp-sm) var(--sp-md);
   text-align: center;
   font-weight: 500;
-  color: #6b7280; /* gray-500 */
+  color: var(--graphite);
   background: none;
   border: none;
   cursor: pointer;
   transition: all 0.2s;
   border-bottom: 2px solid transparent;
+  font-family: var(--font-body);
+  font-size: 14px;
 }
 
 .wp-desa-tab-btn:hover {
-  color: #111827; /* gray-900 */
-  background-color: #f3f4f6; /* gray-100 */
+  color: var(--ink);
+  background-color: var(--cloud);
 }
 
 .wp-desa-tab-btn.active {
-  color: #2563eb; /* blue-600 */
-  border-bottom-color: #2563eb;
-  background-color: #ffffff;
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background-color: var(--canvas);
 }
 
 /* Content Area */
 .wp-desa-content {
-  padding: 2rem;
+  padding: var(--sp-xxl, 32px);
 }
 
 .wp-desa-title {
-  font-size: 1.5rem; /* text-2xl */
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.17;
   margin-top: 0;
-  margin-bottom: 1.5rem;
-  color: #111827; /* gray-900 */
+  margin-bottom: var(--sp-xl);
+  color: var(--ink);
 }
 
 /* Forms */
 .wp-desa-form-group {
-  margin-bottom: 1.25rem;
+  margin-bottom: var(--sp-lg);
 }
 
 .wp-desa-label {
   display: block;
-  font-size: 0.875rem; /* text-sm */
+  font-size: 14px;
   font-weight: 500;
-  color: #374151; /* gray-700 */
-  margin-bottom: 0.5rem;
+  color: var(--ink);
+  margin-bottom: var(--sp-xs);
 }
 
 .wp-desa-input,
 .wp-desa-select,
 .wp-desa-textarea {
   width: 100%;
-  padding: 0.625rem;
-  border: 1px solid #d1d5db; /* gray-300 */
-  border-radius: 0.375rem; /* rounded-md */
-  font-size: 0.95rem;
-  color: #1f2937;
-  background-color: #fff;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  transition: border-color 0.15s, box-shadow 0.15s;
-  box-sizing: border-box; /* WP themes sometimes mess this up */
+  padding: var(--sp-sm) var(--sp-md);
+  border: 1px solid var(--steel);
+  border-radius: var(--rounded-md);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.38;
+  color: var(--ink);
+  background-color: var(--canvas);
+  transition: border-color 0.15s;
+  box-sizing: border-box;
 }
 
 .wp-desa-input:focus,
 .wp-desa-select:focus,
 .wp-desa-textarea:focus {
   outline: none;
-  border-color: #3b82f6; /* blue-500 */
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--ink);
 }
 
 .wp-desa-helper {
-  font-size: 0.85rem;
-  color: #6b7280; /* gray-500 */
-  margin-top: 0.25rem;
+  font-size: 14px;
+  color: var(--graphite);
+  margin-top: var(--sp-xxs, 4px);
 }
 
-/* Buttons */
+/* Buttons — HP: 4px radius, uppercase, 0.7px tracking */
 .wp-desa-btn {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  padding: 0.625rem 1.25rem;
-  border: none;
-  border-radius: 0.375rem; /* rounded-md */
-  font-weight: 500;
-  font-size: 0.95rem;
+  padding: var(--sp-sm) var(--sp-xl);
+  border: 1px solid transparent;
+  border-radius: var(--rounded-md);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
   cursor: pointer;
   transition: background-color 0.15s;
-  width: 100%;
+  height: 44px;
+  box-sizing: border-box;
+  gap: var(--sp-xs);
 }
 
 .wp-desa-btn-primary {
-  background-color: #2563eb; /* blue-600 */
-  color: #ffffff !important;
-  text-decoration: none;
+  background-color: var(--primary);
+  color: var(--on-ink);
+  border-color: var(--primary);
 }
 
-.wp-desa-btn.wp-desa-btn-primary,
+.wp-desa-btn .wp-desa-btn-primary,
 .wp-desa-btn-primary span {
-  color: #ffffff !important;
+  color: var(--on-ink);
 }
 
 .wp-desa-btn-primary:hover {
-  background-color: #1d4ed8; /* blue-700 */
+  background-color: #0e3191;
 }
 
 .wp-desa-btn-primary:disabled {
-  background-color: #93c5fd;
+  background-color: var(--steel);
   cursor: not-allowed;
 }
 
 /* Alerts */
 .wp-desa-alert {
-  padding: 1rem;
-  border-radius: 0.375rem;
-  margin-bottom: 1.5rem;
-  font-size: 0.95rem;
+  padding: var(--sp-md);
+  border-radius: var(--rounded-md);
+  margin-bottom: var(--sp-xl);
+  font-size: 14px;
 }
 
 .wp-desa-alert-success {
-  background-color: #ecfdf5; /* green-50 */
-  color: #065f46; /* green-800 */
-  border: 1px solid #a7f3d0;
+  background-color: #e6f4ea;
+  color: var(--success);
+  border: 1px solid #c3e6cb;
 }
 
 .wp-desa-alert-error {
-  background-color: #fef2f2; /* red-50 */
-  color: #991b1b; /* red-800 */
-  border: 1px solid #fecaca;
+  background-color: #fce8e6;
+  color: var(--error);
+  border: 1px solid #f5c6cb;
 }
 
 /* Tracking Result Card */
 .wp-desa-card {
-  background-color: #f9fafb; /* gray-50 */
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
+  background-color: var(--canvas);
+  border: 1px solid var(--fog);
+  border-radius: var(--rounded-xl);
+  padding: var(--sp-xl);
 }
 
 .wp-desa-card-row {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--sp-xs) 0;
+  border-bottom: 1px solid var(--fog);
 }
 
 .wp-desa-card-row:last-child {
@@ -167,56 +206,54 @@
 }
 
 .wp-desa-card-label {
-  color: #6b7280;
-  font-size: 0.9rem;
+  color: var(--graphite);
+  font-size: 14px;
 }
 
 .wp-desa-card-value {
   font-weight: 500;
-  color: #111827;
+  color: var(--ink);
 }
 
 /* Status Badges */
 .wp-desa-badge {
   display: inline-block;
-  padding: 0.25rem 0.625rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  padding: 4px 12px;
+  border-radius: var(--rounded-pill);
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .wp-desa-badge-pending {
-  background-color: #f3f4f6;
-  color: #374151;
+  background-color: var(--cloud);
+  color: var(--ink);
 }
 .wp-desa-badge-processed {
-  background-color: #fef3c7;
-  color: #92400e;
+  background-color: #fef3e4;
+  color: var(--warning);
 }
 .wp-desa-badge-completed {
-  background-color: #d1fae5;
-  color: #065f46;
+  background-color: #e6f4ea;
+  color: var(--success);
 }
 .wp-desa-badge-rejected {
-  background-color: #fee2e2;
-  color: #991b1b;
+  background-color: #fce8e6;
+  color: var(--error);
 }
 
 /* Tracking Code Display */
 .wp-desa-tracking-code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  background-color: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  border: 1px dashed #2563eb;
-  color: #2563eb;
+  font-family: var(--font-body);
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 0;
+  background-color: var(--canvas);
+  padding: var(--sp-xs) var(--sp-md);
+  border-radius: var(--rounded-md);
+  border: 1px dashed var(--primary);
+  color: var(--primary);
   display: inline-block;
-  margin-top: 0.5rem;
+  margin-top: var(--sp-xs);
 }
 
 /* Public Templates CSS */
@@ -240,20 +277,20 @@
 }
 .pagination .page-numbers {
   display: inline-block;
-  padding: 8px 16px;
-  margin: 0 4px;
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  color: #64748b;
+  padding: var(--sp-xs) var(--sp-md);
+  margin: 0 var(--sp-xxs, 4px);
+  background: var(--canvas);
+  border: 1px solid var(--fog);
+  border-radius: var(--rounded-md);
+  color: var(--graphite);
   text-decoration: none;
   transition: all 0.2s;
 }
 .pagination .page-numbers.current,
 .pagination .page-numbers:hover {
-  background: #16a34a;
-  color: #fff;
-  border-color: #16a34a;
+  background: var(--primary);
+  color: var(--on-ink);
+  border-color: var(--primary);
 }
 .pagination .page-numbers.dots {
   border: none;
@@ -267,12 +304,10 @@
 .wp-desa-grid article:hover img {
   transform: scale(1.05);
 }
-/* Note: Pagination styles are duplicated here but with different color (#2563eb).
-   Ensure specific targeting if needed, or unify colors. */
 .pagination .page-numbers.current,
 .pagination .page-numbers:hover {
-  background: #2563eb;
-  border-color: #2563eb;
+  background: var(--primary);
+  border-color: var(--primary);
 }
 
 /* From single-desa_potensi.php */
@@ -280,18 +315,20 @@
   margin-bottom: 1.5em;
 }
 .entry-content h2 {
-  font-size: 2rem;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1;
   margin-top: 2em;
   margin-bottom: 0.75em;
-  color: #1e293b;
-  font-weight: 700;
+  color: var(--ink);
 }
 .entry-content h3 {
-  font-size: 1.5rem;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.17;
   margin-top: 2em;
   margin-bottom: 0.75em;
-  color: #1e293b;
-  font-weight: 600;
+  color: var(--ink);
 }
 .entry-content ul,
 .entry-content ol {
@@ -302,16 +339,16 @@
   margin-bottom: 0.5em;
 }
 .entry-content blockquote {
-  border-left: 4px solid #16a34a;
-  padding-left: 20px;
+  border-left: 4px solid var(--primary);
+  padding-left: var(--sp-lg);
   font-style: italic;
-  color: #475569;
+  color: var(--charcoal);
   margin: 2em 0;
 }
 .entry-content img {
   max-width: 100%;
   height: auto;
-  border-radius: 12px;
+  border-radius: var(--rounded-xl);
 }
 
 /* =========================================
@@ -322,26 +359,29 @@
 .wp-desa-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 25px;
-  margin: 20px 0;
+  gap: var(--sp-xl);
+  margin: var(--sp-lg) 0;
 }
 
 .wp-desa-stat-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 25px 20px;
+  background: var(--canvas);
+  border-radius: var(--rounded-xl);
+  padding: var(--sp-xl);
   text-align: center;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--fog);
+  box-shadow: var(--shadow-soft-lift);
 }
 
 .wp-desa-stat-icon {
   width: 60px;
   height: 60px;
   margin: 0 auto 15px;
-  border-radius: 50%;
+  border-radius: var(--rounded-lg);
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .wp-desa-stat-icon .dashicons {
@@ -351,28 +391,28 @@
 }
 
 .wp-desa-stat-number {
-  font-size: 2.5em;
-  font-weight: 700;
-  color: #1e293b;
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 500;
   line-height: 1;
+  color: var(--ink);
   margin-bottom: 5px;
 }
 
 .wp-desa-stat-label {
-  color: #64748b;
-  font-size: 0.95em;
+  color: var(--graphite);
+  font-size: 14px;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.7px;
 }
 
 .wp-desa-chart-container {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px;
-  border: 1px solid #f1f5f9;
+  background: var(--canvas);
+  padding: var(--sp-lg);
+  border-radius: var(--rounded-xl);
+  border: 1px solid var(--fog);
+  margin-bottom: var(--sp-xxl, 32px);
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
@@ -381,116 +421,118 @@
 /* --- Bantuan Shortcode --- */
 .status-badge {
   padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 0.8em;
+  border-radius: var(--rounded-pill);
+  font-size: 12px;
   font-weight: 500;
 }
 
 .status-pending {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--cloud);
+  color: var(--ink);
 }
 
 .status-approved {
-  background: #dbeafe;
-  color: #1e40af;
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .status-rejected {
-  background: #fee2e2;
-  color: #991b1b;
+  background: #fce8e6;
+  color: var(--error);
 }
 
 .status-distributed {
-  background: #d1fae5;
-  color: #065f46;
+  background: #e6f4ea;
+  color: var(--success);
 }
 
 /* --- Aduan Shortcode --- */
 #wp-desa-aduan .wp-desa-tab-btn {
-  padding: 12px 20px;
+  padding: var(--sp-sm) var(--sp-lg);
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  font-weight: 600;
-  color: #64748b;
+  font-weight: 500;
+  color: var(--graphite);
   cursor: pointer;
   transition: all 0.2s;
-  font-size: 1em;
+  font-size: 14px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--sp-xs);
+  font-family: var(--font-body);
 }
 
 #wp-desa-aduan .wp-desa-tab-btn.active {
-  color: #2563eb;
-  border-bottom-color: #2563eb;
+  color: var(--primary);
+  border-bottom-color: var(--primary);
 }
 
 #wp-desa-aduan .wp-desa-tab-btn:hover {
-  color: #1e293b;
-  background: #f8fafc;
+  color: var(--ink);
+  background: var(--cloud);
 }
 
 #wp-desa-aduan .wp-desa-input,
 #wp-desa-aduan .wp-desa-select,
 #wp-desa-aduan .wp-desa-textarea {
   width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 0.95em;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  padding: var(--sp-sm) var(--sp-md);
+  border: 1px solid var(--steel);
+  border-radius: var(--rounded-md);
+  font-family: var(--font-body);
+  font-size: 16px;
+  transition: border-color 0.2s;
   box-sizing: border-box;
-  background: #fff;
-  font-family: inherit;
-  color: #1e293b;
+  background: var(--canvas);
+  color: var(--ink);
 }
 
 #wp-desa-aduan .wp-desa-input:focus,
 #wp-desa-aduan .wp-desa-select:focus,
 #wp-desa-aduan .wp-desa-textarea:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--ink);
 }
 
 #wp-desa-aduan .wp-desa-label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: var(--sp-xs);
   font-weight: 500;
-  color: #334155;
-  font-size: 0.95em;
+  color: var(--ink);
+  font-size: 14px;
 }
 
 #wp-desa-aduan .wp-desa-form-group {
-  margin-bottom: 24px;
+  margin-bottom: var(--sp-xl);
 }
 
 #wp-desa-aduan .wp-desa-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 24px;
-  border-radius: 8px;
+  padding: var(--sp-sm) var(--sp-xl);
+  border-radius: var(--rounded-md);
   font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s;
-  border: none;
-  font-size: 1em;
-  gap: 8px;
+  border: 1px solid transparent;
+  font-family: var(--font-body);
+  height: 44px;
+  box-sizing: border-box;
+  gap: var(--sp-xs);
 }
 
 #wp-desa-aduan .wp-desa-btn-primary {
-  background: #2563eb;
-  color: white;
-  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+  background: var(--primary);
+  color: var(--on-ink);
 }
 
 #wp-desa-aduan .wp-desa-btn-primary:hover {
-  background: #1d4ed8;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 8px -1px rgba(37, 99, 235, 0.3);
+  background: #0e3191;
 }
 
 #wp-desa-aduan .wp-desa-btn:disabled {
@@ -498,23 +540,23 @@
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
-  background: #94a3b8;
+  background: var(--steel);
+  color: var(--on-ink);
 }
 
 #wp-desa-aduan .wp-desa-result-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  border: 1px solid #f1f5f9;
+  background: var(--canvas);
+  border-radius: var(--rounded-xl);
+  padding: var(--sp-xl);
+  border: 1px solid var(--fog);
+  box-shadow: var(--shadow-soft-lift);
 }
 
 #wp-desa-aduan .wp-desa-card-row {
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid #f1f5f9;
+  padding: var(--sp-sm) 0;
+  border-bottom: 1px solid var(--fog);
 }
 
 #wp-desa-aduan .wp-desa-card-row:last-child {
@@ -522,19 +564,19 @@
 }
 
 #wp-desa-aduan .wp-desa-card-label {
-  color: #64748b;
+  color: var(--graphite);
   font-weight: 500;
 }
 
 #wp-desa-aduan .wp-desa-card-value {
-  color: #1e293b;
-  font-weight: 600;
+  color: var(--ink);
+  font-weight: 500;
   text-align: right;
 }
 
 #wp-desa-aduan .wp-desa-helper {
-  font-size: 0.85em;
-  color: #64748b;
+  font-size: 14px;
+  color: var(--graphite);
   margin-top: 6px;
   display: block;
 }
@@ -544,7 +586,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 25px;
+  margin-bottom: var(--sp-xl);
   flex-wrap: wrap;
   gap: 15px;
 }
@@ -555,9 +597,9 @@
 }
 
 #wp-desa-keuangan .wp-desa-subtitle {
-  margin: 4px 0 0 0;
-  font-size: 0.9em;
-  color: #64748b;
+  margin: var(--sp-xxs, 4px) 0 0 0;
+  font-size: 14px;
+  color: var(--graphite);
 }
 
 #wp-desa-keuangan .wp-desa-filter {
@@ -568,33 +610,29 @@
 
 #wp-desa-keuangan .wp-desa-filter-label {
   font-weight: 500;
-  color: #64748b;
-}
-
-#wp-desa-keuangan .wp-desa-filter-control {
-  position: relative;
+  color: var(--graphite);
 }
 
 #wp-desa-keuangan .wp-desa-select-year {
   width: auto;
-  padding: 6px 30px 6px 12px;
-  border-radius: 6px;
-  border-color: #cbd5e1;
+  padding: 6px 30px 6px var(--sp-sm);
+  border-radius: var(--rounded-md);
+  border-color: var(--steel);
 }
 
 #wp-desa-keuangan .wp-desa-summary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px;
-  margin-bottom: 35px;
+  gap: var(--sp-xl);
+  margin-bottom: var(--sp-xxl, 32px);
 }
 
 #wp-desa-keuangan .wp-desa-stat-card {
   text-align: left;
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
-  padding: 20px 18px;
+  border-radius: var(--rounded-xl);
+  padding: var(--sp-lg) 18px;
 }
 
 #wp-desa-keuangan .wp-desa-stat-icon-bg {
@@ -612,26 +650,28 @@
 
 #wp-desa-keuangan .wp-desa-stat-label {
   margin: 0 0 10px 0;
-  color: #64748b;
-  font-size: 0.9em;
+  color: var(--graphite);
+  font-size: 14px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.7px;
 }
 
 #wp-desa-keuangan .wp-desa-stat-value {
+  font-family: var(--font-display);
   margin: 0 0 5px 0;
-  color: #1e293b;
-  font-size: 1.8rem;
-  font-weight: 700;
+  color: var(--ink);
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1;
 }
 
 #wp-desa-keuangan .wp-desa-stat-sub {
-  font-size: 0.85em;
-  color: #64748b;
-  background: #f1f5f9;
+  font-size: 14px;
+  color: var(--graphite);
+  background: var(--cloud);
   display: inline-block;
-  padding: 4px 10px;
-  border-radius: 4px;
+  padding: var(--sp-xxs, 4px) 10px;
+  border-radius: var(--rounded-md);
 }
 
 #wp-desa-keuangan .wp-desa-stat-sub-muted {
@@ -640,20 +680,20 @@
 }
 
 #wp-desa-keuangan .wp-desa-stat-card-surplus {
-  border-left: 3px solid #16a34a;
+  border-left: 3px solid var(--primary);
 }
 
 #wp-desa-keuangan .wp-desa-chart-wrapper {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 25px;
-  margin-bottom: 35px;
+  gap: var(--sp-xl);
+  margin-bottom: var(--sp-xxl, 32px);
 }
 
 #wp-desa-keuangan .wp-desa-chart-title {
   text-align: center;
-  margin-bottom: 20px;
-  color: #334155;
+  margin-bottom: var(--sp-lg);
+  color: var(--ink);
 }
 
 #wp-desa-keuangan .wp-desa-chart-box {
@@ -662,21 +702,22 @@
 }
 
 #wp-desa-keuangan .wp-desa-table-header {
-  padding: 20px;
-  border-bottom: 1px solid #e2e8f0;
-  background: #f8fafc;
+  padding: var(--sp-lg);
+  border-bottom: 1px solid var(--fog);
+  background: var(--cloud);
 }
 
 #wp-desa-keuangan .wp-desa-table-title {
   margin: 0;
-  color: #334155;
-  font-size: 1.1em;
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 500;
 }
 
 #wp-desa-keuangan .wp-desa-table-subtitle {
-  margin: 4px 0 0 0;
-  font-size: 0.9em;
-  color: #64748b;
+  margin: var(--sp-xxs, 4px) 0 0 0;
+  font-size: 14px;
+  color: var(--graphite);
 }
 
 #wp-desa-keuangan .wp-desa-table-wrapper {
@@ -686,55 +727,50 @@
 #wp-desa-keuangan table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.95em;
+  font-size: 14px;
 }
 
 #wp-desa-keuangan th {
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--cloud);
+  color: var(--graphite);
   text-transform: uppercase;
-  font-size: 0.85em;
-  letter-spacing: 0.5px;
-  padding: 15px 20px;
+  font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.7px;
+  padding: 15px var(--sp-lg);
 }
 
 #wp-desa-keuangan td {
-  padding: 15px 20px;
+  padding: 15px var(--sp-lg);
 }
 
 #wp-desa-keuangan .wp-desa-row-title {
-  font-weight: 600;
-  color: #1e293b;
+  font-weight: 500;
+  color: var(--ink);
 }
 
 #wp-desa-keuangan .wp-desa-row-subtitle {
-  font-size: 0.9em;
-  color: #64748b;
-  margin-top: 4px;
+  font-size: 14px;
+  color: var(--graphite);
+  margin-top: var(--sp-xxs, 4px);
 }
 
 #wp-desa-keuangan .wp-desa-col-title {
   text-align: left;
 }
-
 #wp-desa-keuangan .wp-desa-col-number {
   text-align: right;
 }
-
 #wp-desa-keuangan .wp-desa-col-percentage {
   text-align: center;
 }
-
 #wp-desa-keuangan .wp-desa-cell-number {
   text-align: right;
   white-space: nowrap;
 }
-
 #wp-desa-keuangan .wp-desa-cell-number-strong {
   font-weight: 500;
 }
-
 #wp-desa-keuangan .wp-desa-cell-percentage {
   text-align: center;
 }
@@ -742,50 +778,51 @@
 #wp-desa-keuangan .wp-desa-percentage {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.85em;
-  font-weight: 600;
+  border-radius: var(--rounded-pill);
+  font-size: 13px;
+  font-weight: 500;
 }
 
 #wp-desa-keuangan .wp-desa-empty-state {
   text-align: center;
   padding: 40px;
-  color: #94a3b8;
+  color: var(--steel);
 }
 
 /* --- Layanan Shortcode Extra --- */
 #wp-desa-layanan .wp-desa-message {
   padding: 15px;
-  border-radius: 8px;
+  border-radius: var(--rounded-md);
   border: 1px solid;
-  margin-bottom: 20px;
+  margin-bottom: var(--sp-lg);
 }
 
 #wp-desa-layanan .wp-desa-tracking-box {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  padding: 20px;
-  border-radius: 8px;
+  background: var(--primary-soft);
+  border: 1px solid var(--primary);
+  padding: var(--sp-lg);
+  border-radius: var(--rounded-md);
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--sp-lg);
 }
 
 #wp-desa-layanan .wp-desa-tracking-label {
-  color: #1e40af;
+  color: var(--primary);
   font-weight: 500;
   margin-bottom: 10px;
 }
 
 #wp-desa-layanan .wp-desa-tracking-number {
-  font-size: 1.5em;
-  font-weight: 700;
-  color: #1e3a8a;
-  letter-spacing: 2px;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--primary);
+  letter-spacing: 0;
 }
 
 #wp-desa-layanan .wp-desa-tracking-note {
-  font-size: 0.9em;
-  color: #60a5fa;
+  font-size: 14px;
+  color: var(--graphite);
   margin-top: 10px;
 }
 
@@ -796,106 +833,109 @@
 
 #wp-desa-layanan .wp-desa-status-badge {
   padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.85em;
-  font-weight: 600;
-  background: #e2e8f0;
-  color: #475569;
+  border-radius: var(--rounded-pill);
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--cloud);
+  color: var(--ink);
 }
 
 #wp-desa-layanan .wp-desa-error-box {
   padding: 15px;
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
-  border-radius: 8px;
+  background: #fce8e6;
+  color: var(--error);
+  border: 1px solid #f5c6cb;
+  border-radius: var(--rounded-md);
   margin-top: 15px;
 }
+
 /* --- Layanan Shortcode --- */
 #wp-desa-layanan .wp-desa-tab-btn {
-  padding: 12px 20px;
+  padding: var(--sp-sm) var(--sp-lg);
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  font-weight: 600;
-  color: #64748b;
+  font-weight: 500;
+  color: var(--graphite);
   cursor: pointer;
   transition: all 0.2s;
-  font-size: 1em;
+  font-size: 14px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--sp-xs);
+  font-family: var(--font-body);
 }
 
 #wp-desa-layanan .wp-desa-tab-btn.active {
-  color: #2563eb;
-  border-bottom-color: #2563eb;
+  color: var(--primary);
+  border-bottom-color: var(--primary);
 }
 
 #wp-desa-layanan .wp-desa-tab-btn:hover {
-  color: #1e293b;
-  background: #f8fafc;
+  color: var(--ink);
+  background: var(--cloud);
 }
 
 #wp-desa-layanan .wp-desa-input,
 #wp-desa-layanan .wp-desa-select,
 #wp-desa-layanan .wp-desa-textarea {
   width: 100%;
-  padding: 12px 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 0.95em;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  padding: var(--sp-sm) var(--sp-md);
+  border: 1px solid var(--steel);
+  border-radius: var(--rounded-md);
+  font-family: var(--font-body);
+  font-size: 16px;
+  transition: border-color 0.2s;
   box-sizing: border-box;
-  background: #fff;
-  font-family: inherit;
-  color: #1e293b;
+  background: var(--canvas);
+  color: var(--ink);
 }
 
 #wp-desa-layanan .wp-desa-input:focus,
 #wp-desa-layanan .wp-desa-select:focus,
 #wp-desa-layanan .wp-desa-textarea:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--ink);
 }
 
 #wp-desa-layanan .wp-desa-label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: var(--sp-xs);
   font-weight: 500;
-  color: #334155;
-  font-size: 0.95em;
+  color: var(--ink);
+  font-size: 14px;
 }
 
 #wp-desa-layanan .wp-desa-form-group {
-  margin-bottom: 24px;
+  margin-bottom: var(--sp-xl);
 }
 
 #wp-desa-layanan .wp-desa-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 24px;
-  border-radius: 8px;
+  padding: var(--sp-sm) var(--sp-xl);
+  border-radius: var(--rounded-md);
   font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s;
-  border: none;
-  font-size: 1em;
-  gap: 8px;
+  border: 1px solid transparent;
+  font-family: var(--font-body);
+  height: 44px;
+  box-sizing: border-box;
+  gap: var(--sp-xs);
 }
 
 #wp-desa-layanan .wp-desa-btn-primary {
-  background: #2563eb;
-  color: white;
-  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+  background: var(--primary);
+  color: var(--on-ink);
 }
 
 #wp-desa-layanan .wp-desa-btn-primary:hover {
-  background: #1d4ed8;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 8px -1px rgba(37, 99, 235, 0.3);
+  background: #0e3191;
 }
 
 #wp-desa-layanan .wp-desa-btn:disabled {
@@ -903,23 +943,23 @@
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
-  background: #94a3b8;
+  background: var(--steel);
+  color: var(--on-ink);
 }
 
 #wp-desa-layanan .wp-desa-result-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  border: 1px solid #f1f5f9;
+  background: var(--canvas);
+  border-radius: var(--rounded-xl);
+  padding: var(--sp-xl);
+  border: 1px solid var(--fog);
+  box-shadow: var(--shadow-soft-lift);
 }
 
 #wp-desa-layanan .wp-desa-card-row {
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid #f1f5f9;
+  padding: var(--sp-sm) 0;
+  border-bottom: 1px solid var(--fog);
 }
 
 #wp-desa-layanan .wp-desa-card-row:last-child {
@@ -927,19 +967,19 @@
 }
 
 #wp-desa-layanan .wp-desa-card-label {
-  color: #64748b;
+  color: var(--graphite);
   font-weight: 500;
 }
 
 #wp-desa-layanan .wp-desa-card-value {
-  color: #1e293b;
-  font-weight: 600;
+  color: var(--ink);
+  font-weight: 500;
   text-align: right;
 }
 
 #wp-desa-layanan .wp-desa-helper {
-  font-size: 0.85em;
-  color: #64748b;
+  font-size: 14px;
+  color: var(--graphite);
   margin-top: 6px;
   display: block;
 }

@@ -14,7 +14,7 @@
                     <p class="wp-desa-stat-title">Total Penduduk</p>
                     <h3 class="wp-desa-stat-value" x-text="formatNumber(stats.total)">-</h3>
                 </div>
-                <div class="wp-desa-stat-icon" style="background: #eff6ff; color: #3b82f6;">
+                <div class="wp-desa-stat-icon" style="background: #c9e0fc; color: #024ad8;">
                     <span class="dashicons dashicons-groups"></span>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                     <p class="wp-desa-stat-title">Kartu Keluarga</p>
                     <h3 class="wp-desa-stat-value" x-text="formatNumber(stats.families)">-</h3>
                 </div>
-                <div class="wp-desa-stat-icon" style="background: #fffbeb; color: #f59e0b;">
+                <div class="wp-desa-stat-icon" style="background: #e6f4ea; color: #1f6b3c;">
                     <span class="dashicons dashicons-admin-home"></span>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                     <p class="wp-desa-stat-title">Laki-laki</p>
                     <h3 class="wp-desa-stat-value" x-text="formatNumber(stats.male)">-</h3>
                 </div>
-                <div class="wp-desa-stat-icon" style="background: #e0f2fe; color: #0ea5e9;">
+                <div class="wp-desa-stat-icon" style="background: #c9e0fc; color: #024ad8;">
                     <span class="dashicons dashicons-admin-users"></span>
                 </div>
             </div>
@@ -50,7 +50,7 @@
                     <p class="wp-desa-stat-title">Perempuan</p>
                     <h3 class="wp-desa-stat-value" x-text="formatNumber(stats.female)">-</h3>
                 </div>
-                <div class="wp-desa-stat-icon" style="background: #fce7f3; color: #ec4899;">
+                <div class="wp-desa-stat-icon" style="background: #f9d4d2; color: #b3262b;">
                     <span class="dashicons dashicons-admin-users"></span>
                 </div>
             </div>
@@ -102,7 +102,7 @@
                     </table>
                 </template>
                 <template x-if="!stats.jobs || stats.jobs.length === 0">
-                    <p style="text-align: center; color: #94a3b8; padding: 30px 0; margin: 0;">Belum ada data.</p>
+                    <p style="text-align: center; color: #c2c2c2; padding: 30px 0; margin: 0;">Belum ada data.</p>
                 </template>
             </div>
         </div>
@@ -129,7 +129,7 @@
                     </table>
                 </template>
                 <template x-if="!stats.maritals || stats.maritals.length === 0">
-                    <p style="text-align: center; color: #94a3b8; padding: 30px 0; margin: 0;">Belum ada data.</p>
+                    <p style="text-align: center; color: #c2c2c2; padding: 30px 0; margin: 0;">Belum ada data.</p>
                 </template>
             </div>
         </div>
@@ -191,7 +191,7 @@
                             labels: ['Laki-laki', 'Perempuan'],
                             datasets: [{
                                 data: [this.stats.male || 0, this.stats.female || 0],
-                                backgroundColor: ['#0ea5e9', '#ec4899'],
+                                backgroundColor: ['#024ad8', '#b3262b'],
                                 borderWidth: 0
                             }]
                         },
@@ -221,7 +221,7 @@
                             datasets: [{
                                 label: 'Jumlah',
                                 data: [parseInt(ag.anak) || 0, parseInt(ag.dewasa) || 0, parseInt(ag.lansia) || 0],
-                                backgroundColor: ['#93c5fd', '#3b82f6', '#1e40af'],
+                                backgroundColor: ['#c9e0fc', '#024ad8', '#0e3191'],
                                 borderRadius: 6,
                                 borderWidth: 0
                             }]
