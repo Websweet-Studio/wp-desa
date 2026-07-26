@@ -99,9 +99,7 @@ class Menu
 
         // Dashboard and Finance (Need Chart.js)
         if ($hook === 'toplevel_page_wp-desa' || $hook === 'wp-desa_page_wp-desa-residents' || $hook === 'wp-desa_page_wp-desa-keuangan') {
-            wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', [], '4.0.0', true);
-            // CDN fallback
-            wp_add_inline_script('chartjs', 'if(typeof Chart==="undefined"){var e=document.createElement("script");e.src="' . WP_DESA_URL . 'assets/js/chart.min.js";document.head.appendChild(e);}');
+            wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js', [], '4.4.0', true);
         }
     }
 

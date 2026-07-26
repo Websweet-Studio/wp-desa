@@ -126,7 +126,7 @@ class Shortcode
         <!-- Total -->
         <div class="wp-desa-stat-card">
           <div class="wp-desa-stat-icon" style="background: #c9e0fc; color: #024ad8;">
-            <i data-lucide="users" style="width: 24px; height: 24px;"></i>
+            <?php echo \WpDesa\Frontend\Icons::svg('users', 'width:24px;height:24px'); ?>
           </div>
           <div class="wp-desa-stat-number"><?php echo number_format_i18n($total_val); ?></div>
           <div class="wp-desa-stat-label">Total Penduduk</div>
@@ -135,7 +135,7 @@ class Shortcode
         <!-- KK -->
         <div class="wp-desa-stat-card">
           <div class="wp-desa-stat-icon" style="background: #e6f4ea; color: #1f6b3c;">
-            <i data-lucide="home" style="width: 24px; height: 24px;"></i>
+            <?php echo \WpDesa\Frontend\Icons::svg('home', 'width: 24px; height: 24px;'); ?>
           </div>
           <div class="wp-desa-stat-number"><?php echo number_format_i18n($families_val); ?></div>
           <div class="wp-desa-stat-label">Kepala Keluarga</div>
@@ -144,7 +144,7 @@ class Shortcode
         <!-- Laki-laki -->
         <div class="wp-desa-stat-card">
           <div class="wp-desa-stat-icon" style="background: #c9e0fc; color: #024ad8;">
-            <i data-lucide="mars" style="width: 24px; height: 24px;"></i>
+            <?php echo \WpDesa\Frontend\Icons::svg('mars', 'width: 24px; height: 24px;'); ?>
           </div>
           <div class="wp-desa-stat-number"><?php echo number_format_i18n($male_val); ?></div>
           <div class="wp-desa-stat-label">Laki-laki</div>
@@ -153,7 +153,7 @@ class Shortcode
         <!-- Perempuan -->
         <div class="wp-desa-stat-card">
           <div class="wp-desa-stat-icon" style="background: #f9d4d2; color: #b3262b;">
-            <i data-lucide="venus" style="width: 24px; height: 24px;"></i>
+            <?php echo \WpDesa\Frontend\Icons::svg('venus', 'width: 24px; height: 24px;'); ?>
           </div>
           <div class="wp-desa-stat-number"><?php echo number_format_i18n($female_val); ?></div>
           <div class="wp-desa-stat-label">Perempuan</div>
@@ -296,7 +296,7 @@ class Shortcode
                   </a>
                 <?php else: ?>
                   <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--graphite); background: var(--cloud);">
-                    <i data-lucide="store" style="width: 48px; height: 48px;"></i>
+                    <?php echo \WpDesa\Frontend\Icons::svg('store', 'width: 48px; height: 48px;'); ?>
                   </div>
                 <?php endif; ?>
               </div>
@@ -310,7 +310,7 @@ class Shortcode
 
                 <div style="border-top: 1px solid var(--fog); padding-top: var(--sp-sm); margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
                   <a href="<?php the_permalink(); ?>" style="font-size: 14px; font-weight: 500; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 4px;">
-                    Detail <i data-lucide="arrow-right" style="width: 16px; height: 16px; margin-top: 2px;"></i>
+                    Detail <?php echo \WpDesa\Frontend\Icons::svg('arrow-right', 'width: 16px; height: 16px; margin-top: 2px;'); ?>
                   </a>
 
                   <?php if ($phone):
@@ -320,7 +320,7 @@ class Shortcode
                     }
                   ?>
                     <a href="https://wa.me/<?php echo esc_attr($clean_phone); ?>" target="_blank" style="background: #25D366; color: #ffffff; border: none; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--rounded-md); text-decoration: none;">
-                      <i data-lucide="message-circle" style="width: 16px; height: 16px;"></i> Chat
+                      <?php echo \WpDesa\Frontend\Icons::svg('message-circle', 'width: 16px; height: 16px;'); ?> Chat
                     </a>
                   <?php endif; ?>
                 </div>
@@ -330,7 +330,7 @@ class Shortcode
         </div>
       <?php else: ?>
         <div style="text-align: center; padding: 60px 20px; background: var(--cloud); border-radius: var(--rounded-xl); border: 1px solid var(--fog); color: var(--graphite);">
-          <i data-lucide="store" style="width: 48px; height: 48px; margin-bottom: 10px;"></i>
+          <?php echo \WpDesa\Frontend\Icons::svg('store', 'width: 48px; height: 48px; margin-bottom: 10px;'); ?>
           <p style="margin: 0; font-size: 1.1em;">Belum ada data UMKM yang ditampilkan.</p>
         </div>
       <?php endif;
@@ -392,7 +392,7 @@ class Shortcode
                 $ids = explode(',', $gallery_ids);
               ?>
                 <h3 style="margin: 40px 0 20px 0; color: #1a1a1a; font-size: 1.3em; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f7f7f7; padding-bottom: 10px;">
-                  <i data-lucide="image" style="width: 24px; height: 24px;"></i> Galeri Produk
+                  <?php echo \WpDesa\Frontend\Icons::svg('image', 'width: 24px; height: 24px;'); ?> Galeri Produk
                 </h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px;">
                   <?php foreach ($ids as $id):
@@ -422,7 +422,7 @@ class Shortcode
                   <div style="margin-bottom: 25px;">
                     <div style="font-size: 0.9em; color: #636363; margin-bottom: 8px; font-weight: 600;">WhatsApp</div>
                     <a href="https://wa.me/<?php echo esc_attr($clean_phone); ?>" target="_blank" style="display: flex; align-items: center; gap: 10px; text-decoration: none; background: #e6f4ea; color: #1f6b3c; padding: 12px 15px; border-radius: 8px; font-weight: 600; transition: background 0.2s; justify-content: center;" onmouseover="this.style.background='#c3e6cb'" onmouseout="this.style.background='#e6f4ea'">
-                      <i data-lucide="message-circle" style="width: 20px; height: 20px;"></i>
+                      <?php echo \WpDesa\Frontend\Icons::svg('message-circle', 'width: 20px; height: 20px;'); ?>
                       Hubungi Penjual
                     </a>
                   </div>
@@ -455,7 +455,7 @@ class Shortcode
                         </div>
                       <?php else: ?>
                         <a href="https://www.google.com/maps/search/?api=1&query=<?php echo urlencode($location); ?>" target="_blank" style="font-size: 0.9em; color: #024ad8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
-                          Lihat di Google Maps <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+                          Lihat di Google Maps <?php echo \WpDesa\Frontend\Icons::svg('arrow-right', 'width: 14px; height: 14px;'); ?>
                         </a>
                       <?php endif; ?>
                     </div>
@@ -467,13 +467,13 @@ class Shortcode
                   <div style="font-size: 0.9em; color: #636363; margin-bottom: 10px; font-weight: 600;">Bagikan</div>
                   <div style="display: flex; gap: 10px;">
                     <a href="https://www.facebook.com/sharer/sharer.php?u=<?php the_permalink($post_id); ?>" target="_blank" style="width: 40px; height: 40px; background: #1877f2; color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-                      <i data-lucide="facebook" style="width: 20px; height: 20px;"></i>
+                      <?php echo \WpDesa\Frontend\Icons::svg('facebook', 'width: 20px; height: 20px;'); ?>
                     </a>
                     <a href="https://twitter.com/intent/tweet?url=<?php the_permalink($post_id); ?>&text=<?php echo urlencode($post->post_title); ?>" target="_blank" style="width: 40px; height: 40px; background: #000000; color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
-                      <i data-lucide="twitter" style="width: 20px; height: 20px;"></i>
+                      <?php echo \WpDesa\Frontend\Icons::svg('twitter', 'width: 20px; height: 20px;'); ?>
                     </a>
                     <button onclick="navigator.clipboard.writeText('<?php the_permalink($post_id); ?>'); alert('Link disalin!');" style="width: 40px; height: 40px; background: #636363; color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: none; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#3d3d3d'" onmouseout="this.style.background='#636363'">
-                      <i data-lucide="link" style="width: 20px; height: 20px;"></i>
+                      <?php echo \WpDesa\Frontend\Icons::svg('link', 'width: 20px; height: 20px;'); ?>
                     </button>
                   </div>
                 </div>
@@ -513,7 +513,7 @@ class Shortcode
                   </a>
                 <?php else: ?>
                   <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--graphite); background: var(--cloud);">
-                    <i data-lucide="carrot" style="width: 48px; height: 48px;"></i>
+                    <?php echo \WpDesa\Frontend\Icons::svg('carrot', 'width: 48px; height: 48px;'); ?>
                   </div>
                 <?php endif; ?>
               </div>
@@ -525,7 +525,7 @@ class Shortcode
                   <?php echo wp_trim_words(get_the_excerpt(), 20); ?>
                 </div>
                 <a href="<?php the_permalink(); ?>" style="font-size: 14px; font-weight: 500; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 4px; margin-top: auto;">
-                  Baca Selengkapnya <i data-lucide="arrow-right" style="width: 16px; height: 16px; margin-top: 2px;"></i>
+                  Baca Selengkapnya <?php echo \WpDesa\Frontend\Icons::svg('arrow-right', 'width: 16px; height: 16px; margin-top: 2px;'); ?>
                 </a>
               </div>
             </div>
@@ -533,7 +533,7 @@ class Shortcode
         </div>
       <?php else: ?>
         <div style="text-align: center; padding: 60px 20px; background: var(--cloud); border-radius: var(--rounded-xl); border: 1px solid var(--fog); color: var(--graphite);">
-          <i data-lucide="carrot" style="width: 48px; height: 48px; margin-bottom: 10px;"></i>
+          <?php echo \WpDesa\Frontend\Icons::svg('carrot', 'width: 48px; height: 48px; margin-bottom: 10px;'); ?>
           <p style="margin: 0; font-size: 1.1em;">Belum ada data Potensi Desa.</p>
         </div>
       <?php endif;
@@ -561,7 +561,7 @@ class Shortcode
     <div class="wp-desa-wrapper">
       <div class="wp-desa-stat-card" style="text-align: center; padding: var(--sp-xl);">
         <?php if ($logo): ?>
-          <img src="<?php echo esc_url($logo); ?>" alt="Logo Kabupaten" style="max-width: 100px; height: auto; margin-bottom: var(--sp-xl);">
+          <img src="<?php echo esc_url($logo); ?>" alt="Logo Kabupaten" class="wp-desa-profil-logo">
         <?php endif; ?>
 
         <h2 style="margin: 0 0 var(--sp-xxs) 0; font-family: var(--font-display); font-size: 24px; font-weight: 500; line-height: 1.17; color: var(--ink);"><?php echo esc_html('Desa ' . $nama_desa); ?></h2>
@@ -573,7 +573,7 @@ class Shortcode
           <?php if ($alamat): ?>
             <div style="display: flex; gap: var(--sp-sm); align-items: flex-start;">
               <div style="width: 32px; height: 32px; background: var(--primary-soft); border-radius: var(--rounded-lg); display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0;">
-                <i data-lucide="map-pin" style="width: 18px; height: 18px;"></i>
+                <?php echo \WpDesa\Frontend\Icons::svg('map-pin', 'width: 18px; height: 18px;'); ?>
               </div>
               <div>
                 <div style="font-size: 12px; color: var(--graphite); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Alamat Kantor</div>
@@ -585,7 +585,7 @@ class Shortcode
           <?php if ($email): ?>
             <div style="display: flex; gap: var(--sp-sm); align-items: flex-start;">
               <div style="width: 32px; height: 32px; background: var(--primary-soft); border-radius: var(--rounded-lg); display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0;">
-                <i data-lucide="mail" style="width: 18px; height: 18px;"></i>
+                <?php echo \WpDesa\Frontend\Icons::svg('mail', 'width: 18px; height: 18px;'); ?>
               </div>
               <div>
                 <div style="font-size: 12px; color: var(--graphite); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Email</div>
@@ -597,7 +597,7 @@ class Shortcode
           <?php if ($telepon): ?>
             <div style="display: flex; gap: var(--sp-sm); align-items: flex-start;">
               <div style="width: 32px; height: 32px; background: var(--primary-soft); border-radius: var(--rounded-lg); display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0;">
-                <i data-lucide="phone" style="width: 18px; height: 18px;"></i>
+                <?php echo \WpDesa\Frontend\Icons::svg('phone', 'width: 18px; height: 18px;'); ?>
               </div>
               <div>
                 <div style="font-size: 12px; color: var(--graphite); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Telepon</div>
@@ -633,7 +633,7 @@ class Shortcode
             <img src="<?php echo esc_url($foto_kades); ?>" alt="Foto Kepala Desa" style="width: 100%; height: 100%; object-fit: cover;">
           <?php else: ?>
             <div style="width: 100%; height: 100%; background: var(--cloud); display: flex; align-items: center; justify-content: center;">
-              <i data-lucide="user" style="width: 80px; height: 80px; color: var(--graphite);"></i>
+              <?php echo \WpDesa\Frontend\Icons::svg('user', 'width: 80px; height: 80px; color: var(--graphite);'); ?>
             </div>
           <?php endif; ?>
         </div>
@@ -669,17 +669,17 @@ class Shortcode
               <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--sp-lg); flex-wrap: wrap;">
                 <div style="flex: 1; min-width: 250px;">
                   <div style="display: flex; align-items: center; gap: var(--sp-xs); margin-bottom: var(--sp-xs);">
-                    <i data-lucide="award" style="color: var(--primary); width: 24px; height: 24px;"></i>
+                    <?php echo \WpDesa\Frontend\Icons::svg('award', 'color: var(--primary); width: 24px; height: 24px;'); ?>
                     <h3 style="margin: 0; font-family: var(--font-display); font-size: 20px; font-weight: 500; line-height: 1.0; color: var(--ink);" x-text="p.name"></h3>
                   </div>
                   <p style="margin: 0 0 var(--sp-sm) 0; font-size: 14px; color: var(--graphite); line-height: 1.5;" x-text="p.description"></p>
                   <div style="display: flex; gap: var(--sp-xs); flex-wrap: wrap;">
                     <span style="background: var(--primary-soft); color: var(--primary-deep); padding: 4px 12px; border-radius: var(--rounded-pill); font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
-                      <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
+                      <?php echo \WpDesa\Frontend\Icons::svg('map-pin', 'width: 14px; height: 14px;'); ?>
                       <span x-text="p.origin"></span>
                     </span>
                     <span style="background: var(--cloud); color: var(--ink); padding: 4px 12px; border-radius: var(--rounded-pill); font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
-                      <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+                      <?php echo \WpDesa\Frontend\Icons::svg('calendar', 'width: 14px; height: 14px;'); ?>
                       <span x-text="p.year"></span>
                     </span>
                   </div>
@@ -690,7 +690,8 @@ class Shortcode
 
                   <button @click="viewRecipients(p)" class="wp-desa-btn" :class="activeProgramId === p.id ? 'wp-desa-btn-secondary' : 'wp-desa-btn-primary'" style="font-size: 14px; padding: 8px 16px;">
                     <span x-text="activeProgramId === p.id ? 'Tutup Daftar' : 'Lihat Penerima'"></span>
-                    <i :data-lucide="activeProgramId === p.id ? 'chevron-up' : 'chevron-down'" style="margin-left: 5px; width: 14px; height: 14px; margin-top: 3px;"></i>
+                    <i x-show="activeProgramId !== p.id"><?php echo \WpDesa\Frontend\Icons::svg('chevron-down', 'width:14px;height:14px;margin-top:3px'); ?></i>
+                    <i x-show="activeProgramId === p.id"><?php echo \WpDesa\Frontend\Icons::svg('chevron-up', 'width:14px;height:14px;margin-top:3px'); ?></i>
                   </button>
                 </div>
               </div>
@@ -733,7 +734,7 @@ class Shortcode
         </template>
         <template x-if="programs.length === 0">
           <div style="text-align: center; padding: 60px 20px; background: var(--cloud); border-radius: var(--rounded-xl); border: 1px solid var(--fog); color: var(--graphite);">
-            <i data-lucide="award" style="width: 48px; height: 48px; margin-bottom: 10px;"></i>
+            <?php echo \WpDesa\Frontend\Icons::svg('award', 'width: 48px; height: 48px; margin-bottom: 10px;'); ?>
             <p style="margin: 0; font-size: 1.1em;">Belum ada program bantuan aktif saat ini.</p>
           </div>
         </template>
@@ -820,7 +821,7 @@ class Shortcode
       <div class="wp-desa-summary-grid">
         <div class="wp-desa-stat-card">
           <div class="wp-desa-stat-icon-bg">
-            <i data-lucide="banknote" style="color: #024ad8; width: 24px; height: 24px;"></i>
+            <?php echo \WpDesa\Frontend\Icons::svg('banknote', 'color: #024ad8; width: 24px; height: 24px;'); ?>
           </div>
           <h4 class="wp-desa-stat-label">Total Pendapatan</h4>
           <h3 class="wp-desa-stat-value" x-text="formatCurrency(summary.totals.find(t => t.type === 'income')?.total_realization || 0)"></h3>
@@ -831,7 +832,7 @@ class Shortcode
 
         <div class="wp-desa-stat-card">
           <div class="wp-desa-stat-icon-bg">
-            <i data-lucide="shopping-cart" style="color: #b3262b; width: 24px; height: 24px;"></i>
+            <?php echo \WpDesa\Frontend\Icons::svg('shopping-cart', 'color: #b3262b; width: 24px; height: 24px;'); ?>
           </div>
           <h4 class="wp-desa-stat-label">Total Belanja</h4>
           <h3 class="wp-desa-stat-value" x-text="formatCurrency(summary.totals.find(t => t.type === 'expense')?.total_realization || 0)"></h3>
@@ -842,7 +843,7 @@ class Shortcode
 
         <div class="wp-desa-stat-card wp-desa-stat-card-surplus">
           <div class="wp-desa-stat-icon-bg">
-            <i data-lucide="trending-up" style="color: #1f6b3c; width: 24px; height: 24px;"></i>
+            <?php echo \WpDesa\Frontend\Icons::svg('trending-up', 'color: #1f6b3c; width: 24px; height: 24px;'); ?>
           </div>
           <h4 class="wp-desa-stat-label">Sisa Lebih (SiLPA)</h4>
           <h3 class="wp-desa-stat-value" :style="{color: getSurplus() >= 0 ? '#1f6b3c' : '#b3262b'}" x-text="formatCurrency(getSurplus())"></h3>
@@ -1127,10 +1128,10 @@ class Shortcode
 
       <div class="wp-desa-tabs" style="display: flex; border-bottom: 1px solid #e8e8e8; margin-bottom: 30px;">
         <button @click="tab = 'form'" :class="{'active': tab === 'form'}" class="wp-desa-tab-btn">
-          <i data-lucide="edit" style="width: 18px; height: 18px;"></i> Buat Laporan
+          <?php echo \WpDesa\Frontend\Icons::svg('edit', 'width: 18px; height: 18px;'); ?> Buat Laporan
         </button>
         <button @click="tab = 'track'" :class="{'active': tab === 'track'}" class="wp-desa-tab-btn">
-          <i data-lucide="search" style="width: 18px; height: 18px;"></i> Cek Status Laporan
+          <?php echo \WpDesa\Frontend\Icons::svg('search', 'width: 18px; height: 18px;'); ?> Cek Status Laporan
         </button>
       </div>
 
@@ -1194,7 +1195,7 @@ class Shortcode
             <button type="submit" :disabled="submitting" class="wp-desa-btn wp-desa-btn-primary" style="width: 100%;">
               <span x-show="!submitting">Kirim Laporan</span>
               <span x-show="submitting" style="display: flex; align-items: center; gap: 8px;">
-                <i data-lucide="loader-2" style="animation: spin 2s linear infinite; width: 18px; height: 18px;"></i> Mengirim...
+                <?php echo \WpDesa\Frontend\Icons::svg('loader-2', 'animation: spin 2s linear infinite; width: 18px; height: 18px;'); ?> Mengirim...
               </span>
             </button>
           </form>
@@ -1208,7 +1209,7 @@ class Shortcode
               <input type="text" x-model="trackCode" placeholder="Contoh: ADU-XXXXXX" required class="wp-desa-input" style="flex: 1; font-family: monospace; letter-spacing: 1px; font-weight: 600;">
               <button type="submit" :disabled="tracking" class="wp-desa-btn wp-desa-btn-primary" style="width: auto; min-width: 100px;">
                 <span x-show="!tracking">Cek</span>
-                <i x-show="tracking" data-lucide="loader-2" style="animation: spin 2s linear infinite; width: 18px; height: 18px;"></i>
+                <i x-show="tracking"><?php echo \WpDesa\Frontend\Icons::svg('loader-2', 'animation: spin 2s linear infinite; width: 18px; height: 18px;'); ?></i>
               </button>
             </div>
           </form>
@@ -1216,7 +1217,7 @@ class Shortcode
           <div x-show="trackResult" class="wp-desa-result-card">
             <div style="text-align: center; margin-bottom: 20px;">
               <div style="width: 60px; height: 60px; background: #c9e0fc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: #024ad8;">
-                <i data-lucide="clipboard-list" style="width: 30px; height: 30px;"></i>
+                <?php echo \WpDesa\Frontend\Icons::svg('clipboard-list', 'width: 30px; height: 30px;'); ?>
               </div>
               <h4 style="margin: 0; color: #1a1a1a; font-size: 1.2em;">Status Laporan</h4>
               <p style="margin: 5px 0 0 0; color: #636363; font-family: monospace;" x-text="trackResult.code"></p>
@@ -1245,7 +1246,7 @@ class Shortcode
             <template x-if="trackResult.response">
               <div style="margin-top: 20px; background: var(--cloud); padding: 15px; border-radius: 8px; border: 1px solid var(--fog);">
                 <strong style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; color: #1a1a1a;">
-                  <i data-lucide="message-square-text" style="width: 18px; height: 18px;"></i> Tanggapan Admin:
+                  <?php echo \WpDesa\Frontend\Icons::svg('message-square-text', 'width: 18px; height: 18px;'); ?> Tanggapan Admin:
                 </strong>
                 <p style="margin: 0; color: #4b5563; line-height: 1.6;" x-text="trackResult.response"></p>
               </div>
@@ -1419,9 +1420,7 @@ class Shortcode
 
       // Chart.js - needed for statistik and keuangan
       if (has_shortcode($content, 'wp_desa_statistik') || has_shortcode($content, 'wp_desa_keuangan')) {
-        wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', [], '4.0.0', true);
-        // CDN fallback
-        wp_add_inline_script('chartjs', 'if(typeof Chart==="undefined"){var e=document.createElement("script");e.src="' . WP_DESA_URL . 'assets/js/chart.min.js";document.head.appendChild(e);}');
+        wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js', [], '4.4.0', true);
       }
 
       // Glightbox - needed for single-umkm gallery and umkm listing
@@ -1432,28 +1431,7 @@ class Shortcode
         wp_add_inline_script('glightbox', 'document.addEventListener("DOMContentLoaded", function() { if(typeof GLightbox !== "undefined") { const lightbox = GLightbox({ selector: ".glightbox" }); } });');
       }
 
-      // Lucide icons - needed by most shortcodes
-      $desa_shortcodes = [
-        'wp_desa_layanan',
-        'wp_desa_aduan',
-        'wp_desa_keuangan',
-        'wp_desa_bantuan',
-        'wp_desa_profil',
-        'wp_desa_kepala_desa',
-        'wp_desa_statistik',
-        'wp_desa_umkm',
-        'wp_desa_potensi',
-        'single-umkm'
-      ];
-      foreach ($desa_shortcodes as $sc) {
-        if (has_shortcode($content, $sc)) {
-          wp_enqueue_script('lucide', 'https://unpkg.com/lucide@latest/dist/umd/lucide.min.js', [], null, true);
-          // CDN fallback
-          wp_add_inline_script('lucide', 'if(typeof lucide==="undefined"){var e=document.createElement("script");e.src="' . WP_DESA_URL . 'assets/js/lucide.min.js";document.head.appendChild(e);}');
-          wp_add_inline_script('lucide', 'document.addEventListener("DOMContentLoaded",function(){try{if(window.lucide&&lucide.createIcons){lucide.createIcons();}}catch(e){}});');
-          break;
-        }
-      }
+      // Lucide no longer needed — all icons are inline SVGs via Icons::svg()
     }
   }
 
@@ -1466,10 +1444,10 @@ class Shortcode
 
       <div class="wp-desa-tabs" style="display: flex; border-bottom: 1px solid #e8e8e8; margin-bottom: 30px;">
         <button class="wp-desa-tab-btn" :class="{ 'active': tab === 'request' }" @click="tab = 'request'">
-          <i data-lucide="edit" style="width: 18px; height: 18px;"></i> Buat Permohonan
+          <?php echo \WpDesa\Frontend\Icons::svg('edit', 'width: 18px; height: 18px;'); ?> Buat Permohonan
         </button>
         <button class="wp-desa-tab-btn" :class="{ 'active': tab === 'tracking' }" @click="tab = 'tracking'">
-          <i data-lucide="search" style="width: 18px; height: 18px;"></i> Cek Status
+          <?php echo \WpDesa\Frontend\Icons::svg('search', 'width: 18px; height: 18px;'); ?> Cek Status
         </button>
       </div>
 

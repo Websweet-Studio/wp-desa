@@ -372,6 +372,12 @@
   box-shadow: var(--shadow-soft-lift);
 }
 
+.wp-desa-profil-logo {
+  max-width: 100px;
+  height: auto;
+  margin-bottom: var(--sp-xl);
+}
+
 .wp-desa-stat-icon {
   width: 60px;
   height: 60px;
