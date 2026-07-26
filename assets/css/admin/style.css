@@ -133,8 +133,8 @@
 .wp-desa-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: var(--sp-xxl);
-  margin-bottom: var(--sp-xxl);
+  gap: var(--sp-md);
+  margin-bottom: var(--sp-md);
 }
 
 /* =========================================================

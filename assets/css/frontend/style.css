@@ -365,17 +365,132 @@
 
 .wp-desa-stat-card {
   background: var(--canvas);
-  border-radius: var(--rounded-xl);
+  border-radius: 2px;
   padding: var(--sp-xl);
   text-align: center;
   border: 1px solid var(--fog);
-  box-shadow: var(--shadow-soft-lift);
 }
 
 .wp-desa-profil-logo {
   max-width: 100px;
   height: auto;
   margin-bottom: var(--sp-xl);
+}
+
+/* Profil Card */
+.wp-desa-profil-card {
+  background: var(--canvas);
+  border-radius: 2px;
+  padding: var(--sp-xl);
+  border: 1px solid var(--fog);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-xl);
+  min-width: 0;
+}
+
+.wp-desa-profil-card > * {
+  min-width: 0;
+}
+
+@media (min-width: 640px) {
+  .wp-desa-profil-card {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--sp-xxl, 32px);
+  }
+}
+
+.wp-desa-profil-header {
+  text-align: center;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (min-width: 640px) {
+  .wp-desa-profil-header {
+    text-align: left;
+    align-items: flex-start;
+  }
+}
+
+.wp-desa-profil-name {
+  margin: 0 0 var(--sp-xxs, 4px) 0;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.17;
+  color: var(--ink);
+}
+
+.wp-desa-profil-subtitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--graphite);
+}
+
+.wp-desa-profil-contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-md);
+  flex: 1;
+}
+
+@media (min-width: 480px) {
+  .wp-desa-profil-contact-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.wp-desa-profil-contact-item {
+  display: flex;
+  gap: var(--sp-sm);
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.wp-desa-profil-contact-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--primary-soft);
+  border-radius: var(--rounded-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.wp-desa-profil-contact-label {
+  font-size: 12px;
+  color: var(--graphite);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.wp-desa-profil-contact-value {
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.wp-desa-profil-contact-link {
+  font-size: 14px;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.wp-desa-profil-contact-link:hover {
+  text-decoration: underline;
 }
 
 .wp-desa-stat-icon {
@@ -416,12 +531,52 @@
 .wp-desa-chart-container {
   background: var(--canvas);
   padding: var(--sp-lg);
-  border-radius: var(--rounded-xl);
+  border-radius: 2px;
   border: 1px solid var(--fog);
-  margin-bottom: var(--sp-xxl, 32px);
-  max-width: 500px;
+  margin-bottom: var(--sp-xxl, 16px);
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* Pure SVG doughnut chart */
+.wp-desa-doughnut {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-md);
+}
+
+.wp-desa-doughnut-svg {
+  width: 160px;
+  height: 160px;
+}
+
+.wp-desa-doughnut-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-md);
+}
+
+.wp-desa-doughnut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.wp-desa-doughnut-legend-item i {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.wp-desa-doughnut-legend-item b {
+  font-weight: 600;
 }
 
 /* --- Bantuan Shortcode --- */

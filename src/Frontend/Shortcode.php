@@ -107,18 +107,45 @@ class Shortcode
       $age_dewasa = 0;
     }
 
-    $chart_id = 'wpDesaStatChart_' . uniqid();
-
     ob_start();
 ?>
     <div class="wp-desa-wrapper">
       <!-- CSS moved to assets/css/frontend/style.css -->
 
-      <!-- Chart Section -->
+      <?php
+      $total_gender = $male_val + $female_val;
+      $male_pct = $total_gender > 0 ? round(($male_val / $total_gender) * 100) : 0;
+      $female_pct = $total_gender > 0 ? round(($female_val / $total_gender) * 100) : 0;
+
+      $r = 60;
+      $sw = 14;
+      $c = 2 * M_PI * $r;
+      $male_dash = ($male_pct / 100) * $c;
+      $female_dash = ($female_pct / 100) * $c;
+      // Female segment starts where male ends; draw male on top so it renders first clockwise
+      // Render: male first, then female. Female offset = male dash.
+      ?>
+
       <div class="wp-desa-chart-container">
         <h3 style="text-align: center; margin-top: 0; color: #1a1a1a; font-size: 1.1em; margin-bottom: 15px;">Komposisi Penduduk</h3>
-        <div style="position: relative; height: 250px;">
-          <canvas id="<?php echo esc_attr($chart_id); ?>"></canvas>
+        <div class="wp-desa-doughnut">
+          <svg viewBox="0 0 160 160" class="wp-desa-doughnut-svg">
+            <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#e8e8e8" stroke-width="<?php echo $sw; ?>" />
+            <!-- Laki-laki -->
+            <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#024ad8" stroke-width="<?php echo $sw; ?>"
+              stroke-dasharray="<?php echo round($male_dash, 1); ?> <?php echo round($c - $male_dash, 1); ?>" stroke-dashoffset="0"
+              stroke-linecap="butt" transform="rotate(-90 80 80)" />
+            <!-- Perempuan -->
+            <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#b3262b" stroke-width="<?php echo $sw; ?>"
+              stroke-dasharray="<?php echo round($female_dash, 1); ?> <?php echo round($c - $female_dash, 1); ?>" stroke-dashoffset="<?php echo round(-$male_dash, 1); ?>"
+              stroke-linecap="butt" transform="rotate(-90 80 80)" />
+            <text x="80" y="76" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="28" font-weight="500" fill="#1a1a1a"><?php echo number_format_i18n($total_gender); ?></text>
+            <text x="80" y="96" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="12" fill="#636363" font-weight="500">Jiwa</text>
+          </svg>
+          <div class="wp-desa-doughnut-legend">
+            <span class="wp-desa-doughnut-legend-item"><i style="background:#024ad8"></i> Laki-laki: <b><?php echo number_format_i18n($male_val); ?></b> (<?php echo $male_pct; ?>%)</span>
+            <span class="wp-desa-doughnut-legend-item"><i style="background:#b3262b"></i> Perempuan: <b><?php echo number_format_i18n($female_val); ?></b> (<?php echo $female_pct; ?>%)</span>
+          </div>
         </div>
       </div>
 
@@ -222,41 +249,7 @@ class Shortcode
         </div>
       </div>
     </div>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const ctx = document.getElementById('<?php echo esc_js($chart_id); ?>');
-        if (ctx) {
-          new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-              labels: ['Laki-laki', 'Perempuan'],
-              datasets: [{
-                data: [<?php echo (int)$male_val; ?>, <?php echo (int)$female_val; ?>],
-                backgroundColor: [
-                  '#024ad8', // Blue for Male
-                  '#b3262b' // Pink for Female
-                ],
-                borderWidth: 0
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  position: 'bottom',
-                  labels: {
-                    padding: 20,
-                    usePointStyle: true
-                  }
-                }
-              }
-            }
-          });
-        }
-      });
-    </script>
+    </div>
   <?php
     return ob_get_clean();
   }
@@ -559,49 +552,50 @@ class Shortcode
     ob_start();
   ?>
     <div class="wp-desa-wrapper">
-      <div class="wp-desa-stat-card" style="text-align: center; padding: var(--sp-xl);">
-        <?php if ($logo): ?>
-          <img src="<?php echo esc_url($logo); ?>" alt="Logo Kabupaten" class="wp-desa-profil-logo">
-        <?php endif; ?>
+      <div class="wp-desa-profil-card">
+        <div class="wp-desa-profil-header">
+          <?php if ($logo): ?>
+            <img src="<?php echo esc_url($logo); ?>" alt="Logo Kabupaten" class="wp-desa-profil-logo">
+          <?php endif; ?>
+          <h2 class="wp-desa-profil-name"><?php echo esc_html('Desa ' . $nama_desa); ?></h2>
+          <p class="wp-desa-profil-subtitle">
+            <?php echo esc_html('Kecamatan ' . $nama_kecamatan . ', ' . $nama_kabupaten); ?>
+          </p>
+        </div>
 
-        <h2 style="margin: 0 0 var(--sp-xxs) 0; font-family: var(--font-display); font-size: 24px; font-weight: 500; line-height: 1.17; color: var(--ink);"><?php echo esc_html('Desa ' . $nama_desa); ?></h2>
-        <h4 style="margin: 0 0 var(--sp-xxl) 0; font-size: 16px; font-weight: 400; color: var(--graphite);">
-          <?php echo esc_html('Kecamatan ' . $nama_kecamatan . ', ' . $nama_kabupaten); ?>
-        </h4>
-
-        <div style="display: inline-flex; flex-direction: column; gap: var(--sp-sm); text-align: left;">
+        <div class="wp-desa-profil-contact-grid">
           <?php if ($alamat): ?>
-            <div style="display: flex; gap: var(--sp-sm); align-items: flex-start;">
-              <div style="width: 32px; height: 32px; background: var(--primary-soft); border-radius: var(--rounded-lg); display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0;">
+            <div class="wp-desa-profil-contact-item">
+              <div class="wp-desa-profil-contact-icon">
                 <?php echo \WpDesa\Frontend\Icons::svg('map-pin', 'width: 18px; height: 18px;'); ?>
               </div>
               <div>
-                <div style="font-size: 12px; color: var(--graphite); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Alamat Kantor</div>
-                <div style="font-size: 14px; color: var(--ink); line-height: 1.5;"><?php echo esc_html($alamat); ?></div>
+                <div class="wp-desa-profil-contact-label">Alamat Kantor</div>
+                <div class="wp-desa-profil-contact-value"><?php echo esc_html($alamat); ?></div>
               </div>
             </div>
           <?php endif; ?>
 
           <?php if ($email): ?>
-            <div style="display: flex; gap: var(--sp-sm); align-items: flex-start;">
-              <div style="width: 32px; height: 32px; background: var(--primary-soft); border-radius: var(--rounded-lg); display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0;">
+            <div class="wp-desa-profil-contact-item">
+              <div class="wp-desa-profil-contact-icon">
                 <?php echo \WpDesa\Frontend\Icons::svg('mail', 'width: 18px; height: 18px;'); ?>
               </div>
               <div>
-                <div style="font-size: 12px; color: var(--graphite); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Email</div>
-                <a href="mailto:<?php echo esc_attr($email); ?>" style="font-size: 14px; color: var(--primary); text-decoration: none; font-weight: 500;"><?php echo esc_html($email); ?></a>
+                <div class="wp-desa-profil-contact-label">Email</div>
+                <a href="mailto:<?php echo esc_attr($email); ?>" class="wp-desa-profil-contact-link"><?php echo esc_html($email); ?></a>
               </div>
             </div>
           <?php endif; ?>
 
           <?php if ($telepon): ?>
-            <div style="display: flex; gap: var(--sp-sm); align-items: flex-start;">
-              <div style="width: 32px; height: 32px; background: var(--primary-soft); border-radius: var(--rounded-lg); display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0;">
+            <div class="wp-desa-profil-contact-item">
+              <div class="wp-desa-profil-contact-icon">
                 <?php echo \WpDesa\Frontend\Icons::svg('phone', 'width: 18px; height: 18px;'); ?>
               </div>
               <div>
-                <div style="font-size: 12px; color: var(--graphite); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Telepon</div>
-                <a href="tel:<?php echo esc_attr($telepon); ?>" style="font-size: 14px; color: var(--primary); text-decoration: none; font-weight: 500;"><?php echo esc_html($telepon); ?></a>
+                <div class="wp-desa-profil-contact-label">Telepon</div>
+                <a href="tel:<?php echo esc_attr($telepon); ?>" class="wp-desa-profil-contact-link"><?php echo esc_html($telepon); ?></a>
               </div>
             </div>
           <?php endif; ?>
