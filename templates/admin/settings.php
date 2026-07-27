@@ -2,7 +2,7 @@
 $settings = get_option('wp_desa_settings', []);
 $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
 ?>
-<div class="wrap wp-desa-wrapper" x-data="settingsNotif()">
+<div class="wrap wp-desa-wrapper">
     <div class="wp-desa-card wp-desa-card-settings">
 
         <form method="post" action="">
@@ -143,50 +143,13 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
     </div>
 
     <!-- Notification Toast -->
-    <div x-show="notification.show"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 translate-y-4"
-        x-transition:enter-end="opacity-100 translate-y-0"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 translate-y-0"
-        x-transition:leave-end="opacity-0 translate-y-4"
-        class="wp-desa-toast"
-        :class="notification.type"
-        x-cloak>
+    <div class="wp-desa-toast" style="display:none;">
         <span class="dashicons dashicons-yes-alt wp-desa-icon-20"></span>
-        <span x-text="notification.message"></span>
+        <span></span>
     </div>
 </div>
 
 <script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('settingsNotif', () => ({
-            notification: {
-                show: false,
-                message: '',
-                type: 'success'
-            },
-            init() {
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.get('settings-updated') === 'true') {
-                    this.showNotification('Pengaturan berhasil disimpan!', 'success');
-
-                    const newUrl = window.location.pathname + '?page=wp-desa-settings&tab=<?php echo esc_js($current_tab); ?>';
-                    window.history.replaceState({}, document.title, newUrl);
-                }
-            },
-            showNotification(message, type = 'success') {
-                this.notification.message = message;
-                this.notification.type = type;
-                this.notification.show = true;
-
-                setTimeout(() => {
-                    this.notification.show = false;
-                }, 3000);
-            }
-        }));
-    });
-
     jQuery(document).ready(function($) {
         function setupMediaUploader(btnId, inputId, previewId, removeBtnId) {
             var mediaUploader;

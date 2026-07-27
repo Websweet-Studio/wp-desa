@@ -651,138 +651,11 @@ class Shortcode
   {
     ob_start();
   ?>
-    <div id="wp-desa-bantuan" class="wp-desa-wrapper" x-data="bantuanDesa()">
+    <div id="wp-desa-bantuan" class="wp-desa-wrapper">
       <h2 class="wp-desa-title" style="text-align:center; margin-bottom: 30px; font-size: 2em; color: #1a1a1a;">Program & Bantuan Sosial</h2>
-
-      <!-- Program List -->
-      <div style="display: grid; gap: 20px;">
-        <template x-for="p in programs" :key="p.id">
-          <div class="wp-desa-stat-card" style="text-align: left; padding: 0; overflow: hidden; border: 1px solid var(--fog);">
-            <div style="padding: var(--sp-xl);">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--sp-lg); flex-wrap: wrap;">
-                <div style="flex: 1; min-width: 250px;">
-                  <div style="display: flex; align-items: center; gap: var(--sp-xs); margin-bottom: var(--sp-xs);">
-                    <?php echo \WpDesa\Frontend\Icons::svg('award', 'color: var(--primary); width: 24px; height: 24px;'); ?>
-                    <h3 style="margin: 0; font-family: var(--font-display); font-size: 20px; font-weight: 500; line-height: 1.0; color: var(--ink);" x-text="p.name"></h3>
-                  </div>
-                  <p style="margin: 0 0 var(--sp-sm) 0; font-size: 14px; color: var(--graphite); line-height: 1.5;" x-text="p.description"></p>
-                  <div style="display: flex; gap: var(--sp-xs); flex-wrap: wrap;">
-                    <span style="background: var(--primary-soft); color: var(--primary-deep); padding: 4px 12px; border-radius: var(--rounded-pill); font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
-                      <?php echo \WpDesa\Frontend\Icons::svg('map-pin', 'width: 14px; height: 14px;'); ?>
-                      <span x-text="p.origin"></span>
-                    </span>
-                    <span style="background: var(--cloud); color: var(--ink); padding: 4px 12px; border-radius: var(--rounded-pill); font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">
-                      <?php echo \WpDesa\Frontend\Icons::svg('calendar', 'width: 14px; height: 14px;'); ?>
-                      <span x-text="p.year"></span>
-                    </span>
-                  </div>
-                </div>
-                <div style="text-align: right; min-width: 150px; display: flex; flex-direction: column; align-items: flex-end;">
-                  <div style="font-weight: 500; font-size: 24px; line-height: 1.17; color: var(--success);" x-text="formatCurrency(p.amount_per_recipient)"></div>
-                  <div style="font-size: 14px; color: var(--graphite); margin-top: var(--sp-xxs); margin-bottom: var(--sp-sm);" x-text="'Kuota: ' + p.quota + ' Penerima'"></div>
-
-                  <button @click="viewRecipients(p)" class="wp-desa-btn" :class="activeProgramId === p.id ? 'wp-desa-btn-secondary' : 'wp-desa-btn-primary'" style="font-size: 14px; padding: 8px 16px;">
-                    <span x-text="activeProgramId === p.id ? 'Tutup Daftar' : 'Lihat Penerima'"></span>
-                    <i x-show="activeProgramId !== p.id"><?php echo \WpDesa\Frontend\Icons::svg('chevron-down', 'width:14px;height:14px;margin-top:3px'); ?></i>
-                    <i x-show="activeProgramId === p.id"><?php echo \WpDesa\Frontend\Icons::svg('chevron-up', 'width:14px;height:14px;margin-top:3px'); ?></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Recipients List (Collapsible) -->
-            <div x-show="activeProgramId === p.id" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-y-90" x-transition:enter-end="opacity-100 transform scale-y-100" style="border-top: 1px solid var(--fog); background: var(--cloud);">
-              <div style="padding: var(--sp-lg);">
-                <h4 style="margin: 0 0 var(--sp-sm) 0; font-family: var(--font-display); font-size: 20px; font-weight: 500; color: var(--ink);">Daftar Penerima Bantuan</h4>
-                <div style="overflow-x: auto; background: var(--canvas); border-radius: var(--rounded-lg); border: 1px solid var(--fog);">
-                  <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-                    <thead>
-                      <tr style="background: var(--cloud); color: var(--graphite); text-transform: uppercase; font-size: 12px; font-weight: 600; letter-spacing: 0.7px;">
-                        <th style="text-align: left; padding: 12px 15px;">Nama</th>
-                        <th style="text-align: left; padding: 12px 15px;">Alamat</th>
-                        <th style="text-align: center; padding: 12px 15px;">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <template x-for="(r, index) in recipients" :key="r.id">
-                        <tr :style="index % 2 === 0 ? 'background: var(--canvas);' : 'background: var(--cloud);'" style="border-bottom: 1px solid var(--fog);">
-                          <td style="padding: 12px 15px; font-weight: 500; color: var(--ink);" x-text="r.nama_lengkap"></td>
-                          <td style="padding: 12px 15px; color: var(--graphite);" x-text="r.alamat"></td>
-                          <td style="text-align: center; padding: 12px 15px;">
-                            <span :class="'status-badge status-' + r.status" x-text="formatStatus(r.status)"></span>
-                          </td>
-                        </tr>
-                      </template>
-                      <template x-if="recipients.length === 0">
-                        <tr>
-                          <td colspan="3" style="text-align: center; padding: var(--sp-xl); color: var(--graphite);">Belum ada data penerima yang ditampilkan.</td>
-                        </tr>
-                      </template>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </template>
-        <template x-if="programs.length === 0">
-          <div style="text-align: center; padding: 60px 20px; background: var(--cloud); border-radius: var(--rounded-xl); border: 1px solid var(--fog); color: var(--graphite);">
-            <?php echo \WpDesa\Frontend\Icons::svg('award', 'width: 48px; height: 48px; margin-bottom: 10px;'); ?>
-            <p style="margin: 0; font-size: 1.1em;">Belum ada program bantuan aktif saat ini.</p>
-          </div>
-        </template>
+      <div style="display: grid; gap: 20px;" class="wp-desa-bantuan-grid">
       </div>
     </div>
-
-    <script>
-      function bantuanDesa() {
-        return {
-          programs: [],
-          activeProgramId: null,
-          recipients: [],
-
-          init() {
-            this.fetchPrograms();
-          },
-
-          fetchPrograms() {
-            fetch('<?php echo esc_url_raw(rest_url('wp-desa/v1/aid-programs')); ?>')
-              .then(res => res.json())
-              .then(data => this.programs = data);
-          },
-
-          viewRecipients(program) {
-            if (this.activeProgramId === program.id) {
-              this.activeProgramId = null;
-              return;
-            }
-            this.activeProgramId = program.id;
-            this.recipients = []; // Clear
-
-            fetch('<?php echo esc_url_raw(rest_url('wp-desa/v1/aid-programs/')); ?>' + program.id + '/recipients')
-              .then(res => res.json())
-              .then(data => this.recipients = data);
-          },
-
-          formatCurrency(value) {
-            return new Intl.NumberFormat('id-ID', {
-              style: 'currency',
-              currency: 'IDR'
-            }).format(value);
-          },
-
-          formatStatus(status) {
-            const map = {
-              'pending': 'Menunggu',
-              'approved': 'Disetujui',
-              'rejected': 'Ditolak',
-              'distributed': 'Disalurkan'
-            };
-            return map[status] || status;
-          }
-        }
-      }
-    </script>
 
     <!-- CSS moved to assets/css/frontend/style.css -->
   <?php
@@ -793,7 +666,7 @@ class Shortcode
   {
     ob_start();
   ?>
-    <div id="wp-desa-keuangan" class="wp-desa-wrapper" x-data="keuanganDesa()">
+    <div id="wp-desa-keuangan" class="wp-desa-wrapper">
       <div class="wp-desa-header">
         <div>
           <h2 class="wp-desa-title">Transparansi Keuangan</h2>
@@ -802,10 +675,7 @@ class Shortcode
         <div class="wp-desa-filter">
           <label class="wp-desa-filter-label">Tahun Anggaran</label>
           <div class="wp-desa-filter-control">
-            <select x-model="filterYear" @change="fetchSummary" class="wp-desa-select wp-desa-select-year">
-              <template x-for="y in years" :key="y">
-                <option :value="y" x-text="y"></option>
-              </template>
+            <select class="wp-desa-select wp-desa-select-year" id="wp-desa-keuangan-year">
             </select>
           </div>
         </div>
@@ -817,9 +687,9 @@ class Shortcode
             <?php echo \WpDesa\Frontend\Icons::svg('banknote', ''); ?>
           </div>
           <h4 class="wp-desa-stat-label">Total Pendapatan</h4>
-          <h3 class="wp-desa-stat-value" x-text="formatCurrency(summary.totals.find(t => t.type === 'income')?.total_realization || 0)"></h3>
+          <h3 class="wp-desa-stat-value" id="wp-desa-keu-income-real"></h3>
           <div class="wp-desa-stat-sub">
-            Target <span x-text="formatCurrency(summary.totals.find(t => t.type === 'income')?.total_budget || 0)"></span>
+            Target <span id="wp-desa-keu-income-budget"></span>
           </div>
         </div>
 
@@ -828,9 +698,9 @@ class Shortcode
             <?php echo \WpDesa\Frontend\Icons::svg('shopping-cart', ''); ?>
           </div>
           <h4 class="wp-desa-stat-label">Total Belanja</h4>
-          <h3 class="wp-desa-stat-value" x-text="formatCurrency(summary.totals.find(t => t.type === 'expense')?.total_realization || 0)"></h3>
+          <h3 class="wp-desa-stat-value" id="wp-desa-keu-expense-real"></h3>
           <div class="wp-desa-stat-sub">
-            Pagu <span x-text="formatCurrency(summary.totals.find(t => t.type === 'expense')?.total_budget || 0)"></span>
+            Pagu <span id="wp-desa-keu-expense-budget"></span>
           </div>
         </div>
 
@@ -839,7 +709,7 @@ class Shortcode
             <?php echo \WpDesa\Frontend\Icons::svg('trending-up', ''); ?>
           </div>
           <h4 class="wp-desa-stat-label">Sisa Lebih (SiLPA)</h4>
-          <h3 class="wp-desa-stat-value" :style="{color: getSurplus() >= 0 ? '#1f6b3c' : '#b3262b'}" x-text="formatCurrency(getSurplus())"></h3>
+          <h3 class="wp-desa-stat-value" id="wp-desa-keu-surplus"></h3>
           <div class="wp-desa-stat-sub wp-desa-stat-sub-muted">
             Realisasi pendapatan dikurangi belanja
           </div>
@@ -884,230 +754,12 @@ class Shortcode
                 <th class="wp-desa-col-percentage">Realisasi</th>
               </tr>
             </thead>
-            <tbody>
-              <template x-for="(item, index) in items" :key="item.id">
-                <tr>
-                  <td>
-                    <div class="wp-desa-row-title" x-text="item.category"></div>
-                    <div class="wp-desa-row-subtitle" x-text="item.description"></div>
-                  </td>
-                  <td class="wp-desa-cell-number" x-text="formatCurrency(item.budget_amount)"></td>
-                  <td class="wp-desa-cell-number wp-desa-cell-number-strong" x-text="formatCurrency(item.realization_amount)"></td>
-                  <td class="wp-desa-cell-percentage">
-                    <div class="wp-desa-percentage"
-                      :style="{
-                                                 background: calculatePercentage(item.realization_amount, item.budget_amount) > 90 ? '#e6f4ea' : (calculatePercentage(item.realization_amount, item.budget_amount) > 50 ? '#fef3e4' : '#fce8e6'),
-                                                 color: calculatePercentage(item.realization_amount, item.budget_amount) > 90 ? '#1f6b3c' : (calculatePercentage(item.realization_amount, item.budget_amount) > 50 ? '#9a5b1e' : '#b3262b')
-                                             }"
-                      x-text="calculatePercentage(item.realization_amount, item.budget_amount) + '%'">
-                    </div>
-                  </td>
-                </tr>
-              </template>
-              <template x-if="items.length === 0">
-                <tr>
-                  <td colspan="4" class="wp-desa-empty-state">
-                    Belum ada data keuangan untuk tahun ini.
-                  </td>
-                </tr>
-              </template>
+            <tbody id="wp-desa-keu-table-body">
             </tbody>
           </table>
         </div>
       </div>
     </div>
-
-    <script>
-      function keuanganDesa() {
-        return {
-          filterYear: new Date().getFullYear(),
-          years: [],
-          summary: {
-            totals: [],
-            income_sources: [],
-            expense_sources: [],
-            yearly_trend: []
-          },
-          items: [],
-          incomeChart: null,
-          expenseChart: null,
-          trendChart: null,
-
-          init() {
-            const currentYear = new Date().getFullYear();
-            for (let i = currentYear; i >= currentYear - 5; i--) {
-              this.years.push(i);
-            }
-            this.fetchSummary();
-            this.fetchData();
-          },
-
-          fetchSummary() {
-            fetch('/wp-json/wp-desa/v1/finances/summary?year=' + this.filterYear)
-              .then(res => res.json())
-              .then(data => {
-                this.summary = data;
-                this.renderCharts();
-              });
-          },
-
-          fetchData() {
-            fetch('/wp-json/wp-desa/v1/finances?year=' + this.filterYear)
-              .then(res => res.json())
-              .then(data => {
-                this.items = Array.isArray(data?.data) ? data.data : (Array.isArray(data) ? data : []);
-              });
-          },
-
-          renderCharts() {
-            if (this.incomeChart) this.incomeChart.destroy();
-            if (this.expenseChart) this.expenseChart.destroy();
-            if (this.trendChart) this.trendChart.destroy();
-
-            // Wait for Chart.js
-            if (typeof Chart === 'undefined') {
-              setTimeout(() => this.renderCharts(), 500);
-              return;
-            }
-
-            const incomeCtx = document.getElementById('publicIncomeChart');
-            if (incomeCtx && this.summary.income_sources.length > 0) {
-              this.incomeChart = new Chart(incomeCtx, {
-                type: 'pie',
-                data: {
-                  labels: this.summary.income_sources.map(i => i.category),
-                  datasets: [{
-                    data: this.summary.income_sources.map(i => i.total),
-                    backgroundColor: ['#636363', '#024ad8', '#ff5050', '#ff5050', '#636363']
-                  }]
-                },
-                options: {
-                  responsive: true
-                }
-              });
-            }
-
-            const expenseCtx = document.getElementById('publicExpenseChart');
-            if (expenseCtx && this.summary.expense_sources.length > 0) {
-              this.expenseChart = new Chart(expenseCtx, {
-                type: 'doughnut',
-                data: {
-                  labels: this.summary.expense_sources.map(i => i.category),
-                  datasets: [{
-                    data: this.summary.expense_sources.map(i => i.total),
-                    backgroundColor: ['#ff5050', '#ff5050', '#ff5050', '#636363', '#024ad8']
-                  }]
-                },
-                options: {
-                  responsive: true
-                }
-              });
-            }
-
-            const trendCtx = document.getElementById('publicTrendChart');
-            if (trendCtx && this.summary.yearly_trend.length > 0) {
-              const years = [...new Set(this.summary.yearly_trend.map(i => i.year))].sort();
-              const incomeMap = {};
-              const expenseMap = {};
-              this.summary.yearly_trend.forEach(item => {
-                if (item.type === 'income') {
-                  incomeMap[item.year] = item.total_realization;
-                } else if (item.type === 'expense') {
-                  expenseMap[item.year] = item.total_realization;
-                }
-              });
-              const incomeData = years.map(y => incomeMap[y] || 0);
-              const expenseData = years.map(y => expenseMap[y] || 0);
-
-              this.trendChart = new Chart(trendCtx, {
-                type: 'line',
-                data: {
-                  labels: years,
-                  datasets: [{
-                      label: 'Pendapatan',
-                      data: incomeData,
-                      borderColor: '#1f6b3c',
-                      backgroundColor: 'rgba(22, 163, 74, 0.1)',
-                      borderWidth: 2,
-                      tension: 0.3,
-                      fill: true,
-                      pointRadius: 3
-                    },
-                    {
-                      label: 'Belanja',
-                      data: expenseData,
-                      borderColor: '#b3262b',
-                      backgroundColor: 'rgba(220, 38, 38, 0.08)',
-                      borderWidth: 2,
-                      tension: 0.3,
-                      fill: true,
-                      pointRadius: 3
-                    }
-                  ]
-                },
-                options: {
-                  responsive: true,
-                  interaction: {
-                    mode: 'index',
-                    intersect: false
-                  },
-                  stacked: false,
-                  plugins: {
-                    legend: {
-                      position: 'bottom'
-                    },
-                    tooltip: {
-                      callbacks: {
-                        label: function(context) {
-                          const value = context.parsed.y || 0;
-                          return context.dataset.label + ': ' + new Intl.NumberFormat('id-ID', {
-                            style: 'currency',
-                            currency: 'IDR',
-                            maximumFractionDigits: 0
-                          }).format(value);
-                        }
-                      }
-                    }
-                  },
-                  scales: {
-                    y: {
-                      ticks: {
-                        callback: function(value) {
-                          return new Intl.NumberFormat('id-ID', {
-                            style: 'currency',
-                            currency: 'IDR',
-                            maximumFractionDigits: 0
-                          }).format(value);
-                        }
-                      }
-                    }
-                  }
-                }
-              });
-            }
-          },
-
-          formatCurrency(value) {
-            return new Intl.NumberFormat('id-ID', {
-              style: 'currency',
-              currency: 'IDR',
-              maximumFractionDigits: 0
-            }).format(value);
-          },
-
-          getSurplus() {
-            const income = this.summary.totals.find(t => t.type === 'income')?.total_realization || 0;
-            const expense = this.summary.totals.find(t => t.type === 'expense')?.total_realization || 0;
-            return income - expense;
-          },
-
-          calculatePercentage(realization, budget) {
-            if (!budget || budget == 0) return 0;
-            return Math.round((realization / budget) * 100);
-          }
-        }
-      }
-    </script>
   <?php
     return ob_get_clean();
   }
@@ -1116,48 +768,42 @@ class Shortcode
   {
     ob_start();
   ?>
-    <div id="wp-desa-aduan" class="wp-desa-wrapper" x-data="aduanWarga()">
+    <div id="wp-desa-aduan" class="wp-desa-wrapper">
       <!-- CSS moved to assets/css/frontend/style.css -->
 
       <div class="wp-desa-tabs" style="display: flex; border-bottom: 1px solid #e8e8e8; margin-bottom: 30px;">
-        <button @click="tab = 'form'" :class="{'active': tab === 'form'}" class="wp-desa-tab-btn">
+        <button class="wp-desa-tab-btn active" data-tab="form">
           <?php echo \WpDesa\Frontend\Icons::svg('edit', 'width: 18px; height: 18px;'); ?> Buat Laporan
         </button>
-        <button @click="tab = 'track'" :class="{'active': tab === 'track'}" class="wp-desa-tab-btn">
+        <button class="wp-desa-tab-btn" data-tab="track">
           <?php echo \WpDesa\Frontend\Icons::svg('search', 'width: 18px; height: 18px;'); ?> Cek Status Laporan
         </button>
       </div>
 
       <div class="wp-desa-content">
         <!-- Form Aduan -->
-        <div x-show="tab === 'form'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100">
-          <div x-show="message.content"
-            style="padding: 15px; border-radius: 8px; margin-bottom: 20px;"
-            :style="message.type === 'success' ? 'background: #e6f4ea; color: #1f6b3c; border: 1px solid #c3e6cb;' : 'background: #fce8e6; color: #b3262b; border: 1px solid #fecaca;'">
-            <span x-text="message.content" style="font-weight: 500;"></span>
-            <template x-if="trackingCode">
-              <div style="margin-top: 15px; background: var(--canvas); padding: 15px; border-radius: 8px; border: 1px dashed #1f6b3c;">
-                <div style="font-size: 0.9em; margin-bottom: 5px; color: #1f6b3c;">Kode Tracking Anda:</div>
-                <div class="wp-desa-tracking-code" x-text="trackingCode" style="font-family: monospace; font-size: 1.5em; font-weight: 700; color: #1a1a1a; letter-spacing: 1px;"></div>
-                <p class="wp-desa-helper" style="margin: 5px 0 0 0;">Simpan kode ini untuk mengecek status laporan.</p>
-              </div>
-            </template>
+        <div id="wp-desa-aduan-form-tab" class="wp-desa-tab-panel">
+          <div id="wp-desa-aduan-message" style="padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none;"></div>
+          <div id="wp-desa-aduan-tracking-code" style="margin-top: 15px; background: var(--canvas); padding: 15px; border-radius: 8px; border: 1px dashed #1f6b3c; display: none;">
+            <div style="font-size: 0.9em; margin-bottom: 5px; color: #1f6b3c;">Kode Tracking Anda:</div>
+            <div class="wp-desa-tracking-code" style="font-family: monospace; font-size: 1.5em; font-weight: 700; color: #1a1a1a; letter-spacing: 1px;"></div>
+            <p class="wp-desa-helper" style="margin: 5px 0 0 0;">Simpan kode ini untuk mengecek status laporan.</p>
           </div>
 
-          <form @submit.prevent="submitComplaint" enctype="multipart/form-data" style="background: var(--canvas); padding: var(--sp-xl); border-radius: var(--rounded-xl); box-shadow: var(--shadow-soft-lift); border: 1px solid var(--fog);">
+          <form id="wp-desa-aduan-form" enctype="multipart/form-data" style="background: var(--canvas); padding: var(--sp-xl); border-radius: var(--rounded-xl); box-shadow: var(--shadow-soft-lift); border: 1px solid var(--fog);">
             <div class="wp-desa-form-group">
               <label class="wp-desa-label">Nama Pelapor (Opsional)</label>
-              <input type="text" x-model="form.reporter_name" class="wp-desa-input" placeholder="Nama Anda (Boleh dikosongkan)">
+              <input type="text" id="wp-desa-aduan-reporter_name" name="reporter_name" class="wp-desa-input" placeholder="Nama Anda (Boleh dikosongkan)">
             </div>
 
             <div class="wp-desa-form-group">
               <label class="wp-desa-label">Kontak (HP/Email)</label>
-              <input type="text" x-model="form.reporter_contact" class="wp-desa-input" placeholder="Untuk konfirmasi status">
+              <input type="text" id="wp-desa-aduan-reporter_contact" name="reporter_contact" class="wp-desa-input" placeholder="Untuk konfirmasi status">
             </div>
 
             <div class="wp-desa-form-group">
               <label class="wp-desa-label">Kategori Masalah</label>
-              <select x-model="form.category" required class="wp-desa-select">
+              <select id="wp-desa-aduan-category" name="category" required class="wp-desa-select">
                 <option value="">-- Pilih Kategori --</option>
                 <option value="Infrastruktur">Infrastruktur (Jalan, Jembatan, dll)</option>
                 <option value="Pelayanan Publik">Pelayanan Publik</option>
@@ -1169,216 +815,78 @@ class Shortcode
 
             <div class="wp-desa-form-group">
               <label class="wp-desa-label">Judul Laporan</label>
-              <input type="text" x-model="form.subject" required class="wp-desa-input" placeholder="Ringkasan masalah">
+              <input type="text" id="wp-desa-aduan-subject" name="subject" required class="wp-desa-input" placeholder="Ringkasan masalah">
             </div>
 
             <div class="wp-desa-form-group">
               <label class="wp-desa-label">Isi Laporan</label>
-              <textarea x-model="form.description" required rows="5" class="wp-desa-textarea" placeholder="Jelaskan detail masalah, lokasi, dll"></textarea>
+              <textarea id="wp-desa-aduan-description" name="description" required rows="5" class="wp-desa-textarea" placeholder="Jelaskan detail masalah, lokasi, dll"></textarea>
             </div>
 
             <div class="wp-desa-form-group">
               <label class="wp-desa-label">Upload Foto Bukti</label>
               <div style="border: 2px dashed #c2c2c2; padding: 20px; border-radius: 8px; text-align: center; background: var(--cloud); transition: all 0.2s;" class="wp-desa-upload-area">
-                <input type="file" @change="handleFileUpload" accept="image/*" class="wp-desa-input" style="border: none; padding: 0; background: transparent; width: auto;">
+                <input type="file" id="wp-desa-aduan-photo" name="photo" accept="image/*" class="wp-desa-input" style="border: none; padding: 0; background: transparent; width: auto;">
                 <small class="wp-desa-helper">Format: JPG, PNG. Maks 2MB.</small>
               </div>
             </div>
 
-            <button type="submit" :disabled="submitting" class="wp-desa-btn wp-desa-btn-primary" style="width: 100%;">
-              <span x-show="!submitting">Kirim Laporan</span>
-              <span x-show="submitting" style="display: flex; align-items: center; gap: 8px;">
-                <?php echo \WpDesa\Frontend\Icons::svg('loader-2', 'animation: spin 2s linear infinite; width: 18px; height: 18px;'); ?> Mengirim...
-              </span>
+            <button type="submit" class="wp-desa-btn wp-desa-btn-primary" style="width: 100%;">
+              Kirim Laporan
             </button>
           </form>
         </div>
 
         <!-- Tracking Form -->
-        <div x-show="tab === 'track'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100">
-          <form @submit.prevent="checkStatus" style="margin-bottom: 1.5rem; background: var(--canvas); padding: var(--sp-xl); border-radius: var(--rounded-xl); box-shadow: var(--shadow-soft-lift); border: 1px solid var(--fog);">
+        <div id="wp-desa-aduan-track-tab" class="wp-desa-tab-panel" style="display: none;">
+          <form id="wp-desa-aduan-track-form" style="margin-bottom: 1.5rem; background: var(--canvas); padding: var(--sp-xl); border-radius: var(--rounded-xl); box-shadow: var(--shadow-soft-lift); border: 1px solid var(--fog);">
             <label class="wp-desa-label" style="margin-bottom: 12px;">Masukkan Kode Tracking</label>
             <div style="display: flex; gap: 10px;">
-              <input type="text" x-model="trackCode" placeholder="Contoh: ADU-XXXXXX" required class="wp-desa-input" style="flex: 1; font-family: monospace; letter-spacing: 1px; font-weight: 600;">
-              <button type="submit" :disabled="tracking" class="wp-desa-btn wp-desa-btn-primary" style="width: auto; min-width: 100px;">
-                <span x-show="!tracking">Cek</span>
-                <i x-show="tracking"><?php echo \WpDesa\Frontend\Icons::svg('loader-2', 'animation: spin 2s linear infinite; width: 18px; height: 18px;'); ?></i>
+              <input type="text" id="wp-desa-aduan-track-code" name="track_code" placeholder="Contoh: ADU-XXXXXX" required class="wp-desa-input" style="flex: 1; font-family: monospace; letter-spacing: 1px; font-weight: 600;">
+              <button type="submit" class="wp-desa-btn wp-desa-btn-primary" style="width: auto; min-width: 100px;">
+                Cek
               </button>
             </div>
           </form>
 
-          <div x-show="trackResult" class="wp-desa-result-card">
+          <div id="wp-desa-aduan-track-result" class="wp-desa-result-card" style="display: none;">
             <div style="text-align: center; margin-bottom: 20px;">
               <div style="width: 60px; height: 60px; background: #c9e0fc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: #024ad8;">
                 <?php echo \WpDesa\Frontend\Icons::svg('clipboard-list', 'width: 30px; height: 30px;'); ?>
               </div>
               <h4 style="margin: 0; color: #1a1a1a; font-size: 1.2em;">Status Laporan</h4>
-              <p style="margin: 5px 0 0 0; color: #636363; font-family: monospace;" x-text="trackResult.code"></p>
+              <p class="wp-desa-track-code-label" style="margin: 5px 0 0 0; color: #636363; font-family: monospace;"></p>
             </div>
 
             <div class="wp-desa-card-row">
               <span class="wp-desa-card-label">Judul</span>
-              <span class="wp-desa-card-value" x-text="trackResult.subject"></span>
+              <span class="wp-desa-card-value wp-desa-track-subject"></span>
             </div>
             <div class="wp-desa-card-row">
               <span class="wp-desa-card-label">Kategori</span>
-              <span class="wp-desa-card-value" x-text="trackResult.category"></span>
+              <span class="wp-desa-card-value wp-desa-track-category"></span>
             </div>
             <div class="wp-desa-card-row">
               <span class="wp-desa-card-label">Tanggal</span>
-              <span class="wp-desa-card-value" x-text="formatDate(trackResult.created_at)"></span>
+              <span class="wp-desa-card-value wp-desa-track-date"></span>
             </div>
             <div class="wp-desa-card-row">
               <span class="wp-desa-card-label">Status</span>
-              <span :class="'wp-desa-badge wp-desa-badge-' + trackResult.status" x-text="formatStatus(trackResult.status)"
-                style="padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; background: #e8e8e8; color: #3d3d3d;"
-                :style="{'pending': 'background: #fef3c7; color: #92400e;', 'in_progress': 'background: #dbeafe; color: #1e40af;', 'resolved': 'background: #e6f4ea; color: #1f6b3c;', 'rejected': 'background: #fce8e6; color: #b3262b;'}[trackResult.status]">
-              </span>
+              <span class="wp-desa-track-status" style="padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; background: #e8e8e8; color: #3d3d3d;"></span>
             </div>
 
-            <template x-if="trackResult.response">
-              <div style="margin-top: 20px; background: var(--cloud); padding: 15px; border-radius: 8px; border: 1px solid var(--fog);">
-                <strong style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; color: #1a1a1a;">
-                  <?php echo \WpDesa\Frontend\Icons::svg('message-square-text', 'width: 18px; height: 18px;'); ?> Tanggapan Admin:
-                </strong>
-                <p style="margin: 0; color: #4b5563; line-height: 1.6;" x-text="trackResult.response"></p>
-              </div>
-            </template>
+            <div class="wp-desa-track-response" style="margin-top: 20px; background: var(--cloud); padding: 15px; border-radius: 8px; border: 1px solid var(--fog); display: none;">
+              <strong style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px; color: #1a1a1a;">
+                <?php echo \WpDesa\Frontend\Icons::svg('message-square-text', 'width: 18px; height: 18px;'); ?> Tanggapan Admin:
+              </strong>
+              <p style="margin: 0; color: #4b5563; line-height: 1.6;"></p>
+            </div>
           </div>
 
-          <div x-show="trackError" style="padding: 15px; background: #fce8e6; color: #b3262b; border: 1px solid #fecaca; border-radius: 8px; margin-top: 15px;" x-text="trackError"></div>
+          <div id="wp-desa-aduan-track-error" style="padding: 15px; background: #fce8e6; color: #b3262b; border: 1px solid #fecaca; border-radius: 8px; margin-top: 15px; display: none;"></div>
         </div>
       </div>
     </div>
-
-
-    <script>
-      document.addEventListener('alpine:init', () => {
-        Alpine.data('aduanWarga', () => ({
-          tab: 'form',
-          form: {
-            reporter_name: '',
-            reporter_contact: '',
-            category: '',
-            subject: '',
-            description: '',
-            photo: null
-          },
-          message: {
-            type: '',
-            content: ''
-          },
-          trackingCode: null,
-          submitting: false,
-
-          trackCode: '',
-          trackResult: null,
-          trackError: null,
-          tracking: false,
-
-          handleFileUpload(event) {
-            this.form.photo = event.target.files[0];
-          },
-
-          submitComplaint() {
-            this.submitting = true;
-            this.message = {
-              type: '',
-              content: ''
-            };
-            this.trackingCode = null;
-
-            const formData = new FormData();
-            formData.append('reporter_name', this.form.reporter_name);
-            formData.append('reporter_contact', this.form.reporter_contact);
-            formData.append('category', this.form.category);
-            formData.append('subject', this.form.subject);
-            formData.append('description', this.form.description);
-            if (this.form.photo) {
-              formData.append('photo', this.form.photo);
-            }
-
-            fetch('/wp-json/wp-desa/v1/complaints/submit', {
-                method: 'POST',
-                body: formData
-              })
-              .then(res => res.json())
-              .then(data => {
-                this.submitting = false;
-                if (data.success) {
-                  this.message = {
-                    type: 'success',
-                    content: data.message
-                  };
-                  this.trackingCode = data.tracking_code;
-                  this.form = {
-                    reporter_name: '',
-                    reporter_contact: '',
-                    category: '',
-                    subject: '',
-                    description: '',
-                    photo: null
-                  }; // Reset
-                  // Reset file input manually if needed
-                } else {
-                  this.message = {
-                    type: 'error',
-                    content: data.message || 'Terjadi kesalahan.'
-                  };
-                }
-              })
-              .catch(err => {
-                this.submitting = false;
-                this.message = {
-                  type: 'error',
-                  content: 'Gagal menghubungi server.'
-                };
-              });
-          },
-
-          checkStatus() {
-            this.tracking = true;
-            this.trackResult = null;
-            this.trackError = null;
-
-            fetch('/wp-json/wp-desa/v1/complaints/track?code=' + this.trackCode)
-              .then(res => res.json())
-              .then(data => {
-                this.tracking = false;
-                if (data.id) {
-                  this.trackResult = data;
-                } else {
-                  this.trackError = data.message || 'Data tidak ditemukan.';
-                }
-              })
-              .catch(err => {
-                this.tracking = false;
-                this.trackError = 'Gagal menghubungi server.';
-              });
-          },
-
-          formatDate(dateString) {
-            if (!dateString) return '-';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('id-ID', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric'
-            });
-          },
-
-          formatStatus(status) {
-            const map = {
-              'pending': 'Menunggu',
-              'in_progress': 'Diproses',
-              'resolved': 'Selesai',
-              'rejected': 'Ditolak'
-            };
-            return map[status] || status;
-          }
-        }));
-      });
-    </script>
   <?php
     return ob_get_clean();
   }
@@ -1387,22 +895,8 @@ class Shortcode
   {
     global $post;
 
-    // Enqueue Alpine.js for frontend (always needed for interactive components)
-    wp_enqueue_script('alpinejs', 'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js', [], '3.0.0', true);
-    // CDN fallback
-    wp_add_inline_script('alpinejs', 'if(typeof Alpine==="undefined"){var e=document.createElement("script");e.src="' . WP_DESA_URL . 'assets/js/alpine.min.js";document.head.appendChild(e);}');
-
-    add_filter('rocket_delay_js_exclusions', function ($excluded) {
-      $excluded[] = 'alpinejs';
-      $excluded[] = 'alpinejs@3.x.x/dist/cdn.min.js';
-      return array_unique($excluded);
-    });
-
-    add_filter('rocket_exclude_defer_js', function ($excluded) {
-      $excluded[] = 'alpinejs';
-      $excluded[] = 'alpinejs@3.x.x/dist/cdn.min.js';
-      return array_unique($excluded);
-    });
+    // Enqueue Frontend JS (replaces Alpine.js, requires jQuery)
+    wp_enqueue_script('wp-desa-frontend', WP_DESA_URL . 'assets/js/wp-desa-frontend.js', ['jquery'], filemtime(WP_DESA_PATH . 'assets/js/wp-desa-frontend.js'), true);
 
     // Enqueue Frontend Styles
     wp_enqueue_style('wp-desa-frontend', WP_DESA_URL . 'assets/css/frontend/style.css', [], '1.0.0');
@@ -1432,258 +926,88 @@ class Shortcode
   {
     ob_start();
   ?>
-    <div id="wp-desa-layanan" class="wp-desa-wrapper" x-data="layananSurat()">
+    <div id="wp-desa-layanan" class="wp-desa-wrapper">
       <!-- CSS moved to assets/css/frontend/style.css -->
 
       <div class="wp-desa-tabs" style="display: flex; border-bottom: 1px solid #e8e8e8; margin-bottom: 30px;">
-        <button class="wp-desa-tab-btn" :class="{ 'active': tab === 'request' }" @click="tab = 'request'">
+        <button class="wp-desa-tab-btn active" data-tab="request">
           <?php echo \WpDesa\Frontend\Icons::svg('edit', 'width: 18px; height: 18px;'); ?> Buat Permohonan
         </button>
-        <button class="wp-desa-tab-btn" :class="{ 'active': tab === 'tracking' }" @click="tab = 'tracking'">
+        <button class="wp-desa-tab-btn" data-tab="tracking">
           <?php echo \WpDesa\Frontend\Icons::svg('search', 'width: 18px; height: 18px;'); ?> Cek Status
         </button>
       </div>
 
       <!-- Request Form -->
-      <div x-show="tab === 'request'">
-        <div x-show="message.content" :style="message.type === 'success' ? 'background: #e6f4ea; color: #1f6b3c; border-color: #c3e6cb;' : 'background: #fce8e6; color: #b3262b; border-color: #fecaca;'" style="padding: 15px; border-radius: 8px; border: 1px solid; margin-bottom: 20px;" x-text="message.content"></div>
+      <div id="wp-desa-layanan-request-tab" class="wp-desa-tab-panel">
+        <div id="wp-desa-layanan-message" style="padding: 15px; border-radius: 8px; border: 1px solid; margin-bottom: 20px; display: none;"></div>
 
-        <div x-show="trackingCode" style="background: #c9e0fc; border: 1px solid #bfdbfe; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+        <div id="wp-desa-layanan-tracking-code" style="background: #c9e0fc; border: 1px solid #bfdbfe; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; display: none;">
           <div style="color: #1e40af; font-weight: 500; margin-bottom: 10px;">Kode Tracking Anda:</div>
-          <div style="font-size: 1.5em; font-weight: 700; color: #1e3a8a; letter-spacing: 2px;" x-text="trackingCode"></div>
+          <div class="wp-desa-layanan-code-label" style="font-size: 1.5em; font-weight: 700; color: #1e3a8a; letter-spacing: 2px;"></div>
           <div style="font-size: 0.9em; color: #60a5fa; margin-top: 10px;">Simpan kode ini untuk mengecek status permohonan.</div>
         </div>
 
-        <form @submit.prevent="submitRequest">
+        <form id="wp-desa-layanan-form">
           <div class="wp-desa-form-group">
             <label class="wp-desa-label">NIK</label>
-            <input type="text" x-model="form.nik" class="wp-desa-input" required maxlength="16">
+            <input type="text" id="wp-desa-layanan-nik" name="nik" class="wp-desa-input" required maxlength="16">
           </div>
 
           <div class="wp-desa-form-group">
             <label class="wp-desa-label">Nama Lengkap</label>
-            <input type="text" x-model="form.name" class="wp-desa-input" required>
+            <input type="text" id="wp-desa-layanan-name" name="name" class="wp-desa-input" required>
           </div>
 
           <div class="wp-desa-form-group">
             <label class="wp-desa-label">Nomor WhatsApp</label>
-            <input type="text" x-model="form.phone" class="wp-desa-input" required placeholder="08...">
+            <input type="text" id="wp-desa-layanan-phone" name="phone" class="wp-desa-input" required placeholder="08...">
           </div>
 
           <div class="wp-desa-form-group">
             <label class="wp-desa-label">Jenis Surat</label>
-            <select x-model="form.letter_type_id" class="wp-desa-select" required>
+            <select id="wp-desa-layanan-letter_type_id" name="letter_type_id" class="wp-desa-select" required>
               <option value="">Pilih Jenis Surat</option>
-              <template x-for="type in types" :key="type.id">
-                <option :value="type.id" x-text="type.name"></option>
-              </template>
             </select>
-            <small class="wp-desa-helper" x-text="selectedTypeDescription"></small>
+            <small id="wp-desa-layanan-type-desc" class="wp-desa-helper"></small>
           </div>
 
           <div class="wp-desa-form-group">
             <label class="wp-desa-label">Keterangan / Keperluan</label>
-            <textarea x-model="form.details" class="wp-desa-textarea" rows="3"></textarea>
+            <textarea id="wp-desa-layanan-details" name="details" class="wp-desa-textarea" rows="3"></textarea>
           </div>
 
-          <button type="submit" class="wp-desa-btn wp-desa-btn-primary" :disabled="submitting">
-            <span x-show="!submitting">Kirim Permohonan</span>
-            <span x-show="submitting">Mengirim...</span>
+          <button type="submit" class="wp-desa-btn wp-desa-btn-primary">
+            Kirim Permohonan
           </button>
         </form>
       </div>
 
       <!-- Tracking Form -->
-      <div x-show="tab === 'tracking'">
+      <div id="wp-desa-layanan-tracking-tab" class="wp-desa-tab-panel" style="display: none;">
         <div class="wp-desa-form-group">
           <label class="wp-desa-label">Masukkan Kode Tracking</label>
           <div style="display: flex; gap: 10px;">
-            <input type="text" x-model="trackCode" class="wp-desa-input" placeholder="Contoh: REQ-...">
-            <button type="button" @click="checkStatus" class="wp-desa-btn wp-desa-btn-primary" :disabled="tracking">
-              <span x-show="!tracking">Cek</span>
-              <span x-show="tracking">...</span>
+            <input type="text" id="wp-desa-layanan-track-code" class="wp-desa-input" placeholder="Contoh: REQ-...">
+            <button type="button" id="wp-desa-layanan-track-btn" class="wp-desa-btn wp-desa-btn-primary">
+              Cek
             </button>
           </div>
         </div>
 
-        <div x-show="trackResult" class="wp-desa-result-card">
+        <div id="wp-desa-layanan-track-result" class="wp-desa-result-card" style="display: none;">
           <div class="wp-desa-card-row">
             <span class="wp-desa-card-label">Nama Pengaju</span>
-            <span class="wp-desa-card-value" x-text="trackResult.name"></span>
+            <span class="wp-desa-card-value wp-desa-layanan-track-name"></span>
           </div>
-          <div class="wp-desa-card-row"><span class="wp-desa-card-label">Tanggal</span><span class="wp-desa-card-value" x-text="formatDate(trackResult.created_at)"></span></div>
+          <div class="wp-desa-card-row"><span class="wp-desa-card-label">Tanggal</span><span class="wp-desa-card-value wp-desa-layanan-track-date"></span></div>
           <div class="wp-desa-card-row"><span class="wp-desa-card-label">Status</span>
-            <span :class="'wp-desa-badge wp-desa-badge-' + trackResult.status" x-text="formatStatus(trackResult.status)"
-              style="padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; background: #e8e8e8; color: #3d3d3d;"
-              :style="{'pending': 'background: #fef3c7; color: #92400e;', 'processed': 'background: #dbeafe; color: #1e40af;', 'ready': 'background: #e6f4ea; color: #1f6b3c;', 'completed': 'background: #d1fae5; color: #065f46;', 'rejected': 'background: #fce8e6; color: #b3262b;'}[trackResult.status]"></span>
+            <span class="wp-desa-layanan-track-status" style="padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; background: #e8e8e8; color: #3d3d3d;"></span>
           </div>
         </div>
-        <div x-show="trackError" style="padding: 15px; background: #fce8e6; color: #b3262b; border: 1px solid #fecaca; border-radius: 8px; margin-top: 15px;" x-text="trackError"></div>
+        <div id="wp-desa-layanan-track-error" style="padding: 15px; background: #fce8e6; color: #b3262b; border: 1px solid #fecaca; border-radius: 8px; margin-top: 15px; display: none;"></div>
       </div>
-    </div>
-    <script>
-      document.addEventListener('alpine:init', () => {
-        Alpine.data('layananSurat', () => ({
-
-          tab: 'request',
-          types: [],
-          form: {
-            nik: '',
-            name: '',
-            phone: '',
-            letter_type_id: '',
-            details: ''
-          }
-
-          ,
-          message: {
-            type: '',
-            content: ''
-          }
-
-          ,
-          trackingCode: null,
-          submitting: false,
-
-          trackCode: '',
-          trackResult: null,
-          trackError: null,
-          tracking: false,
-
-          init() {
-            this.fetchTypes();
-          }
-
-          ,
-
-          fetchTypes() {
-            fetch('/wp-json/wp-desa/v1/letters/types').then(res => res.json()).then(data => this.types = data);
-          }
-
-          ,
-
-          get selectedTypeDescription() {
-              const type = this.types.find(t => t.id == this.form.letter_type_id);
-              return type ? type.description : '';
-            }
-
-            ,
-
-          submitRequest() {
-            this.submitting = true;
-
-            this.message = {
-              type: '',
-              content: ''
-            }
-
-            ;
-            this.trackingCode = null;
-
-            fetch('/wp-json/wp-desa/v1/letters/request', {
-
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              }
-
-              ,
-              body: JSON.stringify(this.form)
-
-            }).then(res => res.json()).then(data => {
-              this.submitting = false;
-
-              if (data.success) {
-                this.message = {
-                  type: 'success',
-                  content: data.message
-                }
-
-                ;
-                this.trackingCode = data.tracking_code;
-
-                this.form = {
-                  nik: '',
-                  name: '',
-                  phone: '',
-                  letter_type_id: '',
-                  details: ''
-                }
-
-                ; // Reset
-              } else {
-                this.message = {
-                  type: 'error',
-                  content: data.message || 'Terjadi kesalahan.'
-                }
-
-                ;
-              }
-
-            }).catch(err => {
-              this.submitting = false;
-
-              this.message = {
-                type: 'error',
-                content: 'Gagal menghubungi server.'
-              }
-
-              ;
-            });
-          }
-
-          ,
-
-          checkStatus() {
-            this.tracking = true;
-            this.trackResult = null;
-            this.trackError = null;
-
-            fetch('/wp-json/wp-desa/v1/letters/track?code=' + this.trackCode).then(res => res.json()).then(data => {
-              this.tracking = false;
-
-              if (data.id) {
-                this.trackResult = data;
-              } else {
-                this.trackError = data.message || 'Data tidak ditemukan.';
-              }
-
-            }).catch(err => {
-              this.tracking = false;
-              this.trackError = 'Gagal menghubungi server.';
-            });
-          }
-
-          ,
-
-          formatDate(dateString) {
-            if (!dateString) return '-';
-            const date = new Date(dateString);
-
-            return date.toLocaleDateString('id-ID', {
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric'
-            });
-          }
-
-          ,
-
-          formatStatus(status) {
-            const map = {
-              'pending': 'Menunggu',
-              'processed': 'Diproses',
-              'ready': 'Siap Diambil',
-              'completed': 'Selesai',
-              'rejected': 'Ditolak'
-            }
-
-            ;
-            return map[status] || status;
-          }
-        }));
-      });
-    </script><?php
-              return ob_get_clean();
-            }
-          }
+    </div><?php
+          return ob_get_clean();
+        }
+      }

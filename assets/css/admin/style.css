@@ -1256,9 +1256,7 @@ input:checked + .slider:before {
 /* =========================================================
    Settings Page Specifics
    ========================================================= */
-[x-cloak] {
-  display: none !important;
-}
+/* [x-cloak] removed — migrated to jQuery */
 
 .wp-desa-card-settings {
   max-width: 800px;

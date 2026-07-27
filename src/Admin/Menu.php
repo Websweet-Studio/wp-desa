@@ -83,10 +83,9 @@ class Menu
         ];
 
         if (in_array($hook, $allowed_pages)) {
-            // Alpine.js
-            wp_enqueue_script('alpinejs', 'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js', [], '3.0.0', true);
-            // CDN fallback
-            wp_add_inline_script('alpinejs', 'if(typeof Alpine==="undefined"){var e=document.createElement("script");e.src="' . WP_DESA_URL . 'assets/js/alpine.min.js";document.head.appendChild(e);}');
+            // jQuery-dependent admin JS
+            wp_enqueue_script('wp-desa-admin', WP_DESA_URL . 'assets/js/wp-desa-admin.js', ['jquery'], filemtime(WP_DESA_PATH . 'assets/js/wp-desa-admin.js'), true);
+            wp_add_inline_script('wp-desa-admin', 'var wpDesaSettings={nonce:"' . wp_create_nonce('wp_rest') . '",apiUrl:"' . esc_url_raw(rest_url('wp-desa/v1/residents')) . '"};', 'before');
 
             // Admin CSS
             wp_enqueue_style('wp-desa-admin-css', WP_DESA_URL . 'assets/css/admin/style.css', [], filemtime(WP_DESA_PATH . 'assets/css/admin/style.css'));
