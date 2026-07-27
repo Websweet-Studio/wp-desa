@@ -187,46 +187,46 @@ class Shortcode
         </div>
       </div>
 
-      <div class="wp-desa-stat-card" style="margin-top: var(--sp-xl);">
-        <h4 style="margin: 0 0 15px 0; color: #1a1a1a; font-size: 1.05em;">Rincian Demografi</h4>
+      <div class="wp-desa-demografi-card">
+        <h4 class="wp-desa-demografi-title">Rincian Demografi</h4>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
-          <div>
-            <h5 style="margin: 0 0 10px 0; font-size: 0.95em; color: #636363; text-transform: uppercase; letter-spacing: 0.05em;">Jenis Kelamin</h5>
-            <ul style="list-style: none; padding: 0; margin: 0;">
-              <li style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.95em;">
-                <span>Laki-laki</span>
-                <span style="font-weight: 600;"><?php echo number_format_i18n($male_val); ?></span>
+        <div class="wp-desa-demografi-grid">
+          <div class="wp-desa-demografi-group">
+            <h5 class="wp-desa-demografi-group-title">Jenis Kelamin</h5>
+            <ul class="wp-desa-demografi-list">
+              <li class="wp-desa-demografi-item">
+                <span class="wp-desa-demografi-label">Laki-laki</span>
+                <span class="wp-desa-demografi-value"><?php echo number_format_i18n($male_val); ?></span>
               </li>
-              <li style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.95em;">
-                <span>Perempuan</span>
-                <span style="font-weight: 600;"><?php echo number_format_i18n($female_val); ?></span>
+              <li class="wp-desa-demografi-item">
+                <span class="wp-desa-demografi-label">Perempuan</span>
+                <span class="wp-desa-demografi-value"><?php echo number_format_i18n($female_val); ?></span>
               </li>
             </ul>
           </div>
 
-          <div>
-            <h5 style="margin: 0 0 10px 0; font-size: 0.95em; color: #636363; text-transform: uppercase; letter-spacing: 0.05em;">Kelompok Usia</h5>
-            <ul style="list-style: none; padding: 0; margin: 0;">
-              <li style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.95em;">
-                <span>Anak (&lt; 18 tahun)</span>
-                <span style="font-weight: 600;"><?php echo number_format_i18n($age_anak); ?></span>
+          <div class="wp-desa-demografi-group">
+            <h5 class="wp-desa-demografi-group-title">Kelompok Usia</h5>
+            <ul class="wp-desa-demografi-list">
+              <li class="wp-desa-demografi-item">
+                <span class="wp-desa-demografi-label">Anak (&lt; 18 tahun)</span>
+                <span class="wp-desa-demografi-value"><?php echo number_format_i18n($age_anak); ?></span>
               </li>
-              <li style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.95em;">
-                <span>Dewasa (&ge; 18 tahun)</span>
-                <span style="font-weight: 600;"><?php echo number_format_i18n($age_dewasa); ?></span>
+              <li class="wp-desa-demografi-item">
+                <span class="wp-desa-demografi-label">Dewasa (&ge; 18 tahun)</span>
+                <span class="wp-desa-demografi-value"><?php echo number_format_i18n($age_dewasa); ?></span>
               </li>
             </ul>
           </div>
 
           <?php if (!empty($job_stats)): ?>
-            <div>
-              <h5 style="margin: 0 0 10px 0; font-size: 0.95em; color: #636363; text-transform: uppercase; letter-spacing: 0.05em;">Pekerjaan Terbanyak</h5>
-              <ul style="list-style: none; padding: 0; margin: 0;">
+            <div class="wp-desa-demografi-group">
+              <h5 class="wp-desa-demografi-group-title">Pekerjaan Terbanyak</h5>
+              <ul class="wp-desa-demografi-list">
                 <?php foreach ($job_stats as $row): ?>
-                  <li style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.95em;">
-                    <span><?php echo esc_html($row->label ?: 'Tidak Diisi'); ?></span>
-                    <span style="font-weight: 600;"><?php echo number_format_i18n((int) $row->count); ?></span>
+                  <li class="wp-desa-demografi-item">
+                    <span class="wp-desa-demografi-label"><?php echo esc_html($row->label ?: 'Tidak Diisi'); ?></span>
+                    <span class="wp-desa-demografi-value"><?php echo number_format_i18n((int) $row->count); ?></span>
                   </li>
                 <?php endforeach; ?>
               </ul>
@@ -234,13 +234,13 @@ class Shortcode
           <?php endif; ?>
 
           <?php if (!empty($marital_stats)): ?>
-            <div>
-              <h5 style="margin: 0 0 10px 0; font-size: 0.95em; color: #636363; text-transform: uppercase; letter-spacing: 0.05em;">Status Perkawinan</h5>
-              <ul style="list-style: none; padding: 0; margin: 0;">
+            <div class="wp-desa-demografi-group">
+              <h5 class="wp-desa-demografi-group-title">Status Perkawinan</h5>
+              <ul class="wp-desa-demografi-list">
                 <?php foreach ($marital_stats as $row): ?>
-                  <li style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.95em;">
-                    <span><?php echo esc_html($row->label ?: 'Tidak Diisi'); ?></span>
-                    <span style="font-weight: 600;"><?php echo number_format_i18n((int) $row->count); ?></span>
+                  <li class="wp-desa-demografi-item">
+                    <span class="wp-desa-demografi-label"><?php echo esc_html($row->label ?: 'Tidak Diisi'); ?></span>
+                    <span class="wp-desa-demografi-value"><?php echo number_format_i18n((int) $row->count); ?></span>
                   </li>
                 <?php endforeach; ?>
               </ul>
@@ -248,7 +248,6 @@ class Shortcode
           <?php endif; ?>
         </div>
       </div>
-    </div>
     </div>
   <?php
     return ob_get_clean();
@@ -815,7 +814,7 @@ class Shortcode
       <div class="wp-desa-summary-grid">
         <div class="wp-desa-stat-card">
           <div class="wp-desa-stat-icon-bg">
-            <?php echo \WpDesa\Frontend\Icons::svg('banknote', 'color: #024ad8; width: 24px; height: 24px;'); ?>
+            <?php echo \WpDesa\Frontend\Icons::svg('banknote', ''); ?>
           </div>
           <h4 class="wp-desa-stat-label">Total Pendapatan</h4>
           <h3 class="wp-desa-stat-value" x-text="formatCurrency(summary.totals.find(t => t.type === 'income')?.total_realization || 0)"></h3>
@@ -826,7 +825,7 @@ class Shortcode
 
         <div class="wp-desa-stat-card">
           <div class="wp-desa-stat-icon-bg">
-            <?php echo \WpDesa\Frontend\Icons::svg('shopping-cart', 'color: #b3262b; width: 24px; height: 24px;'); ?>
+            <?php echo \WpDesa\Frontend\Icons::svg('shopping-cart', ''); ?>
           </div>
           <h4 class="wp-desa-stat-label">Total Belanja</h4>
           <h3 class="wp-desa-stat-value" x-text="formatCurrency(summary.totals.find(t => t.type === 'expense')?.total_realization || 0)"></h3>
@@ -837,7 +836,7 @@ class Shortcode
 
         <div class="wp-desa-stat-card wp-desa-stat-card-surplus">
           <div class="wp-desa-stat-icon-bg">
-            <?php echo \WpDesa\Frontend\Icons::svg('trending-up', 'color: #1f6b3c; width: 24px; height: 24px;'); ?>
+            <?php echo \WpDesa\Frontend\Icons::svg('trending-up', ''); ?>
           </div>
           <h4 class="wp-desa-stat-label">Sisa Lebih (SiLPA)</h4>
           <h3 class="wp-desa-stat-value" :style="{color: getSurplus() >= 0 ? '#1f6b3c' : '#b3262b'}" x-text="formatCurrency(getSurplus())"></h3>

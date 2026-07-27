@@ -148,13 +148,15 @@
 
 .wp-desa-btn-primary {
   background-color: var(--primary);
-  color: var(--on-ink);
+  color: var(--on-ink) !important;
   border-color: var(--primary);
 }
 
 .wp-desa-btn .wp-desa-btn-primary,
-.wp-desa-btn-primary span {
-  color: var(--on-ink);
+.wp-desa-btn-primary span,
+.wp-desa-btn-primary svg,
+.wp-desa-btn-primary * {
+  color: var(--on-ink) !important;
 }
 
 .wp-desa-btn-primary:hover {
@@ -371,79 +373,50 @@
   border: 1px solid var(--fog);
 }
 
-.wp-desa-profil-logo {
-  max-width: 100px;
-  height: auto;
-  margin-bottom: var(--sp-xl);
-}
-
 /* Profil Card */
 .wp-desa-profil-card {
   background: var(--canvas);
   border-radius: 2px;
   padding: var(--sp-xl);
   border: 1px solid var(--fog);
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-xl);
-  min-width: 0;
-}
-
-.wp-desa-profil-card > * {
-  min-width: 0;
-}
-
-@media (min-width: 640px) {
-  .wp-desa-profil-card {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: var(--sp-xxl, 32px);
-  }
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .wp-desa-profil-header {
   text-align: center;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  margin-bottom: var(--sp-xl);
 }
 
-@media (min-width: 640px) {
-  .wp-desa-profil-header {
-    text-align: left;
-    align-items: flex-start;
-  }
+.wp-desa-profil-logo {
+  display: block;
+  max-width: 80px;
+  height: auto;
+  margin: 0 auto var(--sp-md) auto;
 }
 
 .wp-desa-profil-name {
   margin: 0 0 var(--sp-xxs, 4px) 0;
   font-family: var(--font-display);
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 500;
-  line-height: 1.17;
+  line-height: 1.2;
   color: var(--ink);
+  word-break: break-word;
 }
 
 .wp-desa-profil-subtitle {
   margin: 0;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--graphite);
+  word-break: break-word;
 }
 
 .wp-desa-profil-contact-grid {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: var(--sp-md);
-  flex: 1;
-}
-
-@media (min-width: 480px) {
-  .wp-desa-profil-contact-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 .wp-desa-profil-contact-item {
@@ -537,6 +510,88 @@
   max-width: 100%;
   margin-left: auto;
   margin-right: auto;
+}
+
+/* Demografi */
+.wp-desa-demografi-card {
+  background: var(--canvas);
+  border-radius: 2px;
+  border: 1px solid var(--fog);
+  padding: var(--sp-xl);
+  margin-top: var(--sp-xl);
+}
+
+.wp-desa-demografi-title {
+  margin: 0 0 var(--sp-lg) 0;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  padding-bottom: var(--sp-sm);
+  border-bottom: 1px solid var(--fog);
+}
+
+.wp-desa-demografi-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-lg);
+}
+
+@media (min-width: 480px) {
+  .wp-desa-demografi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .wp-desa-demografi-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.wp-desa-demografi-group {
+  min-width: 0;
+}
+
+.wp-desa-demografi-group-title {
+  margin: 0 0 var(--sp-sm) 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--graphite);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.wp-desa-demografi-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.wp-desa-demografi-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 14px;
+  border-bottom: 1px solid var(--cloud);
+}
+
+.wp-desa-demografi-item:last-child {
+  border-bottom: none;
+}
+
+.wp-desa-demografi-label {
+  color: var(--charcoal);
+  min-width: 0;
+  word-break: break-word;
+}
+
+.wp-desa-demografi-value {
+  font-weight: 600;
+  color: var(--ink);
+  flex-shrink: 0;
+  margin-left: var(--sp-sm);
 }
 
 /* Pure SVG doughnut chart */
@@ -746,10 +801,12 @@
 #wp-desa-keuangan .wp-desa-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: var(--sp-xl);
   flex-wrap: wrap;
-  gap: 15px;
+  gap: var(--sp-md);
+  padding-bottom: var(--sp-md);
+  border-bottom: 1px solid var(--fog);
 }
 
 #wp-desa-keuangan .wp-desa-title {
@@ -766,78 +823,119 @@
 #wp-desa-keuangan .wp-desa-filter {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--sp-sm);
 }
 
 #wp-desa-keuangan .wp-desa-filter-label {
+  font-size: 14px;
   font-weight: 500;
   color: var(--graphite);
 }
 
 #wp-desa-keuangan .wp-desa-select-year {
   width: auto;
-  padding: 6px 30px 6px var(--sp-sm);
+  min-width: 100px;
+  padding: 8px 32px 8px 12px;
+  border: 1px solid var(--fog);
   border-radius: var(--rounded-md);
-  border-color: var(--steel);
+  background: var(--canvas);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23636363' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
 }
 
 #wp-desa-keuangan .wp-desa-summary-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--sp-xl);
-  margin-bottom: var(--sp-xxl, 32px);
+  grid-template-columns: 1fr;
+  gap: var(--sp-md);
+  margin-bottom: var(--sp-xl);
+}
+
+@media (min-width: 480px) {
+  #wp-desa-keuangan .wp-desa-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  #wp-desa-keuangan .wp-desa-summary-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--sp-xl);
+  }
 }
 
 #wp-desa-keuangan .wp-desa-stat-card {
+  background: var(--canvas);
+  border: 1px solid var(--fog);
+  border-radius: var(--rounded-xl);
+  padding: var(--sp-lg);
   text-align: left;
   position: relative;
   overflow: hidden;
-  border-radius: var(--rounded-xl);
-  padding: var(--sp-lg) 18px;
+  transition: border-color 0.2s;
+}
+
+#wp-desa-keuangan .wp-desa-stat-card:hover {
+  border-color: var(--primary-soft);
 }
 
 #wp-desa-keuangan .wp-desa-stat-icon-bg {
   position: absolute;
-  right: -10px;
-  top: -10px;
-  opacity: 0.1;
+  right: -8px;
+  top: -8px;
+  opacity: 0.08;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-#wp-desa-keuangan .wp-desa-stat-icon-bg .dashicons {
-  font-size: 100px;
-  width: 100px;
-  height: 100px;
+#wp-desa-keuangan .wp-desa-stat-icon-bg svg {
+  width: 64px;
+  height: 64px;
 }
 
 #wp-desa-keuangan .wp-desa-stat-label {
-  margin: 0 0 10px 0;
+  margin: 0 0 var(--sp-sm) 0;
   color: var(--graphite);
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.7px;
+  letter-spacing: 0.5px;
+  position: relative;
 }
 
 #wp-desa-keuangan .wp-desa-stat-value {
   font-family: var(--font-display);
-  margin: 0 0 5px 0;
+  margin: 0 0 var(--sp-xs) 0;
   color: var(--ink);
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 500;
-  line-height: 1;
+  line-height: 1.1;
+  position: relative;
 }
 
 #wp-desa-keuangan .wp-desa-stat-sub {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--graphite);
   background: var(--cloud);
   display: inline-block;
-  padding: var(--sp-xxs, 4px) 10px;
+  padding: 3px 10px;
   border-radius: var(--rounded-md);
+  position: relative;
 }
 
 #wp-desa-keuangan .wp-desa-stat-sub-muted {
   background: transparent;
   padding: 0;
+  color: var(--steel);
 }
 
 #wp-desa-keuangan .wp-desa-stat-card-surplus {
@@ -846,33 +944,52 @@
 
 #wp-desa-keuangan .wp-desa-chart-wrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--sp-xl);
-  margin-bottom: var(--sp-xxl, 32px);
+  grid-template-columns: 1fr;
+  gap: var(--sp-md);
+  margin-bottom: var(--sp-xl);
+}
+
+@media (min-width: 768px) {
+  #wp-desa-keuangan .wp-desa-chart-wrapper {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--sp-xl);
+  }
+
+  #wp-desa-keuangan .wp-desa-chart-wrapper .wp-desa-chart-container:last-child {
+    grid-column: 1 / -1;
+  }
 }
 
 #wp-desa-keuangan .wp-desa-chart-title {
-  text-align: center;
-  margin-bottom: var(--sp-lg);
+  margin: 0 0 var(--sp-md) 0;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 500;
   color: var(--ink);
 }
 
 #wp-desa-keuangan .wp-desa-chart-box {
   position: relative;
-  height: 250px;
+  height: 280px;
+}
+
+#wp-desa-keuangan .wp-desa-table-card {
+  padding: 0 !important;
+  border-radius: var(--rounded-xl) !important;
 }
 
 #wp-desa-keuangan .wp-desa-table-header {
   padding: var(--sp-lg);
   border-bottom: 1px solid var(--fog);
-  background: var(--cloud);
+  background: var(--canvas);
 }
 
 #wp-desa-keuangan .wp-desa-table-title {
   margin: 0;
-  color: var(--ink);
+  font-family: var(--font-display);
   font-size: 16px;
   font-weight: 500;
+  color: var(--ink);
 }
 
 #wp-desa-keuangan .wp-desa-table-subtitle {
@@ -891,18 +1008,33 @@
   font-size: 14px;
 }
 
+#wp-desa-keuangan thead {
+  border-bottom: 1px solid var(--fog);
+}
+
 #wp-desa-keuangan th {
-  background: var(--cloud);
   color: var(--graphite);
   text-transform: uppercase;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.7px;
-  padding: 15px var(--sp-lg);
+  letter-spacing: 0.5px;
+  padding: 12px var(--sp-lg);
+  text-align: left;
+  background: var(--cloud);
 }
 
 #wp-desa-keuangan td {
-  padding: 15px var(--sp-lg);
+  padding: 14px var(--sp-lg);
+  border-bottom: 1px solid var(--cloud);
+  vertical-align: middle;
+}
+
+#wp-desa-keuangan tbody tr:last-child td {
+  border-bottom: none;
+}
+
+#wp-desa-keuangan tbody tr:hover td {
+  background: var(--cloud);
 }
 
 #wp-desa-keuangan .wp-desa-row-title {
@@ -911,9 +1043,9 @@
 }
 
 #wp-desa-keuangan .wp-desa-row-subtitle {
-  font-size: 14px;
-  color: var(--graphite);
-  margin-top: var(--sp-xxs, 4px);
+  font-size: 12px;
+  color: var(--steel);
+  margin-top: 2px;
 }
 
 #wp-desa-keuangan .wp-desa-col-title {
@@ -925,29 +1057,35 @@
 #wp-desa-keuangan .wp-desa-col-percentage {
   text-align: center;
 }
+
 #wp-desa-keuangan .wp-desa-cell-number {
   text-align: right;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
+
 #wp-desa-keuangan .wp-desa-cell-number-strong {
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--ink);
 }
+
 #wp-desa-keuangan .wp-desa-cell-percentage {
   text-align: center;
 }
 
 #wp-desa-keuangan .wp-desa-percentage {
   display: inline-block;
-  padding: 2px 8px;
+  padding: 4px 12px;
   border-radius: var(--rounded-pill);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 #wp-desa-keuangan .wp-desa-empty-state {
   text-align: center;
-  padding: 40px;
+  padding: 48px var(--sp-lg);
   color: var(--steel);
+  font-size: 14px;
 }
 
 /* --- Layanan Shortcode Extra --- */
