@@ -357,10 +357,12 @@
    Form Elements — HP: 4px radius, 44px height inputs
    ========================================================= */
 .wp-desa-form-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--sp-xl);
+  display: block;
   padding: 20px;
+}
+
+.wp-desa-form-grid > * + * {
+  margin-top: var(--sp-xl);
 }
 
 .wp-desa-form-group {

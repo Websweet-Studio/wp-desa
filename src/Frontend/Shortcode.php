@@ -19,8 +19,12 @@ class Shortcode
     add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
   }
 
-  public function render_statistik()
+  public function render_statistik($atts = [])
   {
+    $atts = shortcode_atts([
+      'style' => 'classic',
+    ], $atts);
+
     global $wpdb;
     $table = $wpdb->prefix . 'desa_residents';
 
@@ -108,9 +112,9 @@ class Shortcode
     }
 
     ob_start();
+    $style = $atts['style'];
 ?>
-    <div class="wp-desa-wrapper">
-      <!-- CSS moved to assets/css/frontend/style.css -->
+    <div class="wp-desa-wrapper wp-desa-stats--<?php echo esc_attr($style); ?>">
 
       <?php
       $total_gender = $male_val + $female_val;
@@ -122,70 +126,234 @@ class Shortcode
       $c = 2 * M_PI * $r;
       $male_dash = ($male_pct / 100) * $c;
       $female_dash = ($female_pct / 100) * $c;
-      // Female segment starts where male ends; draw male on top so it renders first clockwise
-      // Render: male first, then female. Female offset = male dash.
       ?>
 
-      <div class="wp-desa-chart-container">
-        <h3 style="text-align: center; margin-top: 0; color: #1a1a1a; font-size: 1.1em; margin-bottom: 15px;">Komposisi Penduduk</h3>
-        <div class="wp-desa-doughnut">
-          <svg viewBox="0 0 160 160" class="wp-desa-doughnut-svg">
-            <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#e8e8e8" stroke-width="<?php echo $sw; ?>" />
-            <!-- Laki-laki -->
-            <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#024ad8" stroke-width="<?php echo $sw; ?>"
-              stroke-dasharray="<?php echo round($male_dash, 1); ?> <?php echo round($c - $male_dash, 1); ?>" stroke-dashoffset="0"
-              stroke-linecap="butt" transform="rotate(-90 80 80)" />
-            <!-- Perempuan -->
-            <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#b3262b" stroke-width="<?php echo $sw; ?>"
-              stroke-dasharray="<?php echo round($female_dash, 1); ?> <?php echo round($c - $female_dash, 1); ?>" stroke-dashoffset="<?php echo round(-$male_dash, 1); ?>"
-              stroke-linecap="butt" transform="rotate(-90 80 80)" />
-            <text x="80" y="76" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="28" font-weight="500" fill="#1a1a1a"><?php echo number_format_i18n($total_gender); ?></text>
-            <text x="80" y="96" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="12" fill="#636363" font-weight="500">Jiwa</text>
-          </svg>
-          <div class="wp-desa-doughnut-legend">
-            <span class="wp-desa-doughnut-legend-item"><i style="background:#024ad8"></i> Laki-laki: <b><?php echo number_format_i18n($male_val); ?></b> (<?php echo $male_pct; ?>%)</span>
-            <span class="wp-desa-doughnut-legend-item"><i style="background:#b3262b"></i> Perempuan: <b><?php echo number_format_i18n($female_val); ?></b> (<?php echo $female_pct; ?>%)</span>
+      <?php if ($style === 'grid'): ?>
+        <!-- ============ GRID STYLE ============ -->
+        <div class="wp-desa-stats-grid wp-desa-stats-grid--2col">
+          <div class="wp-desa-stat-card wp-desa-stat-card--grid">
+            <div class="wp-desa-stat-icon" style="background: #c9e0fc; color: #024ad8;">
+              <?php echo \WpDesa\Frontend\Icons::svg('users', 'width:32px;height:32px'); ?>
+            </div>
+            <div class="wp-desa-stat-number"><?php echo number_format_i18n($total_val); ?></div>
+            <div class="wp-desa-stat-label">Total Penduduk</div>
           </div>
-        </div>
-      </div>
 
-      <div class="wp-desa-stats-grid">
-        <!-- Total -->
-        <div class="wp-desa-stat-card">
-          <div class="wp-desa-stat-icon" style="background: #c9e0fc; color: #024ad8;">
-            <?php echo \WpDesa\Frontend\Icons::svg('users', 'width:24px;height:24px'); ?>
+          <div class="wp-desa-stat-card wp-desa-stat-card--grid wp-desa-stat-card--doughnut">
+            <h4 class="wp-desa-stat-card--grid__title">Komposisi Penduduk</h4>
+            <div class="wp-desa-doughnut">
+              <svg viewBox="0 0 160 160" class="wp-desa-doughnut-svg">
+                <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#e8e8e8" stroke-width="<?php echo $sw; ?>" />
+                <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#024ad8" stroke-width="<?php echo $sw; ?>"
+                  stroke-dasharray="<?php echo round($male_dash, 1); ?> <?php echo round($c - $male_dash, 1); ?>" stroke-dashoffset="0"
+                  stroke-linecap="butt" transform="rotate(-90 80 80)" />
+                <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#b3262b" stroke-width="<?php echo $sw; ?>"
+                  stroke-dasharray="<?php echo round($female_dash, 1); ?> <?php echo round($c - $female_dash, 1); ?>" stroke-dashoffset="<?php echo round(-$male_dash, 1); ?>"
+                  stroke-linecap="butt" transform="rotate(-90 80 80)" />
+                <text x="80" y="76" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="28" font-weight="500" fill="#1a1a1a"><?php echo number_format_i18n($total_gender); ?></text>
+                <text x="80" y="96" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="12" fill="#636363" font-weight="500">Jiwa</text>
+              </svg>
+              <div class="wp-desa-doughnut-legend">
+                <span class="wp-desa-doughnut-legend-item"><i style="background:#024ad8"></i> Laki-laki: <b><?php echo number_format_i18n($male_val); ?></b> (<?php echo $male_pct; ?>%)</span>
+                <span class="wp-desa-doughnut-legend-item"><i style="background:#b3262b"></i> Perempuan: <b><?php echo number_format_i18n($female_val); ?></b> (<?php echo $female_pct; ?>%)</span>
+              </div>
+            </div>
           </div>
-          <div class="wp-desa-stat-number"><?php echo number_format_i18n($total_val); ?></div>
-          <div class="wp-desa-stat-label">Total Penduduk</div>
+
+          <div class="wp-desa-stat-card wp-desa-stat-card--grid">
+            <div class="wp-desa-stat-icon" style="background: #e6f4ea; color: #1f6b3c;">
+              <?php echo \WpDesa\Frontend\Icons::svg('home', 'width:32px;height:32px'); ?>
+            </div>
+            <div class="wp-desa-stat-number"><?php echo number_format_i18n($families_val); ?></div>
+            <div class="wp-desa-stat-label">Kepala Keluarga</div>
+          </div>
+
+          <div class="wp-desa-stat-card wp-desa-stat-card--grid wp-desa-stat-card--gender">
+            <h4 class="wp-desa-stat-card--grid__title">Jenis Kelamin</h4>
+            <div class="wp-desa-gender-split">
+              <div class="wp-desa-gender-bar">
+                <div class="wp-desa-gender-bar--male" style="flex:<?php echo $male_pct; ?>">
+                  <span><?php echo $male_pct; ?>%</span>
+                </div>
+                <div class="wp-desa-gender-bar--female" style="flex:<?php echo $female_pct; ?>">
+                  <span><?php echo $female_pct; ?>%</span>
+                </div>
+              </div>
+              <div class="wp-desa-gender-labels">
+                <span><b style="color:#024ad8"><?php echo number_format_i18n($male_val); ?></b> Laki-laki</span>
+                <span><b style="color:#b3262b"><?php echo number_format_i18n($female_val); ?></b> Perempuan</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- KK -->
-        <div class="wp-desa-stat-card">
-          <div class="wp-desa-stat-icon" style="background: #e6f4ea; color: #1f6b3c;">
-            <?php echo \WpDesa\Frontend\Icons::svg('home', 'width: 24px; height: 24px;'); ?>
+      <?php elseif ($style === 'cards'): ?>
+        <!-- ============ CARDS STYLE ============ -->
+        <div class="wp-desa-stats-grid wp-desa-stats--cards-list">
+          <div class="wp-desa-stats--cards-item">
+            <div class="wp-desa-stats--cards-item__icon" style="background: #c9e0fc; color: #024ad8;">
+              <?php echo \WpDesa\Frontend\Icons::svg('users', 'width:28px;height:28px'); ?>
+            </div>
+            <div class="wp-desa-stats--cards-item__info">
+              <div class="wp-desa-stats--cards-item__number"><?php echo number_format_i18n($total_val); ?></div>
+              <div class="wp-desa-stats--cards-item__label">Total Penduduk</div>
+            </div>
           </div>
-          <div class="wp-desa-stat-number"><?php echo number_format_i18n($families_val); ?></div>
-          <div class="wp-desa-stat-label">Kepala Keluarga</div>
+
+          <div class="wp-desa-stats--cards-item">
+            <div class="wp-desa-stats--cards-item__icon" style="background: #e6f4ea; color: #1f6b3c;">
+              <?php echo \WpDesa\Frontend\Icons::svg('home', 'width:28px;height:28px'); ?>
+            </div>
+            <div class="wp-desa-stats--cards-item__info">
+              <div class="wp-desa-stats--cards-item__number"><?php echo number_format_i18n($families_val); ?></div>
+              <div class="wp-desa-stats--cards-item__label">Kepala Keluarga</div>
+            </div>
+          </div>
+
+          <div class="wp-desa-stats--cards-item">
+            <div class="wp-desa-stats--cards-item__icon" style="background: #c9e0fc; color: #024ad8;">
+              <?php echo \WpDesa\Frontend\Icons::svg('mars', 'width:28px;height:28px'); ?>
+            </div>
+            <div class="wp-desa-stats--cards-item__info">
+              <div class="wp-desa-stats--cards-item__number"><?php echo number_format_i18n($male_val); ?></div>
+              <div class="wp-desa-stats--cards-item__label">Laki-laki</div>
+            </div>
+          </div>
+
+          <div class="wp-desa-stats--cards-item">
+            <div class="wp-desa-stats--cards-item__icon" style="background: #f9d4d2; color: #b3262b;">
+              <?php echo \WpDesa\Frontend\Icons::svg('venus', 'width:28px;height:28px'); ?>
+            </div>
+            <div class="wp-desa-stats--cards-item__info">
+              <div class="wp-desa-stats--cards-item__number"><?php echo number_format_i18n($female_val); ?></div>
+              <div class="wp-desa-stats--cards-item__label">Perempuan</div>
+            </div>
+          </div>
         </div>
 
-        <!-- Laki-laki -->
-        <div class="wp-desa-stat-card">
-          <div class="wp-desa-stat-icon" style="background: #c9e0fc; color: #024ad8;">
-            <?php echo \WpDesa\Frontend\Icons::svg('mars', 'width: 24px; height: 24px;'); ?>
+        <div class="wp-desa-chart-container" style="margin-bottom: var(--sp-xl);">
+          <h3 class="wp-desa-chart-title" style="text-align: center;">Komposisi Penduduk</h3>
+          <div class="wp-desa-doughnut">
+            <svg viewBox="0 0 160 160" class="wp-desa-doughnut-svg">
+              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#e8e8e8" stroke-width="<?php echo $sw; ?>" />
+              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#024ad8" stroke-width="<?php echo $sw; ?>"
+                stroke-dasharray="<?php echo round($male_dash, 1); ?> <?php echo round($c - $male_dash, 1); ?>" stroke-dashoffset="0"
+                stroke-linecap="butt" transform="rotate(-90 80 80)" />
+              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#b3262b" stroke-width="<?php echo $sw; ?>"
+                stroke-dasharray="<?php echo round($female_dash, 1); ?> <?php echo round($c - $female_dash, 1); ?>" stroke-dashoffset="<?php echo round(-$male_dash, 1); ?>"
+                stroke-linecap="butt" transform="rotate(-90 80 80)" />
+              <text x="80" y="76" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="28" font-weight="500" fill="#1a1a1a"><?php echo number_format_i18n($total_gender); ?></text>
+              <text x="80" y="96" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="12" fill="#636363" font-weight="500">Jiwa</text>
+            </svg>
+            <div class="wp-desa-doughnut-legend">
+              <span class="wp-desa-doughnut-legend-item"><i style="background:#024ad8"></i> Laki-laki: <b><?php echo number_format_i18n($male_val); ?></b> (<?php echo $male_pct; ?>%)</span>
+              <span class="wp-desa-doughnut-legend-item"><i style="background:#b3262b"></i> Perempuan: <b><?php echo number_format_i18n($female_val); ?></b> (<?php echo $female_pct; ?>%)</span>
+            </div>
           </div>
-          <div class="wp-desa-stat-number"><?php echo number_format_i18n($male_val); ?></div>
-          <div class="wp-desa-stat-label">Laki-laki</div>
         </div>
 
-        <!-- Perempuan -->
-        <div class="wp-desa-stat-card">
-          <div class="wp-desa-stat-icon" style="background: #f9d4d2; color: #b3262b;">
-            <?php echo \WpDesa\Frontend\Icons::svg('venus', 'width: 24px; height: 24px;'); ?>
+      <?php elseif ($style === 'minimal'): ?>
+        <!-- ============ MINIMAL STYLE ============ -->
+        <div class="wp-desa-stats--minimal-section">
+          <div class="wp-desa-stats--minimal-row">
+            <div class="wp-desa-stats--minimal-row__left">
+              <span class="wp-desa-stats--minimal-row__icon" style="color:#024ad8;"><?php echo \WpDesa\Frontend\Icons::svg('users', 'width:20px;height:20px'); ?></span>
+              <span class="wp-desa-stats--minimal-row__label">Total Penduduk</span>
+            </div>
+            <span class="wp-desa-stats--minimal-row__value"><?php echo number_format_i18n($total_val); ?></span>
           </div>
-          <div class="wp-desa-stat-number"><?php echo number_format_i18n($female_val); ?></div>
-          <div class="wp-desa-stat-label">Perempuan</div>
+          <div class="wp-desa-stats--minimal-row">
+            <div class="wp-desa-stats--minimal-row__left">
+              <span class="wp-desa-stats--minimal-row__icon" style="color:#1f6b3c;"><?php echo \WpDesa\Frontend\Icons::svg('home', 'width:20px;height:20px'); ?></span>
+              <span class="wp-desa-stats--minimal-row__label">Kepala Keluarga</span>
+            </div>
+            <span class="wp-desa-stats--minimal-row__value"><?php echo number_format_i18n($families_val); ?></span>
+          </div>
+          <div class="wp-desa-stats--minimal-row">
+            <div class="wp-desa-stats--minimal-row__left">
+              <span class="wp-desa-stats--minimal-row__icon" style="color:#024ad8;"><?php echo \WpDesa\Frontend\Icons::svg('mars', 'width:20px;height:20px'); ?></span>
+              <span class="wp-desa-stats--minimal-row__label">Laki-laki</span>
+            </div>
+            <span class="wp-desa-stats--minimal-row__value"><?php echo number_format_i18n($male_val); ?></span>
+          </div>
+          <div class="wp-desa-stats--minimal-row">
+            <div class="wp-desa-stats--minimal-row__left">
+              <span class="wp-desa-stats--minimal-row__icon" style="color:#b3262b;"><?php echo \WpDesa\Frontend\Icons::svg('venus', 'width:20px;height:20px'); ?></span>
+              <span class="wp-desa-stats--minimal-row__label">Perempuan</span>
+            </div>
+            <span class="wp-desa-stats--minimal-row__value"><?php echo number_format_i18n($female_val); ?></span>
+          </div>
+
+          <div class="wp-desa-stats--minimal-divider"></div>
+
+          <div class="wp-desa-stats--minimal-row wp-desa-stats--minimal-row--pct">
+            <div class="wp-desa-stats--minimal-row__left">
+              <span class="wp-desa-stats--minimal-row__label">Komposisi Gender</span>
+            </div>
+            <span class="wp-desa-stats--minimal-row__value">
+              <span style="color:#024ad8; font-weight:600;"><?php echo $male_pct; ?>%</span>
+              <span style="color:var(--steel); margin: 0 4px;">/</span>
+              <span style="color:#b3262b; font-weight:600;"><?php echo $female_pct; ?>%</span>
+            </span>
+          </div>
         </div>
-      </div>
+
+      <?php else: ?><!-- CLASSIC (default) -->
+        <div class="wp-desa-chart-container">
+          <h3 style="text-align: center; margin-top: 0; color: #1a1a1a; font-size: 1.1em; margin-bottom: 15px;">Komposisi Penduduk</h3>
+          <div class="wp-desa-doughnut">
+            <svg viewBox="0 0 160 160" class="wp-desa-doughnut-svg">
+              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#e8e8e8" stroke-width="<?php echo $sw; ?>" />
+              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#024ad8" stroke-width="<?php echo $sw; ?>"
+                stroke-dasharray="<?php echo round($male_dash, 1); ?> <?php echo round($c - $male_dash, 1); ?>" stroke-dashoffset="0"
+                stroke-linecap="butt" transform="rotate(-90 80 80)" />
+              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#b3262b" stroke-width="<?php echo $sw; ?>"
+                stroke-dasharray="<?php echo round($female_dash, 1); ?> <?php echo round($c - $female_dash, 1); ?>" stroke-dashoffset="<?php echo round(-$male_dash, 1); ?>"
+                stroke-linecap="butt" transform="rotate(-90 80 80)" />
+              <text x="80" y="76" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="28" font-weight="500" fill="#1a1a1a"><?php echo number_format_i18n($total_gender); ?></text>
+              <text x="80" y="96" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="12" fill="#636363" font-weight="500">Jiwa</text>
+            </svg>
+            <div class="wp-desa-doughnut-legend">
+              <span class="wp-desa-doughnut-legend-item"><i style="background:#024ad8"></i> Laki-laki: <b><?php echo number_format_i18n($male_val); ?></b> (<?php echo $male_pct; ?>%)</span>
+              <span class="wp-desa-doughnut-legend-item"><i style="background:#b3262b"></i> Perempuan: <b><?php echo number_format_i18n($female_val); ?></b> (<?php echo $female_pct; ?>%)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="wp-desa-stats-grid">
+          <div class="wp-desa-stat-card">
+            <div class="wp-desa-stat-icon" style="background: #c9e0fc; color: #024ad8;">
+              <?php echo \WpDesa\Frontend\Icons::svg('users', 'width:24px;height:24px'); ?>
+            </div>
+            <div class="wp-desa-stat-number"><?php echo number_format_i18n($total_val); ?></div>
+            <div class="wp-desa-stat-label">Total Penduduk</div>
+          </div>
+
+          <div class="wp-desa-stat-card">
+            <div class="wp-desa-stat-icon" style="background: #e6f4ea; color: #1f6b3c;">
+              <?php echo \WpDesa\Frontend\Icons::svg('home', 'width: 24px; height: 24px;'); ?>
+            </div>
+            <div class="wp-desa-stat-number"><?php echo number_format_i18n($families_val); ?></div>
+            <div class="wp-desa-stat-label">Kepala Keluarga</div>
+          </div>
+
+          <div class="wp-desa-stat-card">
+            <div class="wp-desa-stat-icon" style="background: #c9e0fc; color: #024ad8;">
+              <?php echo \WpDesa\Frontend\Icons::svg('mars', 'width: 24px; height: 24px;'); ?>
+            </div>
+            <div class="wp-desa-stat-number"><?php echo number_format_i18n($male_val); ?></div>
+            <div class="wp-desa-stat-label">Laki-laki</div>
+          </div>
+
+          <div class="wp-desa-stat-card">
+            <div class="wp-desa-stat-icon" style="background: #f9d4d2; color: #b3262b;">
+              <?php echo \WpDesa\Frontend\Icons::svg('venus', 'width: 24px; height: 24px;'); ?>
+            </div>
+            <div class="wp-desa-stat-number"><?php echo number_format_i18n($female_val); ?></div>
+            <div class="wp-desa-stat-label">Perempuan</div>
+          </div>
+        </div>
+      <?php endif; ?>
 
       <div class="wp-desa-demografi-card">
         <h4 class="wp-desa-demografi-title">Rincian Demografi</h4>
@@ -737,7 +905,7 @@ class Shortcode
         </div>
       </div>
 
-      <div class="wp-desa-stat-card wp-desa-table-card">
+      <div class="wp-desa-table-card">
         <div class="wp-desa-table-header">
           <div>
             <h4 class="wp-desa-table-title">Rincian Realisasi APBDes</h4>

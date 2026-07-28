@@ -3,7 +3,7 @@ global $wpdb;
 $table_name = $wpdb->prefix . 'desa_finances';
 $settings   = get_option('wp_desa_settings', []);
 $per_page   = 20;
-$view       = isset($_GET['view']) ? $_GET['view'] : 'dashboard';
+$view       = isset($_GET['view']) ? $_GET['view'] : 'data';
 $action     = isset($_GET['action']) ? $_GET['action'] : 'list';
 
 // ============================================================
@@ -127,51 +127,18 @@ function wp_desa_format_rp($amount)
     <!-- Tabs Navigation -->
     <div class="wp-desa-card wp-desa-mb-20">
         <div class="wp-desa-tabs wp-desa-tab-counts">
-            <a href="?page=wp-desa-keuangan&tab=keuangan"
-               class="wp-desa-tab <?php echo $view === 'dashboard' ? 'active' : ''; ?>">
-                <span class="dashicons dashicons-chart-pie wp-desa-icon-gap"></span> Dashboard & Grafik
-            </a>
             <a href="?page=wp-desa-keuangan&tab=keuangan&view=data"
                class="wp-desa-tab <?php echo $view === 'data' ? 'active' : ''; ?>">
                 <span class="dashicons dashicons-list-view wp-desa-icon-gap"></span> Data APBDes
             </a>
+            <a href="?page=wp-desa-keuangan&tab=keuangan"
+               class="wp-desa-tab <?php echo $view === 'dashboard' ? 'active' : ''; ?>">
+                <span class="dashicons dashicons-chart-pie wp-desa-icon-gap"></span> Dashboard & Grafik
+            </a>
         </div>
     </div>
 
-    <?php if ($view === 'dashboard'): ?>
-        <!-- ======== DASHBOARD TAB ======== -->
-        <div class="wp-desa-dashboard">
-            <div class="wp-desa-stats-grid">
-                <div class="wp-desa-stat-card">
-                    <div class="wp-desa-stat-title">Total Pendapatan</div>
-                    <div class="wp-desa-stat-value wp-desa-text-green"></div>
-                    <div class="wp-desa-stat-desc">Realisasi: <span></span></div>
-                </div>
-                <div class="wp-desa-stat-card">
-                    <div class="wp-desa-stat-title">Total Belanja</div>
-                    <div class="wp-desa-stat-value wp-desa-text-red"></div>
-                    <div class="wp-desa-stat-desc">Realisasi: <span></span></div>
-                </div>
-                <div class="wp-desa-stat-card">
-                    <div class="wp-desa-stat-title">Surplus/Defisit (Realisasi)</div>
-                    <div class="wp-desa-stat-value"></div>
-                    <div class="wp-desa-stat-desc">Tahun Anggaran <span></span></div>
-                </div>
-            </div>
-
-            <div class="wp-desa-grid-2">
-                <div class="wp-desa-card wp-desa-card-pad">
-                    <h3 class="wp-desa-section-title">Sumber Pendapatan Desa</h3>
-                    <canvas id="incomeChart" class="wp-desa-chart"></canvas>
-                </div>
-                <div class="wp-desa-card wp-desa-card-pad">
-                    <h3 class="wp-desa-section-title">Penggunaan Dana (Belanja)</h3>
-                    <canvas id="expenseChart" class="wp-desa-chart"></canvas>
-                </div>
-            </div>
-        </div>
-
-    <?php else: ?>
+    <?php if ($view === 'data'): ?>
         <!-- ======== DATA TAB ======== -->
         <?php if ($action === 'list'): ?>
             <!-- Table View -->
@@ -323,6 +290,38 @@ function wp_desa_format_rp($amount)
                 </form>
             </div>
         <?php endif; ?>
+    <?php else: ?>
+        <!-- ======== DASHBOARD TAB ======== -->
+        <div class="wp-desa-dashboard">
+            <div class="wp-desa-stats-grid">
+                <div class="wp-desa-stat-card">
+                    <div class="wp-desa-stat-title">Total Pendapatan</div>
+                    <div class="wp-desa-stat-value wp-desa-text-green"></div>
+                    <div class="wp-desa-stat-desc">Realisasi: <span></span></div>
+                </div>
+                <div class="wp-desa-stat-card">
+                    <div class="wp-desa-stat-title">Total Belanja</div>
+                    <div class="wp-desa-stat-value wp-desa-text-red"></div>
+                    <div class="wp-desa-stat-desc">Realisasi: <span></span></div>
+                </div>
+                <div class="wp-desa-stat-card">
+                    <div class="wp-desa-stat-title">Surplus/Defisit (Realisasi)</div>
+                    <div class="wp-desa-stat-value"></div>
+                    <div class="wp-desa-stat-desc">Tahun Anggaran <span></span></div>
+                </div>
+            </div>
+
+            <div class="wp-desa-grid-2">
+                <div class="wp-desa-card wp-desa-card-pad">
+                    <h3 class="wp-desa-section-title">Sumber Pendapatan Desa</h3>
+                    <canvas id="incomeChart" class="wp-desa-chart"></canvas>
+                </div>
+                <div class="wp-desa-card wp-desa-card-pad">
+                    <h3 class="wp-desa-section-title">Penggunaan Dana (Belanja)</h3>
+                    <canvas id="expenseChart" class="wp-desa-chart"></canvas>
+                </div>
+            </div>
+        </div>
     <?php endif; ?>
 
 </div>

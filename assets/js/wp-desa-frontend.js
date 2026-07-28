@@ -116,10 +116,17 @@
             labels: state.summary.income_sources.map(function (i) { return i.category; }),
             datasets: [{
               data: state.summary.income_sources.map(function (i) { return i.total; }),
-              backgroundColor: ['#636363', '#024ad8', '#ff5050', '#ff5050', '#636363']
+              backgroundColor: ['#024ad8', '#4361ee', '#7aa5f5', '#c9e0fc', '#636363']
             }]
           },
-          options: { responsive: true }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, boxHeight: 6 } },
+              tooltip: { callbacks: { label: function (ctx) { return ctx.label + ': ' + formatCurrency(ctx.parsed); } } }
+            }
+          }
         });
       }
 
@@ -132,10 +139,17 @@
             labels: state.summary.expense_sources.map(function (i) { return i.category; }),
             datasets: [{
               data: state.summary.expense_sources.map(function (i) { return i.total; }),
-              backgroundColor: ['#ff5050', '#ff5050', '#ff5050', '#636363', '#024ad8']
+              backgroundColor: ['#b3262b', '#ff5050', '#e0734a', '#9a5b1e', '#636363']
             }]
           },
-          options: { responsive: true }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, boxHeight: 6 } },
+              tooltip: { callbacks: { label: function (ctx) { return ctx.label + ': ' + formatCurrency(ctx.parsed); } } }
+            }
+          }
         });
       }
 
@@ -188,6 +202,7 @@
           },
           options: {
             responsive: true,
+            maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
             stacked: false,
             plugins: {
