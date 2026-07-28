@@ -18,8 +18,11 @@
             'desc' => 'Form aspirasi dan pengaduan warga. Warga dapat mengirim laporan, upload foto, dan cek status laporan.',
         ],
         [
-            'code' => '[wp_desa_keuangan]',
+            'code' => '[wp_desa_keuangan style="classic"]',
             'desc' => 'Menampilkan transparansi APBDes — ringkasan pendapatan & belanja, grafik, dan tabel rincian. Warga dapat memfilter berdasarkan tahun anggaran.',
+            'params' => [
+                ['style', 'classic', 'Tampilan: classic (lengkap — statistik, grafik, tabel), compact (ringkas — statistik & grafik), minimal (hanya ringkasan statistik)'],
+            ],
         ],
         [
             'code' => '[wp_desa_bantuan]',
@@ -30,8 +33,11 @@
             'desc' => 'Menampilkan profil desa — logo kabupaten, nama desa, alamat kantor, email, dan telepon (diambil dari Pengaturan).',
         ],
         [
-            'code' => '[wp_desa_kepala_desa]',
+            'code' => '[wp_desa_kepala_desa style="card"]',
             'desc' => 'Menampilkan foto, nama, dan NIP kepala desa (diambil dari Pengaturan).',
+            'params' => [
+                ['style', 'card', 'Tampilan: card (foto besar bulat di tengah), horizontal (foto kiri, teks kanan), minimal (foto kecil, ringkas)'],
+            ],
         ],
         [
             'code' => '[wp_desa_statistik style="classic"]',

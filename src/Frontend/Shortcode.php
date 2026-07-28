@@ -4,6 +4,17 @@ namespace WpDesa\Frontend;
 
 class Shortcode
 {
+  private static $instance_counts = [];
+
+  private function instance_id($key)
+  {
+    if (!isset(self::$instance_counts[$key])) {
+      self::$instance_counts[$key] = 0;
+    }
+    self::$instance_counts[$key]++;
+    return $key . '-' . self::$instance_counts[$key];
+  }
+
   public function register()
   {
     add_shortcode('wp_desa_layanan', [$this, 'render_layanan']);
@@ -23,7 +34,10 @@ class Shortcode
   {
     $atts = shortcode_atts([
       'style' => 'classic',
+      'hide_demografi' => 'no',
     ], $atts);
+
+    $hide_demografi = $atts['hide_demografi'] === 'yes';
 
     global $wpdb;
     $table = $wpdb->prefix . 'desa_residents';
@@ -355,67 +369,69 @@ class Shortcode
         </div>
       <?php endif; ?>
 
-      <div class="wp-desa-demografi-card">
-        <h4 class="wp-desa-demografi-title">Rincian Demografi</h4>
+      <?php if (!$hide_demografi): ?>
+        <div class="wp-desa-demografi-card">
+          <h4 class="wp-desa-demografi-title">Rincian Demografi</h4>
 
-        <div class="wp-desa-demografi-grid">
-          <div class="wp-desa-demografi-group">
-            <h5 class="wp-desa-demografi-group-title">Jenis Kelamin</h5>
-            <ul class="wp-desa-demografi-list">
-              <li class="wp-desa-demografi-item">
-                <span class="wp-desa-demografi-label">Laki-laki</span>
-                <span class="wp-desa-demografi-value"><?php echo number_format_i18n($male_val); ?></span>
-              </li>
-              <li class="wp-desa-demografi-item">
-                <span class="wp-desa-demografi-label">Perempuan</span>
-                <span class="wp-desa-demografi-value"><?php echo number_format_i18n($female_val); ?></span>
-              </li>
-            </ul>
-          </div>
-
-          <div class="wp-desa-demografi-group">
-            <h5 class="wp-desa-demografi-group-title">Kelompok Usia</h5>
-            <ul class="wp-desa-demografi-list">
-              <li class="wp-desa-demografi-item">
-                <span class="wp-desa-demografi-label">Anak (&lt; 18 tahun)</span>
-                <span class="wp-desa-demografi-value"><?php echo number_format_i18n($age_anak); ?></span>
-              </li>
-              <li class="wp-desa-demografi-item">
-                <span class="wp-desa-demografi-label">Dewasa (&ge; 18 tahun)</span>
-                <span class="wp-desa-demografi-value"><?php echo number_format_i18n($age_dewasa); ?></span>
-              </li>
-            </ul>
-          </div>
-
-          <?php if (!empty($job_stats)): ?>
+          <div class="wp-desa-demografi-grid">
             <div class="wp-desa-demografi-group">
-              <h5 class="wp-desa-demografi-group-title">Pekerjaan Terbanyak</h5>
+              <h5 class="wp-desa-demografi-group-title">Jenis Kelamin</h5>
               <ul class="wp-desa-demografi-list">
-                <?php foreach ($job_stats as $row): ?>
-                  <li class="wp-desa-demografi-item">
-                    <span class="wp-desa-demografi-label"><?php echo esc_html($row->label ?: 'Tidak Diisi'); ?></span>
-                    <span class="wp-desa-demografi-value"><?php echo number_format_i18n((int) $row->count); ?></span>
-                  </li>
-                <?php endforeach; ?>
+                <li class="wp-desa-demografi-item">
+                  <span class="wp-desa-demografi-label">Laki-laki</span>
+                  <span class="wp-desa-demografi-value"><?php echo number_format_i18n($male_val); ?></span>
+                </li>
+                <li class="wp-desa-demografi-item">
+                  <span class="wp-desa-demografi-label">Perempuan</span>
+                  <span class="wp-desa-demografi-value"><?php echo number_format_i18n($female_val); ?></span>
+                </li>
               </ul>
             </div>
-          <?php endif; ?>
 
-          <?php if (!empty($marital_stats)): ?>
             <div class="wp-desa-demografi-group">
-              <h5 class="wp-desa-demografi-group-title">Status Perkawinan</h5>
+              <h5 class="wp-desa-demografi-group-title">Kelompok Usia</h5>
               <ul class="wp-desa-demografi-list">
-                <?php foreach ($marital_stats as $row): ?>
-                  <li class="wp-desa-demografi-item">
-                    <span class="wp-desa-demografi-label"><?php echo esc_html($row->label ?: 'Tidak Diisi'); ?></span>
-                    <span class="wp-desa-demografi-value"><?php echo number_format_i18n((int) $row->count); ?></span>
-                  </li>
-                <?php endforeach; ?>
+                <li class="wp-desa-demografi-item">
+                  <span class="wp-desa-demografi-label">Anak (&lt; 18 tahun)</span>
+                  <span class="wp-desa-demografi-value"><?php echo number_format_i18n($age_anak); ?></span>
+                </li>
+                <li class="wp-desa-demografi-item">
+                  <span class="wp-desa-demografi-label">Dewasa (&ge; 18 tahun)</span>
+                  <span class="wp-desa-demografi-value"><?php echo number_format_i18n($age_dewasa); ?></span>
+                </li>
               </ul>
             </div>
-          <?php endif; ?>
+
+            <?php if (!empty($job_stats)): ?>
+              <div class="wp-desa-demografi-group">
+                <h5 class="wp-desa-demografi-group-title">Pekerjaan Terbanyak</h5>
+                <ul class="wp-desa-demografi-list">
+                  <?php foreach ($job_stats as $row): ?>
+                    <li class="wp-desa-demografi-item">
+                      <span class="wp-desa-demografi-label"><?php echo esc_html($row->label ?: 'Tidak Diisi'); ?></span>
+                      <span class="wp-desa-demografi-value"><?php echo number_format_i18n((int) $row->count); ?></span>
+                    </li>
+                  <?php endforeach; ?>
+                </ul>
+              </div>
+            <?php endif; ?>
+
+            <?php if (!empty($marital_stats)): ?>
+              <div class="wp-desa-demografi-group">
+                <h5 class="wp-desa-demografi-group-title">Status Perkawinan</h5>
+                <ul class="wp-desa-demografi-list">
+                  <?php foreach ($marital_stats as $row): ?>
+                    <li class="wp-desa-demografi-item">
+                      <span class="wp-desa-demografi-label"><?php echo esc_html($row->label ?: 'Tidak Diisi'); ?></span>
+                      <span class="wp-desa-demografi-value"><?php echo number_format_i18n((int) $row->count); ?></span>
+                    </li>
+                  <?php endforeach; ?>
+                </ul>
+              </div>
+            <?php endif; ?>
+          </div>
         </div>
-      </div>
+      <?php endif; ?>
     </div>
   <?php
     return ob_get_clean();
@@ -773,8 +789,17 @@ class Shortcode
     return ob_get_clean();
   }
 
-  public function render_kepala_desa()
+  public function render_kepala_desa($atts = [])
   {
+    $atts = shortcode_atts([
+      'style' => 'card',
+    ], $atts);
+
+    $style = $atts['style'];
+    if (!in_array($style, ['card', 'horizontal', 'minimal'])) {
+      $style = 'card';
+    }
+
     $settings = get_option('wp_desa_settings');
     if (!$settings) return '';
 
@@ -787,26 +812,24 @@ class Shortcode
 
     ob_start();
   ?>
-    <div class="wp-desa-wrapper">
-      <div class="wp-desa-stat-card" style="text-align: center; max-width: 400px; margin: 0 auto;">
-        <div style="width: 160px; height: 160px; border-radius: 50%; overflow: hidden; margin: 0 auto var(--sp-lg) auto; border: 4px solid var(--fog); position: relative;">
+    <div class="wp-desa-wrapper wp-desa-kades--<?php echo esc_attr($style); ?>">
+      <div class="wp-desa-kades-card">
+        <div class="wp-desa-kades-photo">
           <?php if ($foto_kades): ?>
-            <img src="<?php echo esc_url($foto_kades); ?>" alt="Foto Kepala Desa" style="width: 100%; height: 100%; object-fit: cover;">
+            <img src="<?php echo esc_url($foto_kades); ?>" alt="Foto Kepala Desa">
           <?php else: ?>
-            <div style="width: 100%; height: 100%; background: var(--cloud); display: flex; align-items: center; justify-content: center;">
+            <div class="wp-desa-kades-photo-placeholder">
               <?php echo \WpDesa\Frontend\Icons::svg('user', 'width: 80px; height: 80px; color: var(--graphite);'); ?>
             </div>
           <?php endif; ?>
         </div>
 
-        <div>
-          <h3 style="margin: 0 0 var(--sp-xxs) 0; font-family: var(--font-display); font-size: 24px; font-weight: 500; line-height: 1.17; color: var(--ink);"><?php echo esc_html($nama_kades); ?></h3>
-          <p style="margin: 0 0 var(--sp-sm) 0; font-size: 14px; font-weight: 500; color: var(--primary);">Kepala Desa <?php echo esc_html($nama_desa); ?></p>
+        <div class="wp-desa-kades-info">
+          <h3 class="wp-desa-kades-name"><?php echo esc_html($nama_kades); ?></h3>
+          <p class="wp-desa-kades-role">Kepala Desa <?php echo esc_html($nama_desa); ?></p>
 
           <?php if ($nip_kades): ?>
-            <div style="display: inline-block; padding: 6px 16px; border-radius: var(--rounded-pill); background: var(--cloud); color: var(--graphite); font-size: 14px; font-weight: 500;">
-              NIP. <?php echo esc_html($nip_kades); ?>
-            </div>
+            <div class="wp-desa-kades-nip">NIP. <?php echo esc_html($nip_kades); ?></div>
           <?php endif; ?>
         </div>
       </div>
@@ -819,7 +842,7 @@ class Shortcode
   {
     ob_start();
   ?>
-    <div id="wp-desa-bantuan" class="wp-desa-wrapper">
+    <div id="<?php echo esc_attr($this->instance_id('wp-desa-bantuan')); ?>" class="wp-desa-wrapper" data-wp-desa="bantuan">
       <h2 class="wp-desa-title" style="text-align:center; margin-bottom: 30px; font-size: 2em; color: #1a1a1a;">Program & Bantuan Sosial</h2>
       <div style="display: grid; gap: 20px;" class="wp-desa-bantuan-grid">
       </div>
@@ -830,11 +853,22 @@ class Shortcode
     return ob_get_clean();
   }
 
-  public function render_keuangan()
+  public function render_keuangan($atts = [])
   {
+    $atts = shortcode_atts([
+      'style' => 'classic',
+    ], $atts);
+
+    $style = $atts['style'];
+    if (!in_array($style, ['classic', 'compact', 'minimal'])) {
+      $style = 'classic';
+    }
+
+    $uid = $this->instance_id('wp-desa-keuangan');
+
     ob_start();
   ?>
-    <div id="wp-desa-keuangan" class="wp-desa-wrapper">
+    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper wp-desa-keu--<?php echo esc_attr($style); ?>" data-wp-desa="keuangan">
       <div class="wp-desa-header">
         <div>
           <h2 class="wp-desa-title">Transparansi Keuangan</h2>
@@ -843,7 +877,7 @@ class Shortcode
         <div class="wp-desa-filter">
           <label class="wp-desa-filter-label">Tahun Anggaran</label>
           <div class="wp-desa-filter-control">
-            <select class="wp-desa-select wp-desa-select-year" id="wp-desa-keuangan-year">
+            <select class="wp-desa-select wp-desa-select-year" id="<?php echo esc_attr($uid); ?>-year">
             </select>
           </div>
         </div>
@@ -855,9 +889,9 @@ class Shortcode
             <?php echo \WpDesa\Frontend\Icons::svg('banknote', ''); ?>
           </div>
           <h4 class="wp-desa-stat-label">Total Pendapatan</h4>
-          <h3 class="wp-desa-stat-value" id="wp-desa-keu-income-real"></h3>
+          <h3 class="wp-desa-stat-value" id="<?php echo esc_attr($uid); ?>-income-real"></h3>
           <div class="wp-desa-stat-sub">
-            Target <span id="wp-desa-keu-income-budget"></span>
+            Target <span id="<?php echo esc_attr($uid); ?>-income-budget"></span>
           </div>
         </div>
 
@@ -866,9 +900,9 @@ class Shortcode
             <?php echo \WpDesa\Frontend\Icons::svg('shopping-cart', ''); ?>
           </div>
           <h4 class="wp-desa-stat-label">Total Belanja</h4>
-          <h3 class="wp-desa-stat-value" id="wp-desa-keu-expense-real"></h3>
+          <h3 class="wp-desa-stat-value" id="<?php echo esc_attr($uid); ?>-expense-real"></h3>
           <div class="wp-desa-stat-sub">
-            Pagu <span id="wp-desa-keu-expense-budget"></span>
+            Pagu <span id="<?php echo esc_attr($uid); ?>-expense-budget"></span>
           </div>
         </div>
 
@@ -877,56 +911,60 @@ class Shortcode
             <?php echo \WpDesa\Frontend\Icons::svg('trending-up', ''); ?>
           </div>
           <h4 class="wp-desa-stat-label">Sisa Lebih (SiLPA)</h4>
-          <h3 class="wp-desa-stat-value" id="wp-desa-keu-surplus"></h3>
+          <h3 class="wp-desa-stat-value" id="<?php echo esc_attr($uid); ?>-surplus"></h3>
           <div class="wp-desa-stat-sub wp-desa-stat-sub-muted">
             Realisasi pendapatan dikurangi belanja
           </div>
         </div>
       </div>
 
-      <div class="wp-desa-chart-wrapper">
-        <div class="wp-desa-chart-container">
-          <h4 class="wp-desa-chart-title">Sumber Pendapatan</h4>
-          <div class="wp-desa-chart-box">
-            <canvas id="publicIncomeChart"></canvas>
+      <?php if ($style !== 'minimal'): ?>
+        <div class="wp-desa-chart-wrapper">
+          <div class="wp-desa-chart-container">
+            <h4 class="wp-desa-chart-title">Sumber Pendapatan</h4>
+            <div class="wp-desa-chart-box">
+              <canvas id="<?php echo esc_attr($uid); ?>-income-chart"></canvas>
+            </div>
+          </div>
+          <div class="wp-desa-chart-container">
+            <h4 class="wp-desa-chart-title">Penggunaan Anggaran</h4>
+            <div class="wp-desa-chart-box">
+              <canvas id="<?php echo esc_attr($uid); ?>-expense-chart"></canvas>
+            </div>
+          </div>
+          <div class="wp-desa-chart-container">
+            <h4 class="wp-desa-chart-title">Tren Realisasi per Tahun</h4>
+            <div class="wp-desa-chart-box">
+              <canvas id="<?php echo esc_attr($uid); ?>-trend-chart"></canvas>
+            </div>
           </div>
         </div>
-        <div class="wp-desa-chart-container">
-          <h4 class="wp-desa-chart-title">Penggunaan Anggaran</h4>
-          <div class="wp-desa-chart-box">
-            <canvas id="publicExpenseChart"></canvas>
-          </div>
-        </div>
-        <div class="wp-desa-chart-container">
-          <h4 class="wp-desa-chart-title">Tren Realisasi per Tahun</h4>
-          <div class="wp-desa-chart-box">
-            <canvas id="publicTrendChart"></canvas>
-          </div>
-        </div>
-      </div>
+      <?php endif; ?>
 
-      <div class="wp-desa-table-card">
-        <div class="wp-desa-table-header">
-          <div>
-            <h4 class="wp-desa-table-title">Rincian Realisasi APBDes</h4>
-            <p class="wp-desa-table-subtitle">Per kategori belanja dan pendapatan desa.</p>
+      <?php if ($style === 'classic'): ?>
+        <div class="wp-desa-table-card">
+          <div class="wp-desa-table-header">
+            <div>
+              <h4 class="wp-desa-table-title">Rincian Realisasi APBDes</h4>
+              <p class="wp-desa-table-subtitle">Per kategori belanja dan pendapatan desa.</p>
+            </div>
+          </div>
+          <div class="wp-desa-table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th class="wp-desa-col-title">Uraian</th>
+                  <th class="wp-desa-col-number">Anggaran</th>
+                  <th class="wp-desa-col-number">Realisasi</th>
+                  <th class="wp-desa-col-percentage">Realisasi</th>
+                </tr>
+              </thead>
+              <tbody id="<?php echo esc_attr($uid); ?>-table-body">
+              </tbody>
+            </table>
           </div>
         </div>
-        <div class="wp-desa-table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th class="wp-desa-col-title">Uraian</th>
-                <th class="wp-desa-col-number">Anggaran</th>
-                <th class="wp-desa-col-number">Realisasi</th>
-                <th class="wp-desa-col-percentage">Realisasi</th>
-              </tr>
-            </thead>
-            <tbody id="wp-desa-keu-table-body">
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <?php endif; ?>
     </div>
   <?php
     return ob_get_clean();
@@ -934,9 +972,10 @@ class Shortcode
 
   public function render_aduan()
   {
+    $uid = $this->instance_id('wp-desa-aduan');
     ob_start();
   ?>
-    <div id="wp-desa-aduan" class="wp-desa-wrapper">
+    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper" data-wp-desa="aduan">
       <!-- CSS moved to assets/css/frontend/style.css -->
 
       <div class="wp-desa-tabs" style="display: flex; border-bottom: 1px solid #e8e8e8; margin-bottom: 30px;">
@@ -950,28 +989,28 @@ class Shortcode
 
       <div class="wp-desa-content">
         <!-- Form Aduan -->
-        <div id="wp-desa-aduan-form-tab" class="wp-desa-tab-panel">
-          <div id="wp-desa-aduan-message" style="padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none;"></div>
-          <div id="wp-desa-aduan-tracking-code" style="margin-top: 15px; background: var(--canvas); padding: 15px; border-radius: 8px; border: 1px dashed #1f6b3c; display: none;">
+        <div class="wp-desa-tab-panel" x-show="tab === 'form'">
+          <div x-show="message.content" style="padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none;"></div>
+          <div x-show="trackingCode" style="margin-top: 15px; background: var(--canvas); padding: 15px; border-radius: 8px; border: 1px dashed #1f6b3c; display: none;">
             <div style="font-size: 0.9em; margin-bottom: 5px; color: #1f6b3c;">Kode Tracking Anda:</div>
-            <div class="wp-desa-tracking-code" style="font-family: monospace; font-size: 1.5em; font-weight: 700; color: #1a1a1a; letter-spacing: 1px;"></div>
+            <div class="wp-desa-tracking-code" style="font-family: monospace; font-size: 1.5em; font-weight: 700; color: #1a1a1a; letter-spacing: 1px;" x-text="trackingCode"></div>
             <p class="wp-desa-helper" style="margin: 5px 0 0 0;">Simpan kode ini untuk mengecek status laporan.</p>
           </div>
 
-          <form id="wp-desa-aduan-form" enctype="multipart/form-data" style="background: var(--canvas); padding: var(--sp-xl); border-radius: var(--rounded-xl); box-shadow: var(--shadow-soft-lift); border: 1px solid var(--fog);">
+          <form enctype="multipart/form-data" style="background: var(--canvas); padding: var(--sp-xl); border-radius: var(--rounded-xl); box-shadow: var(--shadow-soft-lift); border: 1px solid var(--fog);">
             <div class="wp-desa-form-group">
               <label class="wp-desa-label">Nama Pelapor (Opsional)</label>
-              <input type="text" id="wp-desa-aduan-reporter_name" name="reporter_name" class="wp-desa-input" placeholder="Nama Anda (Boleh dikosongkan)">
+              <input type="text" x-model="form.reporter_name" name="reporter_name" class="wp-desa-input" placeholder="Nama Anda (Boleh dikosongkan)">
             </div>
 
             <div class="wp-desa-form-group">
               <label class="wp-desa-label">Kontak (HP/Email)</label>
-              <input type="text" id="wp-desa-aduan-reporter_contact" name="reporter_contact" class="wp-desa-input" placeholder="Untuk konfirmasi status">
+              <input type="text" x-model="form.reporter_contact" name="reporter_contact" class="wp-desa-input" placeholder="Untuk konfirmasi status">
             </div>
 
             <div class="wp-desa-form-group">
               <label class="wp-desa-label">Kategori Masalah</label>
-              <select id="wp-desa-aduan-category" name="category" required class="wp-desa-select">
+              <select x-model="form.category" name="category" required class="wp-desa-select">
                 <option value="">-- Pilih Kategori --</option>
                 <option value="Infrastruktur">Infrastruktur (Jalan, Jembatan, dll)</option>
                 <option value="Pelayanan Publik">Pelayanan Publik</option>
@@ -983,41 +1022,43 @@ class Shortcode
 
             <div class="wp-desa-form-group">
               <label class="wp-desa-label">Judul Laporan</label>
-              <input type="text" id="wp-desa-aduan-subject" name="subject" required class="wp-desa-input" placeholder="Ringkasan masalah">
+              <input type="text" x-model="form.subject" name="subject" required class="wp-desa-input" placeholder="Ringkasan masalah">
             </div>
 
             <div class="wp-desa-form-group">
               <label class="wp-desa-label">Isi Laporan</label>
-              <textarea id="wp-desa-aduan-description" name="description" required rows="5" class="wp-desa-textarea" placeholder="Jelaskan detail masalah, lokasi, dll"></textarea>
+              <textarea x-model="form.description" name="description" required rows="5" class="wp-desa-textarea" placeholder="Jelaskan detail masalah, lokasi, dll"></textarea>
             </div>
 
             <div class="wp-desa-form-group">
               <label class="wp-desa-label">Upload Foto Bukti</label>
               <div style="border: 2px dashed #c2c2c2; padding: 20px; border-radius: 8px; text-align: center; background: var(--cloud); transition: all 0.2s;" class="wp-desa-upload-area">
-                <input type="file" id="wp-desa-aduan-photo" name="photo" accept="image/*" class="wp-desa-input" style="border: none; padding: 0; background: transparent; width: auto;">
+                <input type="file" name="photo" accept="image/*" class="wp-desa-input" style="border: none; padding: 0; background: transparent; width: auto;">
                 <small class="wp-desa-helper">Format: JPG, PNG. Maks 2MB.</small>
               </div>
             </div>
 
             <button type="submit" class="wp-desa-btn wp-desa-btn-primary" style="width: 100%;">
-              Kirim Laporan
+              <span>Kirim Laporan</span>
+              <span style="display: none;">Mengirim...</span>
             </button>
           </form>
         </div>
 
         <!-- Tracking Form -->
-        <div id="wp-desa-aduan-track-tab" class="wp-desa-tab-panel" style="display: none;">
-          <form id="wp-desa-aduan-track-form" style="margin-bottom: 1.5rem; background: var(--canvas); padding: var(--sp-xl); border-radius: var(--rounded-xl); box-shadow: var(--shadow-soft-lift); border: 1px solid var(--fog);">
+        <div class="wp-desa-tab-panel" x-show="tab === 'track'" style="display: none;">
+          <form style="margin-bottom: 1.5rem; background: var(--canvas); padding: var(--sp-xl); border-radius: var(--rounded-xl); box-shadow: var(--shadow-soft-lift); border: 1px solid var(--fog);">
             <label class="wp-desa-label" style="margin-bottom: 12px;">Masukkan Kode Tracking</label>
             <div style="display: flex; gap: 10px;">
-              <input type="text" id="wp-desa-aduan-track-code" name="track_code" placeholder="Contoh: ADU-XXXXXX" required class="wp-desa-input" style="flex: 1; font-family: monospace; letter-spacing: 1px; font-weight: 600;">
+              <input type="text" x-model="trackCode" placeholder="Contoh: ADU-XXXXXX" required class="wp-desa-input" style="flex: 1; font-family: monospace; letter-spacing: 1px; font-weight: 600;">
               <button type="submit" class="wp-desa-btn wp-desa-btn-primary" style="width: auto; min-width: 100px;">
-                Cek
+                <span>Cek</span>
+                <span style="display: none;">...</span>
               </button>
             </div>
           </form>
 
-          <div id="wp-desa-aduan-track-result" class="wp-desa-result-card" style="display: none;">
+          <div x-show="trackResult" class="wp-desa-result-card" style="display: none;">
             <div style="text-align: center; margin-bottom: 20px;">
               <div style="width: 60px; height: 60px; background: #c9e0fc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; color: #024ad8;">
                 <?php echo \WpDesa\Frontend\Icons::svg('clipboard-list', 'width: 30px; height: 30px;'); ?>
@@ -1051,7 +1092,7 @@ class Shortcode
             </div>
           </div>
 
-          <div id="wp-desa-aduan-track-error" style="padding: 15px; background: #fce8e6; color: #b3262b; border: 1px solid #fecaca; border-radius: 8px; margin-top: 15px; display: none;"></div>
+          <div x-show="trackError" style="padding: 15px; background: #fce8e6; color: #b3262b; border: 1px solid #fecaca; border-radius: 8px; margin-top: 15px; display: none;"></div>
         </div>
       </div>
     </div>
@@ -1094,9 +1135,10 @@ class Shortcode
 
   public function render_layanan()
   {
+    $uid = $this->instance_id('wp-desa-layanan');
     ob_start();
   ?>
-    <div id="wp-desa-layanan" class="wp-desa-wrapper">
+    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper" data-wp-desa="layanan">
       <!-- CSS moved to assets/css/frontend/style.css -->
 
       <div class="wp-desa-tabs" style="display: flex; border-bottom: 1px solid #e8e8e8; margin-bottom: 30px;">
@@ -1109,63 +1151,65 @@ class Shortcode
       </div>
 
       <!-- Request Form -->
-      <div id="wp-desa-layanan-request-tab" class="wp-desa-tab-panel">
-        <div id="wp-desa-layanan-message" style="padding: 15px; border-radius: 8px; border: 1px solid; margin-bottom: 20px; display: none;"></div>
+      <div class="wp-desa-tab-panel" x-show="tab === 'request'">
+        <div x-show="message.content" style="padding: 15px; border-radius: 8px; border: 1px solid; margin-bottom: 20px; display: none;"></div>
 
-        <div id="wp-desa-layanan-tracking-code" style="background: #c9e0fc; border: 1px solid #bfdbfe; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; display: none;">
+        <div x-show="trackingCode" style="background: #c9e0fc; border: 1px solid #bfdbfe; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; display: none;">
           <div style="color: #1e40af; font-weight: 500; margin-bottom: 10px;">Kode Tracking Anda:</div>
-          <div class="wp-desa-layanan-code-label" style="font-size: 1.5em; font-weight: 700; color: #1e3a8a; letter-spacing: 2px;"></div>
+          <div class="wp-desa-layanan-code-label" style="font-size: 1.5em; font-weight: 700; color: #1e3a8a; letter-spacing: 2px;" x-text="trackingCode"></div>
           <div style="font-size: 0.9em; color: #60a5fa; margin-top: 10px;">Simpan kode ini untuk mengecek status permohonan.</div>
         </div>
 
-        <form id="wp-desa-layanan-form">
+        <form>
           <div class="wp-desa-form-group">
             <label class="wp-desa-label">NIK</label>
-            <input type="text" id="wp-desa-layanan-nik" name="nik" class="wp-desa-input" required maxlength="16">
+            <input type="text" x-model="form.nik" name="nik" class="wp-desa-input" required maxlength="16">
           </div>
 
           <div class="wp-desa-form-group">
             <label class="wp-desa-label">Nama Lengkap</label>
-            <input type="text" id="wp-desa-layanan-name" name="name" class="wp-desa-input" required>
+            <input type="text" x-model="form.name" name="name" class="wp-desa-input" required>
           </div>
 
           <div class="wp-desa-form-group">
             <label class="wp-desa-label">Nomor WhatsApp</label>
-            <input type="text" id="wp-desa-layanan-phone" name="phone" class="wp-desa-input" required placeholder="08...">
+            <input type="text" x-model="form.phone" name="phone" class="wp-desa-input" required placeholder="08...">
           </div>
 
           <div class="wp-desa-form-group">
             <label class="wp-desa-label">Jenis Surat</label>
-            <select id="wp-desa-layanan-letter_type_id" name="letter_type_id" class="wp-desa-select" required>
+            <select x-model="form.letter_type_id" name="letter_type_id" class="wp-desa-select" required>
               <option value="">Pilih Jenis Surat</option>
             </select>
-            <small id="wp-desa-layanan-type-desc" class="wp-desa-helper"></small>
+            <small class="wp-desa-helper wp-desa-layanan-type-desc"></small>
           </div>
 
           <div class="wp-desa-form-group">
             <label class="wp-desa-label">Keterangan / Keperluan</label>
-            <textarea id="wp-desa-layanan-details" name="details" class="wp-desa-textarea" rows="3"></textarea>
+            <textarea x-model="form.details" name="details" class="wp-desa-textarea" rows="3"></textarea>
           </div>
 
           <button type="submit" class="wp-desa-btn wp-desa-btn-primary">
-            Kirim Permohonan
+            <span>Kirim Permohonan</span>
+            <span style="display: none;">Mengirim...</span>
           </button>
         </form>
       </div>
 
       <!-- Tracking Form -->
-      <div id="wp-desa-layanan-tracking-tab" class="wp-desa-tab-panel" style="display: none;">
+      <div class="wp-desa-tab-panel" x-show="tab === 'tracking'" style="display: none;">
         <div class="wp-desa-form-group">
           <label class="wp-desa-label">Masukkan Kode Tracking</label>
           <div style="display: flex; gap: 10px;">
-            <input type="text" id="wp-desa-layanan-track-code" class="wp-desa-input" placeholder="Contoh: REQ-...">
-            <button type="button" id="wp-desa-layanan-track-btn" class="wp-desa-btn wp-desa-btn-primary">
-              Cek
+            <input type="text" x-model="trackCode" class="wp-desa-input" placeholder="Contoh: REQ-...">
+            <button type="button" class="wp-desa-btn wp-desa-btn-primary">
+              <span>Cek</span>
+              <span style="display: none;">...</span>
             </button>
           </div>
         </div>
 
-        <div id="wp-desa-layanan-track-result" class="wp-desa-result-card" style="display: none;">
+        <div x-show="trackResult" class="wp-desa-result-card" style="display: none;">
           <div class="wp-desa-card-row">
             <span class="wp-desa-card-label">Nama Pengaju</span>
             <span class="wp-desa-card-value wp-desa-layanan-track-name"></span>
@@ -1175,7 +1219,7 @@ class Shortcode
             <span class="wp-desa-layanan-track-status" style="padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; background: #e8e8e8; color: #3d3d3d;"></span>
           </div>
         </div>
-        <div id="wp-desa-layanan-track-error" style="padding: 15px; background: #fce8e6; color: #b3262b; border: 1px solid #fecaca; border-radius: 8px; margin-top: 15px; display: none;"></div>
+        <div x-show="trackError" style="padding: 15px; background: #fce8e6; color: #b3262b; border: 1px solid #fecaca; border-radius: 8px; margin-top: 15px; display: none;"></div>
       </div>
     </div><?php
           return ob_get_clean();

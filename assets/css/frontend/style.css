@@ -23,6 +23,7 @@
   --sp-md: 16px;
   --sp-lg: 20px;
   --sp-xl: 24px;
+  --sp-xxl: 32px;
   --shadow-soft-lift: 0 2px 8px rgba(26, 26, 26, 0.08);
   --font-body:
     "Forma DJR Micro", "Manrope", "Inter", Arial, ui-sans-serif, sans-serif;
@@ -779,6 +780,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  padding: var(--sp-sm);
 }
 
 .wp-desa-stats--cards .wp-desa-stats--cards-item__info {
@@ -878,6 +880,136 @@
   }
 }
 
+/* Kepala Desa Shortcode --- */
+.wp-desa-kades--card,
+.wp-desa-kades--horizontal,
+.wp-desa-kades--minimal {
+  margin-bottom: var(--sp-xl);
+}
+
+.wp-desa-kades-card {
+  padding: var(--sp-xl);
+}
+
+/* Photo */
+.wp-desa-kades-photo {
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.wp-desa-kades-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.wp-desa-kades-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--cloud);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Info */
+.wp-desa-kades-name {
+  margin: 0 0 var(--sp-xxs) 0;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.17;
+  color: var(--ink);
+}
+
+.wp-desa-kades-role {
+  margin: 0 0 var(--sp-sm) 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--primary);
+}
+
+.wp-desa-kades-nip {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: var(--rounded-pill);
+  background: var(--cloud);
+  color: var(--graphite);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ===== Style: Card (default) ===== */
+.wp-desa-kades--card .wp-desa-kades-card {
+  background: var(--canvas);
+  border: 1px solid var(--fog);
+  border-radius: var(--rounded-xl);
+  padding: var(--sp-xxl);
+  text-align: center;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.wp-desa-kades--card .wp-desa-kades-photo {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  margin: 0 auto var(--sp-lg) auto;
+  border: 4px solid var(--fog);
+}
+
+/* ===== Style: Horizontal ===== */
+.wp-desa-kades--horizontal .wp-desa-kades-card {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-xl);
+  background: var(--canvas);
+  border: 1px solid var(--fog);
+  border-radius: var(--rounded-xl);
+  padding: var(--sp-xl);
+}
+
+.wp-desa-kades--horizontal .wp-desa-kades-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid var(--fog);
+}
+
+/* ===== Style: Minimal ===== */
+.wp-desa-kades--minimal .wp-desa-kades-card {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-md);
+}
+
+.wp-desa-kades--minimal .wp-desa-kades-photo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid var(--fog);
+}
+
+.wp-desa-kades--minimal .wp-desa-kades-name {
+  font-size: 18px;
+}
+
+.wp-desa-kades--minimal .wp-desa-kades-role {
+  margin-bottom: 0;
+}
+
+@media (max-width: 480px) {
+  .wp-desa-kades--horizontal .wp-desa-kades-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .wp-desa-kades--horizontal .wp-desa-kades-photo {
+    margin: 0 auto;
+  }
+}
+
 /* --- Bantuan Shortcode --- */
 .status-badge {
   padding: 2px 8px;
@@ -907,7 +1039,7 @@
 }
 
 /* --- Aduan Shortcode --- */
-#wp-desa-aduan .wp-desa-tab-btn {
+[data-wp-desa="aduan"] .wp-desa-tab-btn {
   padding: var(--sp-sm) var(--sp-lg);
   background: transparent;
   border: none;
@@ -923,19 +1055,19 @@
   font-family: var(--font-body);
 }
 
-#wp-desa-aduan .wp-desa-tab-btn.active {
+[data-wp-desa="aduan"] .wp-desa-tab-btn.active {
   color: var(--primary);
   border-bottom-color: var(--primary);
 }
 
-#wp-desa-aduan .wp-desa-tab-btn:hover {
+[data-wp-desa="aduan"] .wp-desa-tab-btn:hover {
   color: var(--ink);
   background: var(--cloud);
 }
 
-#wp-desa-aduan .wp-desa-input,
-#wp-desa-aduan .wp-desa-select,
-#wp-desa-aduan .wp-desa-textarea {
+[data-wp-desa="aduan"] .wp-desa-input,
+[data-wp-desa="aduan"] .wp-desa-select,
+[data-wp-desa="aduan"] .wp-desa-textarea {
   width: 100%;
   padding: var(--sp-sm) var(--sp-md);
   border: 1px solid var(--steel);
@@ -948,14 +1080,14 @@
   color: var(--ink);
 }
 
-#wp-desa-aduan .wp-desa-input:focus,
-#wp-desa-aduan .wp-desa-select:focus,
-#wp-desa-aduan .wp-desa-textarea:focus {
+[data-wp-desa="aduan"] .wp-desa-input:focus,
+[data-wp-desa="aduan"] .wp-desa-select:focus,
+[data-wp-desa="aduan"] .wp-desa-textarea:focus {
   outline: none;
   border-color: var(--ink);
 }
 
-#wp-desa-aduan .wp-desa-label {
+[data-wp-desa="aduan"] .wp-desa-label {
   display: block;
   margin-bottom: var(--sp-xs);
   font-weight: 500;
@@ -963,11 +1095,11 @@
   font-size: 14px;
 }
 
-#wp-desa-aduan .wp-desa-form-group {
+[data-wp-desa="aduan"] .wp-desa-form-group {
   margin-bottom: var(--sp-xl);
 }
 
-#wp-desa-aduan .wp-desa-btn {
+[data-wp-desa="aduan"] .wp-desa-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -986,16 +1118,16 @@
   gap: var(--sp-xs);
 }
 
-#wp-desa-aduan .wp-desa-btn-primary {
+[data-wp-desa="aduan"] .wp-desa-btn-primary {
   background: var(--primary);
   color: var(--on-ink);
 }
 
-#wp-desa-aduan .wp-desa-btn-primary:hover {
+[data-wp-desa="aduan"] .wp-desa-btn-primary:hover {
   background: #0e3191;
 }
 
-#wp-desa-aduan .wp-desa-btn:disabled {
+[data-wp-desa="aduan"] .wp-desa-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
   transform: none;
@@ -1004,7 +1136,7 @@
   color: var(--on-ink);
 }
 
-#wp-desa-aduan .wp-desa-result-card {
+[data-wp-desa="aduan"] .wp-desa-result-card {
   background: var(--canvas);
   border-radius: var(--rounded-xl);
   padding: var(--sp-xl);
@@ -1012,29 +1144,29 @@
   box-shadow: var(--shadow-soft-lift);
 }
 
-#wp-desa-aduan .wp-desa-card-row {
+[data-wp-desa="aduan"] .wp-desa-card-row {
   display: flex;
   justify-content: space-between;
   padding: var(--sp-sm) 0;
   border-bottom: 1px solid var(--fog);
 }
 
-#wp-desa-aduan .wp-desa-card-row:last-child {
+[data-wp-desa="aduan"] .wp-desa-card-row:last-child {
   border-bottom: none;
 }
 
-#wp-desa-aduan .wp-desa-card-label {
+[data-wp-desa="aduan"] .wp-desa-card-label {
   color: var(--graphite);
   font-weight: 500;
 }
 
-#wp-desa-aduan .wp-desa-card-value {
+[data-wp-desa="aduan"] .wp-desa-card-value {
   color: var(--ink);
   font-weight: 500;
   text-align: right;
 }
 
-#wp-desa-aduan .wp-desa-helper {
+[data-wp-desa="aduan"] .wp-desa-helper {
   font-size: 14px;
   color: var(--graphite);
   margin-top: 6px;
@@ -1045,7 +1177,7 @@
 /* ============================================
    [wp_desa_keuangan] — Finances Public
    ============================================ */
-#wp-desa-keuangan .wp-desa-header {
+[data-wp-desa="keuangan"] .wp-desa-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1054,31 +1186,31 @@
   gap: var(--sp-md);
 }
 
-#wp-desa-keuangan .wp-desa-title {
+[data-wp-desa="keuangan"] .wp-desa-title {
   margin: 0;
   text-align: left;
   font-size: 24px;
 }
 
-#wp-desa-keuangan .wp-desa-subtitle {
+[data-wp-desa="keuangan"] .wp-desa-subtitle {
   margin: 4px 0 0 0;
   font-size: 14px;
   color: var(--graphite);
 }
 
-#wp-desa-keuangan .wp-desa-filter {
+[data-wp-desa="keuangan"] .wp-desa-filter {
   display: flex;
   align-items: center;
   gap: var(--sp-sm);
 }
 
-#wp-desa-keuangan .wp-desa-filter-label {
+[data-wp-desa="keuangan"] .wp-desa-filter-label {
   font-size: 14px;
   font-weight: 500;
   color: var(--graphite);
 }
 
-#wp-desa-keuangan .wp-desa-select-year {
+[data-wp-desa="keuangan"] .wp-desa-select-year {
   width: auto;
   min-width: 120px;
   padding: 8px 32px 8px 12px;
@@ -1097,7 +1229,7 @@
 }
 
 /* Summary Cards Grid */
-#wp-desa-keuangan .wp-desa-summary-grid {
+[data-wp-desa="keuangan"] .wp-desa-summary-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--sp-md);
@@ -1105,19 +1237,19 @@
 }
 
 @media (min-width: 480px) {
-  #wp-desa-keuangan .wp-desa-summary-grid {
+  [data-wp-desa="keuangan"] .wp-desa-summary-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (min-width: 768px) {
-  #wp-desa-keuangan .wp-desa-summary-grid {
+  [data-wp-desa="keuangan"] .wp-desa-summary-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: var(--sp-xl);
   }
 }
 
-#wp-desa-keuangan .wp-desa-stat-card {
+[data-wp-desa="keuangan"] .wp-desa-stat-card {
   background: var(--canvas);
   border: 1px solid var(--fog);
   border-radius: var(--rounded-xl);
@@ -1131,12 +1263,12 @@
     border-color 0.2s;
 }
 
-#wp-desa-keuangan .wp-desa-stat-card:hover {
+[data-wp-desa="keuangan"] .wp-desa-stat-card:hover {
   border-color: var(--primary-soft);
   box-shadow: 0 4px 16px rgba(2, 74, 216, 0.06);
 }
 
-#wp-desa-keuangan .wp-desa-stat-icon-bg {
+[data-wp-desa="keuangan"] .wp-desa-stat-icon-bg {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1148,12 +1280,12 @@
   background: var(--primary-soft);
 }
 
-#wp-desa-keuangan .wp-desa-stat-icon-bg svg {
+[data-wp-desa="keuangan"] .wp-desa-stat-icon-bg svg {
   width: 22px;
   height: 22px;
 }
 
-#wp-desa-keuangan .wp-desa-stat-label {
+[data-wp-desa="keuangan"] .wp-desa-stat-label {
   margin: 0 0 6px 0;
   font-size: 12px;
   font-weight: 600;
@@ -1162,7 +1294,7 @@
   color: var(--graphite);
 }
 
-#wp-desa-keuangan .wp-desa-stat-value {
+[data-wp-desa="keuangan"] .wp-desa-stat-value {
   font-family: var(--font-display);
   margin: 0 0 var(--sp-xs) 0;
   color: var(--ink);
@@ -1171,22 +1303,22 @@
   line-height: 1.1;
 }
 
-#wp-desa-keuangan .wp-desa-stat-sub {
+[data-wp-desa="keuangan"] .wp-desa-stat-sub {
   font-size: 12px;
   color: var(--graphite);
 }
 
-#wp-desa-keuangan .wp-desa-stat-sub-muted {
+[data-wp-desa="keuangan"] .wp-desa-stat-sub-muted {
   color: var(--steel);
   font-size: 12px;
 }
 
-#wp-desa-keuangan .wp-desa-stat-card-surplus {
+[data-wp-desa="keuangan"] .wp-desa-stat-card-surplus {
   border-left: 3px solid var(--primary);
 }
 
 /* Charts Section */
-#wp-desa-keuangan .wp-desa-chart-wrapper {
+[data-wp-desa="keuangan"] .wp-desa-chart-wrapper {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--sp-xl);
@@ -1194,15 +1326,17 @@
 }
 
 @media (min-width: 768px) {
-  #wp-desa-keuangan .wp-desa-chart-wrapper {
+  [data-wp-desa="keuangan"] .wp-desa-chart-wrapper {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  #wp-desa-keuangan .wp-desa-chart-wrapper .wp-desa-chart-container:last-child {
+  [data-wp-desa="keuangan"]
+    .wp-desa-chart-wrapper
+    .wp-desa-chart-container:last-child {
     grid-column: 1 / -1;
   }
 
-  #wp-desa-keuangan
+  [data-wp-desa="keuangan"]
     .wp-desa-chart-wrapper
     .wp-desa-chart-container:last-child
     .wp-desa-chart-box {
@@ -1210,7 +1344,7 @@
   }
 }
 
-#wp-desa-keuangan .wp-desa-chart-container {
+[data-wp-desa="keuangan"] .wp-desa-chart-container {
   background: var(--canvas);
   border: 1px solid var(--fog);
   border-radius: var(--rounded-xl);
@@ -1222,7 +1356,7 @@
     border-color 0.2s;
 }
 
-#wp-desa-keuangan .wp-desa-chart-title {
+[data-wp-desa="keuangan"] .wp-desa-chart-title {
   margin: 0 0 var(--sp-md) 0;
   font-family: var(--font-display);
   font-size: 15px;
@@ -1230,13 +1364,13 @@
   color: var(--ink);
 }
 
-#wp-desa-keuangan .wp-desa-chart-box {
+[data-wp-desa="keuangan"] .wp-desa-chart-box {
   position: relative;
   height: 260px;
 }
 
 /* Table Section */
-#wp-desa-keuangan .wp-desa-table-card {
+[data-wp-desa="keuangan"] .wp-desa-table-card {
   background: var(--canvas);
   border: 1px solid var(--fog);
   border-radius: var(--rounded-xl);
@@ -1245,11 +1379,11 @@
   overflow: hidden;
 }
 
-#wp-desa-keuangan .wp-desa-table-header {
+[data-wp-desa="keuangan"] .wp-desa-table-header {
   margin-bottom: var(--sp-md);
 }
 
-#wp-desa-keuangan .wp-desa-table-title {
+[data-wp-desa="keuangan"] .wp-desa-table-title {
   margin: 0;
   font-family: var(--font-display);
   font-size: 16px;
@@ -1257,27 +1391,27 @@
   color: var(--ink);
 }
 
-#wp-desa-keuangan .wp-desa-table-subtitle {
+[data-wp-desa="keuangan"] .wp-desa-table-subtitle {
   margin: 4px 0 0 0;
   font-size: 14px;
   color: var(--graphite);
 }
 
-#wp-desa-keuangan .wp-desa-table-wrapper {
+[data-wp-desa="keuangan"] .wp-desa-table-wrapper {
   overflow-x: auto;
 }
 
-#wp-desa-keuangan table {
+[data-wp-desa="keuangan"] table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
 }
 
-#wp-desa-keuangan thead {
+[data-wp-desa="keuangan"] thead {
   border-bottom: 1px solid var(--fog);
 }
 
-#wp-desa-keuangan th {
+[data-wp-desa="keuangan"] th {
   color: var(--graphite);
   text-transform: uppercase;
   font-size: 11px;
@@ -1288,70 +1422,70 @@
   background: var(--cloud);
 }
 
-#wp-desa-keuangan th:first-child {
+[data-wp-desa="keuangan"] th:first-child {
   padding-left: var(--sp-lg);
   border-radius: var(--rounded-lg) 0 0 var(--rounded-lg);
 }
 
-#wp-desa-keuangan th:last-child {
+[data-wp-desa="keuangan"] th:last-child {
   padding-right: var(--sp-lg);
   border-radius: 0 var(--rounded-lg) var(--rounded-lg) 0;
 }
 
-#wp-desa-keuangan td {
+[data-wp-desa="keuangan"] td {
   padding: 14px var(--sp-sm);
   border-bottom: 1px solid var(--cloud);
   vertical-align: middle;
 }
 
-#wp-desa-keuangan td:first-child {
+[data-wp-desa="keuangan"] td:first-child {
   padding-left: var(--sp-lg);
 }
 
-#wp-desa-keuangan td:last-child {
+[data-wp-desa="keuangan"] td:last-child {
   padding-right: var(--sp-lg);
 }
 
-#wp-desa-keuangan tbody tr:last-child td {
+[data-wp-desa="keuangan"] tbody tr:last-child td {
   border-bottom: none;
 }
 
-#wp-desa-keuangan tbody tr:hover td {
+[data-wp-desa="keuangan"] tbody tr:hover td {
   background: var(--cloud);
 }
 
-#wp-desa-keuangan .wp-desa-row-title {
+[data-wp-desa="keuangan"] .wp-desa-row-title {
   font-weight: 500;
   color: var(--ink);
 }
 
-#wp-desa-keuangan .wp-desa-col-title {
+[data-wp-desa="keuangan"] .wp-desa-col-title {
   text-align: left;
 }
-#wp-desa-keuangan .wp-desa-col-number {
+[data-wp-desa="keuangan"] .wp-desa-col-number {
   text-align: right;
 }
-#wp-desa-keuangan .wp-desa-col-percentage {
+[data-wp-desa="keuangan"] .wp-desa-col-percentage {
   text-align: center;
 }
 
-#wp-desa-keuangan .wp-desa-cell-number {
+[data-wp-desa="keuangan"] .wp-desa-cell-number {
   text-align: right;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
   font-family: var(--font-body);
 }
 
-#wp-desa-keuangan .wp-desa-cell-number-strong {
+[data-wp-desa="keuangan"] .wp-desa-cell-number-strong {
   font-weight: 600;
   color: var(--ink);
 }
 
-#wp-desa-keuangan .wp-desa-cell-percentage {
+[data-wp-desa="keuangan"] .wp-desa-cell-percentage {
   text-align: center;
 }
 
-#wp-desa-keuangan .wp-desa-percentage {
+[data-wp-desa="keuangan"] .wp-desa-percentage {
   display: inline-block;
   padding: 3px 10px;
   border-radius: var(--rounded-pill);
@@ -1359,22 +1493,124 @@
   font-weight: 600;
 }
 
-#wp-desa-keuangan .wp-desa-empty-state {
+[data-wp-desa="keuangan"] .wp-desa-empty-state {
   text-align: center;
   padding: 40px var(--sp-lg);
   color: var(--steel);
   font-size: 14px;
 }
 
+/* ===== Keuangan Style: Compact ===== */
+.wp-desa-keu--compact .wp-desa-header {
+  margin-bottom: var(--sp-md);
+}
+
+.wp-desa-keu--compact .wp-desa-title {
+  font-size: 20px;
+}
+
+.wp-desa-keu--compact .wp-desa-subtitle {
+  font-size: 13px;
+}
+
+.wp-desa-keu--compact .wp-desa-summary-grid {
+  gap: var(--sp-sm);
+  margin-bottom: var(--sp-md);
+}
+
+.wp-desa-keu--compact .wp-desa-stat-card {
+  padding: var(--sp-lg);
+}
+
+.wp-desa-keu--compact .wp-desa-stat-icon-bg {
+  width: 36px;
+  height: 36px;
+  margin-bottom: var(--sp-sm);
+}
+
+.wp-desa-keu--compact .wp-desa-stat-icon-bg svg {
+  width: 18px;
+  height: 18px;
+}
+
+.wp-desa-keu--compact .wp-desa-stat-value {
+  font-size: 22px;
+}
+
+.wp-desa-keu--compact .wp-desa-chart-wrapper {
+  gap: var(--sp-md);
+  margin-bottom: var(--sp-md);
+}
+
+.wp-desa-keu--compact .wp-desa-chart-container {
+  padding: var(--sp-lg);
+}
+
+.wp-desa-keu--compact .wp-desa-chart-box {
+  height: 220px;
+}
+
+.wp-desa-keu--compact .wp-desa-table-card {
+  padding: var(--sp-lg);
+}
+
+/* ===== Keuangan Style: Minimal ===== */
+.wp-desa-keu--minimal .wp-desa-header {
+  margin-bottom: var(--sp-md);
+}
+
+.wp-desa-keu--minimal .wp-desa-title {
+  font-size: 18px;
+}
+
+.wp-desa-keu--minimal .wp-desa-subtitle {
+  font-size: 13px;
+}
+
+.wp-desa-keu--minimal .wp-desa-summary-grid {
+  gap: var(--sp-sm);
+  margin-bottom: 0;
+}
+
+.wp-desa-keu--minimal .wp-desa-stat-card {
+  padding: var(--sp-md) var(--sp-lg);
+  box-shadow: none;
+}
+
+.wp-desa-keu--minimal .wp-desa-stat-icon-bg {
+  width: 32px;
+  height: 32px;
+  margin-bottom: var(--sp-xs);
+  background: transparent;
+  color: var(--primary);
+}
+
+.wp-desa-keu--minimal .wp-desa-stat-icon-bg svg {
+  width: 16px;
+  height: 16px;
+}
+
+.wp-desa-keu--minimal .wp-desa-stat-label {
+  font-size: 11px;
+}
+
+.wp-desa-keu--minimal .wp-desa-stat-value {
+  font-size: 20px;
+}
+
+.wp-desa-keu--minimal .wp-desa-stat-sub {
+  font-size: 11px;
+}
+
 /* --- Layanan Shortcode Extra --- */
-#wp-desa-layanan .wp-desa-message {
+[data-wp-desa="layanan"] .wp-desa-message {
   padding: 15px;
   border-radius: var(--rounded-md);
   border: 1px solid;
   margin-bottom: var(--sp-lg);
 }
 
-#wp-desa-layanan .wp-desa-tracking-box {
+[data-wp-desa="layanan"] .wp-desa-tracking-box {
   background: var(--primary-soft);
   border: 1px solid var(--primary);
   padding: var(--sp-lg);
@@ -1383,13 +1619,13 @@
   margin-bottom: var(--sp-lg);
 }
 
-#wp-desa-layanan .wp-desa-tracking-label {
+[data-wp-desa="layanan"] .wp-desa-tracking-label {
   color: var(--primary);
   font-weight: 500;
   margin-bottom: 10px;
 }
 
-#wp-desa-layanan .wp-desa-tracking-number {
+[data-wp-desa="layanan"] .wp-desa-tracking-number {
   font-family: var(--font-display);
   font-size: 24px;
   font-weight: 500;
@@ -1397,18 +1633,18 @@
   letter-spacing: 0;
 }
 
-#wp-desa-layanan .wp-desa-tracking-note {
+[data-wp-desa="layanan"] .wp-desa-tracking-note {
   font-size: 14px;
   color: var(--graphite);
   margin-top: 10px;
 }
 
-#wp-desa-layanan .wp-desa-tracking-input-group {
+[data-wp-desa="layanan"] .wp-desa-tracking-input-group {
   display: flex;
   gap: 10px;
 }
 
-#wp-desa-layanan .wp-desa-status-badge {
+[data-wp-desa="layanan"] .wp-desa-status-badge {
   padding: 4px 12px;
   border-radius: var(--rounded-pill);
   font-size: 13px;
@@ -1417,7 +1653,7 @@
   color: var(--ink);
 }
 
-#wp-desa-layanan .wp-desa-error-box {
+[data-wp-desa="layanan"] .wp-desa-error-box {
   padding: 15px;
   background: #fce8e6;
   color: var(--error);
@@ -1427,7 +1663,7 @@
 }
 
 /* --- Layanan Shortcode --- */
-#wp-desa-layanan .wp-desa-tab-btn {
+[data-wp-desa="layanan"] .wp-desa-tab-btn {
   padding: var(--sp-sm) var(--sp-lg);
   background: transparent;
   border: none;
@@ -1443,19 +1679,19 @@
   font-family: var(--font-body);
 }
 
-#wp-desa-layanan .wp-desa-tab-btn.active {
+[data-wp-desa="layanan"] .wp-desa-tab-btn.active {
   color: var(--primary);
   border-bottom-color: var(--primary);
 }
 
-#wp-desa-layanan .wp-desa-tab-btn:hover {
+[data-wp-desa="layanan"] .wp-desa-tab-btn:hover {
   color: var(--ink);
   background: var(--cloud);
 }
 
-#wp-desa-layanan .wp-desa-input,
-#wp-desa-layanan .wp-desa-select,
-#wp-desa-layanan .wp-desa-textarea {
+[data-wp-desa="layanan"] .wp-desa-input,
+[data-wp-desa="layanan"] .wp-desa-select,
+[data-wp-desa="layanan"] .wp-desa-textarea {
   width: 100%;
   padding: var(--sp-sm) var(--sp-md);
   border: 1px solid var(--steel);
@@ -1468,14 +1704,14 @@
   color: var(--ink);
 }
 
-#wp-desa-layanan .wp-desa-input:focus,
-#wp-desa-layanan .wp-desa-select:focus,
-#wp-desa-layanan .wp-desa-textarea:focus {
+[data-wp-desa="layanan"] .wp-desa-input:focus,
+[data-wp-desa="layanan"] .wp-desa-select:focus,
+[data-wp-desa="layanan"] .wp-desa-textarea:focus {
   outline: none;
   border-color: var(--ink);
 }
 
-#wp-desa-layanan .wp-desa-label {
+[data-wp-desa="layanan"] .wp-desa-label {
   display: block;
   margin-bottom: var(--sp-xs);
   font-weight: 500;
@@ -1483,11 +1719,11 @@
   font-size: 14px;
 }
 
-#wp-desa-layanan .wp-desa-form-group {
+[data-wp-desa="layanan"] .wp-desa-form-group {
   margin-bottom: var(--sp-xl);
 }
 
-#wp-desa-layanan .wp-desa-btn {
+[data-wp-desa="layanan"] .wp-desa-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1506,16 +1742,16 @@
   gap: var(--sp-xs);
 }
 
-#wp-desa-layanan .wp-desa-btn-primary {
+[data-wp-desa="layanan"] .wp-desa-btn-primary {
   background: var(--primary);
   color: var(--on-ink);
 }
 
-#wp-desa-layanan .wp-desa-btn-primary:hover {
+[data-wp-desa="layanan"] .wp-desa-btn-primary:hover {
   background: #0e3191;
 }
 
-#wp-desa-layanan .wp-desa-btn:disabled {
+[data-wp-desa="layanan"] .wp-desa-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
   transform: none;
@@ -1524,7 +1760,7 @@
   color: var(--on-ink);
 }
 
-#wp-desa-layanan .wp-desa-result-card {
+[data-wp-desa="layanan"] .wp-desa-result-card {
   background: var(--canvas);
   border-radius: var(--rounded-xl);
   padding: var(--sp-xl);
@@ -1532,29 +1768,29 @@
   box-shadow: var(--shadow-soft-lift);
 }
 
-#wp-desa-layanan .wp-desa-card-row {
+[data-wp-desa="layanan"] .wp-desa-card-row {
   display: flex;
   justify-content: space-between;
   padding: var(--sp-sm) 0;
   border-bottom: 1px solid var(--fog);
 }
 
-#wp-desa-layanan .wp-desa-card-row:last-child {
+[data-wp-desa="layanan"] .wp-desa-card-row:last-child {
   border-bottom: none;
 }
 
-#wp-desa-layanan .wp-desa-card-label {
+[data-wp-desa="layanan"] .wp-desa-card-label {
   color: var(--graphite);
   font-weight: 500;
 }
 
-#wp-desa-layanan .wp-desa-card-value {
+[data-wp-desa="layanan"] .wp-desa-card-value {
   color: var(--ink);
   font-weight: 500;
   text-align: right;
 }
 
-#wp-desa-layanan .wp-desa-helper {
+[data-wp-desa="layanan"] .wp-desa-helper {
   font-size: 14px;
   color: var(--graphite);
   margin-top: 6px;

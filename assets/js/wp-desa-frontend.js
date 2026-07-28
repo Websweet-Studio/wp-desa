@@ -43,12 +43,9 @@
   }
 
   // ==========================================================================
-  // 1. initKeuanganDesa()
+  // 1. initKeuanganDesa($el)
   // ==========================================================================
-  function initKeuanganDesa() {
-    var $el = $("#wp-desa-keuangan");
-    if (!$el.length) return;
-
+  function initKeuanganDesa($el) {
     var state = {
       filterYear: new Date().getFullYear(),
       years: [],
@@ -64,7 +61,7 @@
       trendChart: null,
     };
 
-    // DOM refs
+    // DOM refs — all relative to $el
     var $yearSelect = $el.find(".wp-desa-select-year");
     var $summaryCards = $el.find(".wp-desa-stat-value"); // 3 h3 elements
     var $summarySubs = $el.find(".wp-desa-stat-sub span"); // 2 span elements (budget labels)
@@ -72,6 +69,11 @@
     // Remove inert Alpine templates from tbody
     var $tbody = $el.find("tbody");
     $tbody.find("template").remove();
+
+    // Canvas refs
+    var $canvasIncome = $el.find("canvas").eq(0);
+    var $canvasExpense = $el.find("canvas").eq(1);
+    var $canvasTrend = $el.find("canvas").eq(2);
 
     function calcPct(realization, budget) {
       if (!budget || budget === 0) return 0;
@@ -169,7 +171,7 @@
       }
 
       // Income pie chart
-      var incomeCtx = document.getElementById("publicIncomeChart");
+      var incomeCtx = $canvasIncome.length ? $canvasIncome[0] : null;
       if (
         incomeCtx &&
         state.summary.income_sources &&
@@ -217,7 +219,7 @@
       }
 
       // Expense doughnut chart
-      var expenseCtx = document.getElementById("publicExpenseChart");
+      var expenseCtx = $canvasExpense.length ? $canvasExpense[0] : null;
       if (
         expenseCtx &&
         state.summary.expense_sources &&
@@ -265,7 +267,7 @@
       }
 
       // Trend line chart
-      var trendCtx = document.getElementById("publicTrendChart");
+      var trendCtx = $canvasTrend.length ? $canvasTrend[0] : null;
       if (
         trendCtx &&
         state.summary.yearly_trend &&
@@ -453,12 +455,9 @@
   }
 
   // ==========================================================================
-  // 2. initBantuanDesa()
+  // 2. initBantuanDesa($el)
   // ==========================================================================
-  function initBantuanDesa() {
-    var $el = $("#wp-desa-bantuan");
-    if (!$el.length) return;
-
+  function initBantuanDesa($el) {
     var state = {
       programs: [],
       activeProgramId: null,
@@ -638,12 +637,9 @@
   }
 
   // ==========================================================================
-  // 3. initAduanWarga()
+  // 3. initAduanWarga($el)
   // ==========================================================================
-  function initAduanWarga() {
-    var $el = $("#wp-desa-aduan");
-    if (!$el.length) return;
-
+  function initAduanWarga($el) {
     var state = {
       tab: "form",
       form: {
@@ -663,31 +659,28 @@
       tracking: false,
     };
 
-    // DOM refs
+    // DOM refs — all relative to $el
     var $tabs = $el.find(".wp-desa-tab-btn");
     var $content = $el.find(".wp-desa-content");
-    var $formPanel = $content.children("[x-show]").eq(0); // tab === 'form'
-    var $trackPanel = $content.children("[x-show]").eq(1); // tab === 'track'
+    var $formPanel = $content.children(".wp-desa-tab-panel").eq(0); // tab === 'form'
+    var $trackPanel = $content.children(".wp-desa-tab-panel").eq(1); // tab === 'track'
 
-    // Form elements
+    // Form elements — use name attribute selectors (x-model is just a marker for the JS)
     var $form = $formPanel.find("form");
-    var $reporterName = $form.find('input[x-model="form.reporter_name"]');
-    var $reporterContact = $form.find('input[x-model="form.reporter_contact"]');
-    var $category = $form.find('select[x-model="form.category"]');
-    var $subject = $form.find('input[x-model="form.subject"]');
-    var $description = $form.find('textarea[x-model="form.description"]');
+    var $reporterName = $form.find('[x-model="form.reporter_name"]');
+    var $reporterContact = $form.find('[x-model="form.reporter_contact"]');
+    var $category = $form.find('[x-model="form.category"]');
+    var $subject = $form.find('[x-model="form.subject"]');
+    var $description = $form.find('[x-model="form.description"]');
     var $photoInput = $form.find('input[type="file"]');
     var $submitBtn = $form.find('button[type="submit"]');
 
     // Message / tracking code displays
     var $messageDiv = $formPanel.find('[x-show="message.content"]');
-    var $trackingCodeDiv = $formPanel
-      .find('template[x-if="trackingCode"]')
-      .parent(); // find the div around the template
-    // Actually the template is inside the message div. We'll handle inline.
+    var $trackingCodeDiv = $formPanel.find('[x-show="trackingCode"]');
 
     // Tracking panel elements
-    var $trackCodeInput = $trackPanel.find('input[x-model="trackCode"]');
+    var $trackCodeInput = $trackPanel.find('[x-model="trackCode"]');
     var $trackBtn = $trackPanel.find('button[type="submit"]');
     var $trackResultDiv = $trackPanel.find('[x-show="trackResult"]');
     var $trackErrorDiv = $trackPanel.find('[x-show="trackError"]');
@@ -709,7 +702,6 @@
       $tabs.removeClass("active");
       $tabs.each(function () {
         var $btn = $(this);
-        // Detect which tab this button targets based on text content
         if (tab === "form" && $btn.text().indexOf("Buat") >= 0)
           $btn.addClass("active");
         if (tab === "track" && $btn.text().indexOf("Cek") >= 0)
@@ -811,6 +803,13 @@
         $messageDiv.hide().empty();
       }
 
+      // Tracking code box
+      if (state.trackingCode) {
+        $trackingCodeDiv.show();
+      } else {
+        $trackingCodeDiv.hide();
+      }
+
       // Submit button state
       var $submittingSpan = $submitBtn.find("span").eq(1);
       var $normalSpan = $submitBtn.find("span").eq(0);
@@ -857,7 +856,7 @@
     function updateTrackUI() {
       // Track button
       var $normalText = $trackBtn.find("span").eq(0);
-      var $loadingIcon = $trackBtn.find("i, svg").eq(0);
+      var $loadingIcon = $trackBtn.find("span").eq(1);
       if (state.tracking) {
         $trackBtn.prop("disabled", true);
         $normalText.hide();
@@ -879,47 +878,30 @@
         };
         var statusStyle = statusStyleMap[r.status] || "";
 
-        var html =
-          '<div style="text-align:center;margin-bottom:20px;">' +
-          '<div style="width:60px;height:60px;background:#c9e0fc;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;color:#024ad8;">' +
-          '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>' +
-          "</div>" +
-          '<h4 style="margin:0;color:#1a1a1a;font-size:1.2em;">Status Laporan</h4>' +
-          '<p style="margin:5px 0 0 0;color:#636363;font-family:monospace;">' +
-          escapeHtml(r.code) +
-          "</p>" +
-          "</div>" +
-          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Judul</span><span class="wp-desa-card-value">' +
-          escapeHtml(r.subject) +
-          "</span></div>" +
-          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Kategori</span><span class="wp-desa-card-value">' +
-          escapeHtml(r.category) +
-          "</span></div>" +
-          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Tanggal</span><span class="wp-desa-card-value">' +
-          formatDate(r.created_at) +
-          "</span></div>" +
-          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Status</span>' +
-          '<span class="wp-desa-badge wp-desa-badge-' +
-          (r.status || "") +
-          '" style="padding:4px 12px;border-radius:20px;font-size:0.85em;font-weight:600;' +
-          statusStyle +
-          '">' +
-          formatStatus(r.status) +
-          "</span></div>";
+        $trackResultDiv.find(".wp-desa-track-code-label").text(r.code || "");
+        $trackResultDiv.find(".wp-desa-track-subject").text(r.subject || "");
+        $trackResultDiv.find(".wp-desa-track-category").text(r.category || "");
+        $trackResultDiv
+          .find(".wp-desa-track-date")
+          .text(formatDate(r.created_at));
+        $trackResultDiv
+          .find(".wp-desa-track-status")
+          .text(formatStatus(r.status))
+          .attr(
+            "style",
+            "padding:4px 12px;border-radius:20px;font-size:0.85em;font-weight:600;" +
+              statusStyle,
+          );
 
+        var $response = $trackResultDiv.find(".wp-desa-track-response");
         if (r.response) {
-          html +=
-            '<div style="margin-top:20px;background:var(--cloud);padding:15px;border-radius:8px;border:1px solid var(--fog);">' +
-            '<strong style="display:flex;align-items:center;gap:6px;margin-bottom:8px;color:#1a1a1a;">' +
-            '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Tanggapan Admin:' +
-            "</strong>" +
-            '<p style="margin:0;color:#4b5563;line-height:1.6;">' +
-            escapeHtml(r.response) +
-            "</p>" +
-            "</div>";
+          $response.find("p").text(r.response);
+          $response.show();
+        } else {
+          $response.hide();
         }
 
-        $trackResultDiv.html(html).show();
+        $trackResultDiv.show();
         $trackErrorDiv.hide().empty();
       } else {
         $trackResultDiv.hide().empty();
@@ -944,13 +926,10 @@
     $trackPanel.find("form").on("submit", checkStatus);
 
     // ---- boot ----
-    // Initially hide both panels and all show/hide elements, then show form tab
     $formPanel.hide();
     $trackPanel.hide();
     $messageDiv.hide();
-    // Hide the tracking code template parent (empty div after template removed)
-    // The tracking code section is inside $messageDiv but rendered via template. Remove the template.
-    $formPanel.find("template").remove();
+    $trackingCodeDiv.hide();
 
     // Hide submit button loading state initially
     $submitBtn.find("span").eq(1).hide();
@@ -964,12 +943,9 @@
   }
 
   // ==========================================================================
-  // 4. initLayananSurat()
+  // 4. initLayananSurat($el)
   // ==========================================================================
-  function initLayananSurat() {
-    var $el = $("#wp-desa-layanan");
-    if (!$el.length) return;
-
+  function initLayananSurat($el) {
     var state = {
       tab: "request",
       types: [],
@@ -983,29 +959,29 @@
       tracking: false,
     };
 
-    // DOM refs
+    // DOM refs — all relative to $el
     var $tabs = $el.find(".wp-desa-tab-btn");
     var $requestPanel = $el.find("[x-show=\"tab === 'request'\"]");
     var $trackingPanel = $el.find("[x-show=\"tab === 'tracking'\"]");
 
-    // Request form elements
+    // Request form elements — use x-model attribute selectors
     var $form = $requestPanel.find("form");
-    var $nik = $requestPanel.find('input[x-model="form.nik"]');
-    var $name = $requestPanel.find('input[x-model="form.name"]');
-    var $phone = $requestPanel.find('input[x-model="form.phone"]');
+    var $nik = $requestPanel.find('[x-model="form.nik"]');
+    var $name = $requestPanel.find('[x-model="form.name"]');
+    var $phone = $requestPanel.find('[x-model="form.phone"]');
     var $letterTypeSelect = $requestPanel.find(
-      'select[x-model="form.letter_type_id"]',
+      '[x-model="form.letter_type_id"]',
     );
-    var $details = $requestPanel.find('textarea[x-model="form.details"]');
+    var $details = $requestPanel.find('[x-model="form.details"]');
     var $submitBtn = $requestPanel.find('button[type="submit"]');
-    var $typeDescription = $requestPanel.find("small.wp-desa-helper");
+    var $typeDescription = $requestPanel.find(".wp-desa-layanan-type-desc");
 
     // Message / tracking displays
     var $msgContent = $requestPanel.find('[x-show="message.content"]');
     var $trackingBox = $requestPanel.find('[x-show="trackingCode"]');
 
     // Tracking panel elements
-    var $trackCodeInput = $trackingPanel.find('input[x-model="trackCode"]');
+    var $trackCodeInput = $trackingPanel.find('[x-model="trackCode"]');
     var $trackBtn = $trackingPanel.find("button");
     var $trackResultDiv = $trackingPanel.find('[x-show="trackResult"]');
     var $trackErrorDiv = $trackingPanel.find('[x-show="trackError"]');
@@ -1119,7 +1095,6 @@
 
       // Tracking code box
       if (state.trackingCode) {
-        $trackingBox.find('[x-text="trackingCode"]').text(state.trackingCode);
         $trackingBox.show();
       } else {
         $trackingBox.hide();
@@ -1194,23 +1169,20 @@
         };
         var statusStyle = statusStyleMap[r.status] || "";
 
-        var html =
-          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Nama Pengaju</span><span class="wp-desa-card-value">' +
-          escapeHtml(r.name) +
-          "</span></div>" +
-          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Tanggal</span><span class="wp-desa-card-value">' +
-          formatDate(r.created_at) +
-          "</span></div>" +
-          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Status</span>' +
-          '<span class="wp-desa-badge wp-desa-badge-' +
-          (r.status || "") +
-          '" style="padding:4px 12px;border-radius:20px;font-size:0.85em;font-weight:600;' +
-          statusStyle +
-          '">' +
-          formatStatus(r.status) +
-          "</span></div>";
+        $trackResultDiv.find(".wp-desa-layanan-track-name").text(r.name || "");
+        $trackResultDiv
+          .find(".wp-desa-layanan-track-date")
+          .text(formatDate(r.created_at));
+        $trackResultDiv
+          .find(".wp-desa-layanan-track-status")
+          .text(formatStatus(r.status))
+          .attr(
+            "style",
+            "padding:4px 12px;border-radius:20px;font-size:0.85em;font-weight:600;" +
+              statusStyle,
+          );
 
-        $trackResultDiv.html(html).show();
+        $trackResultDiv.show();
         $trackErrorDiv.hide().empty();
       } else {
         $trackResultDiv.hide().empty();
@@ -1263,12 +1235,20 @@
   }
 
   // ==========================================================================
-  // DOM Ready — init all components
+  // DOM Ready — init all components using data-wp-desa attribute (multi-instance safe)
   // ==========================================================================
   $(function () {
-    initKeuanganDesa();
-    initBantuanDesa();
-    initAduanWarga();
-    initLayananSurat();
+    $('[data-wp-desa="keuangan"]').each(function () {
+      initKeuanganDesa($(this));
+    });
+    $('[data-wp-desa="bantuan"]').each(function () {
+      initBantuanDesa($(this));
+    });
+    $('[data-wp-desa="aduan"]').each(function () {
+      initAduanWarga($(this));
+    });
+    $('[data-wp-desa="layanan"]').each(function () {
+      initLayananSurat($(this));
+    });
   });
 })(jQuery, window, document);

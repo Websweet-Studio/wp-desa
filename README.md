@@ -77,13 +77,13 @@ Pasang shortcode berikut di Halaman (Page) WordPress:
 | ------------------------- | ----------------------- | --------------------------------- |
 | **Layanan Surat**         | `[wp_desa_layanan]`     | Form pengajuan & tracking surat   |
 | **Aspirasi Warga**        | `[wp_desa_aduan]`       | Form pengaduan & cek status       |
-| **Transparansi Keuangan** | `[wp_desa_keuangan]`    | Tabel & grafik APBDes             |
+| **Transparansi Keuangan** | `[wp_desa_keuangan style="classic"]`    | Tabel & grafik APBDes. Style: `classic`, `compact`, `minimal` |
 | **Program Bantuan**       | `[wp_desa_bantuan]`     | Daftar program & penerima bantuan |
 | **Statistik Desa**        | `[wp_desa_statistik]`   | Ringkasan demografi penduduk      |
 | **UMKM Desa**             | `[wp_desa_umkm]`        | Direktori UMKM (Grid Layout)      |
 | **Potensi Desa**          | `[wp_desa_potensi]`     | Daftar Potensi Desa               |
 | **Profil Desa**           | `[wp_desa_profil]`      | Informasi identitas & kontak desa |
-| **Kepala Desa**           | `[wp_desa_kepala_desa]` | Foto & nama Kepala Desa           |
+| **Kepala Desa**           | `[wp_desa_kepala_desa style="card"]` | Foto & nama Kepala Desa. Style: `card`, `horizontal`, `minimal` |
 
 ## 📂 Struktur Folder
 
