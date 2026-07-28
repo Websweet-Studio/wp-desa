@@ -159,29 +159,22 @@ class ComplaintController extends WP_REST_Controller
         $per_page = $request->get_param('per_page') ? intval($request->get_param('per_page')) : 20;
         $offset = ($page - 1) * $per_page;
 
-        $where_clause = '';
-        $args = [];
-
-        if (!empty($status)) {
-            $where_clause = "WHERE status = %s";
-            $args[] = $status;
-        }
-
         // Count total items
-        $count_sql = "SELECT COUNT(*) FROM $table_complaints $where_clause";
-        if (!empty($args)) {
-            $count_sql = $wpdb->prepare($count_sql, ...$args);
+        if (!empty($status)) {
+            $count_sql = $wpdb->prepare("SELECT COUNT(*) FROM $table_complaints WHERE status = %s", $status);
+        } else {
+            $count_sql = "SELECT COUNT(*) FROM $table_complaints";
         }
         $total_items = (int) $wpdb->get_var($count_sql);
         $total_pages = ceil($total_items / $per_page);
 
         // Get actual data
-        $data_args = $args;
-        $data_args[] = $per_page;
-        $data_args[] = $offset;
-        $sql = "SELECT * FROM $table_complaints $where_clause ORDER BY created_at DESC LIMIT %d OFFSET %d";
-        $prepared_sql = $wpdb->prepare($sql, ...$data_args);
-        $results = $wpdb->get_results($prepared_sql);
+        if (!empty($status)) {
+            $sql = $wpdb->prepare("SELECT * FROM $table_complaints WHERE status = %s ORDER BY created_at DESC LIMIT %d OFFSET %d", $status, $per_page, $offset);
+        } else {
+            $sql = $wpdb->prepare("SELECT * FROM $table_complaints ORDER BY created_at DESC LIMIT %d OFFSET %d", $per_page, $offset);
+        }
+        $results = $wpdb->get_results($sql);
 
         // Get counts for all statuses
         $counts_sql = "SELECT status, COUNT(*) as count FROM $table_complaints GROUP BY status";
