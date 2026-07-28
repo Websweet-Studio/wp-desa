@@ -106,7 +106,9 @@ class Menu
     {
         $screen = get_current_screen();
         if ($screen && strpos($screen->id, 'wp-desa') !== false) {
-            echo '<style>.wp-desa-dashboard .notice { display: none; }</style>';
+            remove_all_actions('admin_notices');
+            remove_all_actions('all_admin_notices');
+            echo '<style>.wp-desa-dashboard .notice, .wp-desa-wrapper .notice { display:none !important; }</style>';
         }
     }
 

@@ -269,6 +269,7 @@
   height: auto;
 }
 
+.wp-desa-btn-disabled,
 .wp-desa-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
@@ -359,6 +360,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--sp-xl);
+  padding: 20px;
 }
 
 .wp-desa-form-group {
@@ -419,7 +421,17 @@
 .wp-desa-wrapper input[type="time"],
 .wp-desa-wrapper input[type="url"],
 .wp-desa-wrapper input[type="week"],
-.wp-desa-wrapper select,
+.wp-desa-wrapper select {
+  max-width: 100%;
+  padding: var(--sp-sm) var(--sp-md);
+  border-radius: var(--rounded-md);
+  border: 1px solid var(--steel);
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--ink);
+  background-color: var(--paper);
+  line-height: 1.5;
+}
 .wp-desa-wrapper textarea {
   width: 100%;
   padding: var(--sp-sm) var(--sp-md);
@@ -575,6 +587,15 @@ input:checked + .slider:before {
   align-items: center;
   justify-content: center;
   padding: var(--sp-lg);
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+}
+.wp-desa-modal-overlay.is-open {
+  visibility: visible;
+  opacity: 1;
 }
 
 .wp-desa-modal-content {
@@ -1382,10 +1403,10 @@ input:checked + .slider:before {
   display: flex;
   align-items: center;
   gap: var(--sp-xl);
+  margin: 10px -20px 0px;
   padding: var(--sp-sm) var(--sp-xxl);
   background: var(--canvas);
   border-bottom: 1px solid var(--fog);
-  margin: 0 -20px;
   flex-wrap: wrap;
 }
 
