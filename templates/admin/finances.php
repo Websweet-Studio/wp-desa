@@ -124,32 +124,6 @@ function wp_desa_format_rp($amount)
         </div>
     <?php endif; ?>
 
-    <!-- Header -->
-    <div class="wp-desa-header">
-        <div>
-            <?php if ($action === 'edit'): ?>
-                <a href="?page=wp-desa-keuangan&tab=keuangan&view=data" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" style="margin-bottom:8px;">
-                    <span class="dashicons dashicons-arrow-left-alt2"></span> Kembali
-                </a>
-            <?php endif; ?>
-            <h1 class="wp-desa-title">
-                <?php echo $action === 'edit' ? 'Edit Data Keuangan' : 'Keuangan Desa'; ?>
-            </h1>
-            <p class="wp-desa-helper">
-                <?php echo $action === 'edit' ? 'Perbarui data anggaran dan realisasi.' : 'Kelola anggaran dan realisasi APBDes.'; ?>
-            </p>
-        </div>
-        <?php if ($view === 'dashboard'): ?>
-            <div class="wp-desa-actions">
-                <?php if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1): ?>
-                    <button class="wp-desa-btn wp-desa-btn-danger btn-generate-dummy">
-                        <span class="dashicons dashicons-database"></span> Generate Dummy
-                    </button>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
-    </div>
-
     <!-- Tabs Navigation -->
     <div class="wp-desa-card wp-desa-mb-20">
         <div class="wp-desa-tabs wp-desa-tab-counts">

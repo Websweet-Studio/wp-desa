@@ -116,22 +116,50 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
 
             <!-- Tab: Pengaturan Sistem -->
             <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'sistem' ? 'display:none;' : ''; ?>">
+                <!-- Seed / Clear Data -->
                 <div class="wp-desa-form-grid">
+                    <div class="wp-desa-box-gray">
+                        <div class="wp-desa-flex-between-center" style="margin-bottom:16px;">
+                            <div>
+                                <label class="wp-desa-label wp-desa-label-lg">Generate Data Dummy</label>
+                                <p class="wp-desa-helper wp-desa-m-0">Buat data contoh untuk semua fitur (penduduk, surat, aduan, keuangan, bantuan).</p>
+                            </div>
+                            <form method="post" style="margin:0;" onsubmit="return confirm('Buat data dummy untuk SEMUA fitur?')">
+                                <?php wp_nonce_field('wp_desa_seed_action', 'wp_desa_seed_nonce'); ?>
+                                <input type="hidden" name="wp_desa_seed_data" value="1">
+                                <button type="submit" class="wp-desa-btn wp-desa-btn-primary">
+                                    <span class="dashicons dashicons-database"></span> Generate Dummy
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
                     <div class="wp-desa-box-gray">
                         <div class="wp-desa-flex-between-center">
                             <div>
-                                <label class="wp-desa-label wp-desa-label-lg" for="dev_mode">Development Mode</label>
-                                <p class="wp-desa-helper wp-desa-m-0">Aktifkan fitur pengembangan seperti tombol Generate Dummy Data.</p>
+                                <label class="wp-desa-label wp-desa-label-lg">Hapus Semua Data</label>
+                                <p class="wp-desa-helper wp-desa-m-0">Kosongkan semua data dari tabel fitur plugin. Data pengaturan tidak dihapus.</p>
                             </div>
-                            <div>
-                                <label class="switch">
-                                    <input type="checkbox" name="dev_mode" id="dev_mode" value="1" <?php checked($settings['dev_mode'] ?? 0, 1); ?>>
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
+                            <form method="post" style="margin:0;" onsubmit="return confirm('Yakin hapus SEMUA data? Tindakan ini tidak bisa dibatalkan.')">
+                                <?php wp_nonce_field('wp_desa_clear_action', 'wp_desa_clear_nonce'); ?>
+                                <input type="hidden" name="wp_desa_clear_data" value="1">
+                                <button type="submit" class="wp-desa-btn wp-desa-btn-danger">
+                                    <span class="dashicons dashicons-trash"></span> Hapus Semua Data
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
+
+                <?php if (isset($_GET['seed_done'])): ?>
+                    <div class="notice notice-success is-dismissible">
+                        <p>Data dummy berhasil dibuat.</p>
+                    </div>
+                <?php elseif (isset($_GET['clear_done'])): ?>
+                    <div class="notice notice-success is-dismissible">
+                        <p>Semua data berhasil dihapus.</p>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <div class="wp-desa-form-actions">

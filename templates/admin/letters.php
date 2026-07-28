@@ -93,16 +93,6 @@ $counts['all'] = array_sum($counts);
     <?php if ($action === 'detail'): ?>
 
         <!-- ======== DETAIL VIEW ======== -->
-        <div class="wp-desa-header">
-            <div>
-                <a href="?page=wp-desa-layanan&tab=surat" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" style="margin-bottom:8px;">
-                    <span class="dashicons dashicons-arrow-left-alt2"></span> Kembali
-                </a>
-                <h1 class="wp-desa-title">Detail Permohonan Surat</h1>
-                <p class="wp-desa-helper">Kode Tracking: <strong><?php echo esc_html($letter->tracking_code); ?></strong></p>
-            </div>
-        </div>
-
         <div class="wp-desa-card">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
                 <div>
@@ -174,20 +164,6 @@ $counts['all'] = array_sum($counts);
     <?php else: ?>
 
         <!-- ======== LIST VIEW ======== -->
-        <div class="wp-desa-header">
-            <div>
-                <h1 class="wp-desa-title">Layanan Surat Online</h1>
-                <p class="wp-desa-helper">Kelola permohonan surat dari warga desa.</p>
-            </div>
-            <div class="wp-desa-actions">
-                <?php if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1): ?>
-                    <button class="wp-desa-btn wp-desa-btn-danger btn-generate-dummy">
-                        <span class="dashicons dashicons-database"></span> Generate Dummy
-                    </button>
-                <?php endif; ?>
-            </div>
-        </div>
-
         <div class="wp-desa-card">
             <!-- Filter Tabs -->
             <div class="wp-desa-tabs">

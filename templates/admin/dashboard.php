@@ -25,16 +25,6 @@
                 <span class="wp-desa-hero__value">0</span>
                 <span class="wp-desa-hero__label">Aspirasi</span>
             </div>
-            <?php
-            $settings = get_option('wp_desa_settings', []);
-            if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1):
-            ?>
-                <div class="wp-desa-hero__metric wp-desa-hero__metric--cta">
-                    <button class="wp-desa-btn wp-desa-btn-primary wp-desa-btn-primary-invert">
-                        <span class="dashicons dashicons-database"></span> Generate Dummy
-                    </button>
-                </div>
-            <?php endif; ?>
         </div>
     </section>
 

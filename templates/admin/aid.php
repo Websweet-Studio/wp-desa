@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wp_desa_save_program'
         $wpdb->insert($programs_table, $data);
     }
 
-    wp_redirect(admin_url('admin.php?page=wp-desa-aid&saved=1'));
+    wp_redirect(admin_url('admin.php?page=wp-desa-keuangan&tab=bantuan&saved=1'));
     exit;
 }
 
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wp_desa_add_recipient
         }
     }
 
-    wp_redirect(admin_url('admin.php?page=wp-desa-aid&action=recipients&program_id=' . $program_id));
+    wp_redirect(admin_url('admin.php?page=wp-desa-keuangan&tab=bantuan&action=recipients&program_id=' . $program_id));
     exit;
 }
 
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wp_desa_update_recipi
         $wpdb->update($recipients_table, $update_data, ['id' => $recipient_id]);
     }
 
-    wp_redirect(admin_url('admin.php?page=wp-desa-aid&action=recipients&program_id=' . $program_id));
+    wp_redirect(admin_url('admin.php?page=wp-desa-keuangan&tab=bantuan&action=recipients&program_id=' . $program_id));
     exit;
 }
 
@@ -103,7 +103,7 @@ if ($action === 'edit') {
         $edit_program = $wpdb->get_row($wpdb->prepare("SELECT * FROM $programs_table WHERE id = %d", $edit_id));
     }
     if (!$edit_program) {
-        wp_redirect(admin_url('admin.php?page=wp-desa-aid'));
+        wp_redirect(admin_url('admin.php?page=wp-desa-keuangan&tab=bantuan'));
         exit;
     }
 }
@@ -122,7 +122,7 @@ if ($action === 'recipients') {
         $program = $wpdb->get_row($wpdb->prepare("SELECT * FROM $programs_table WHERE id = %d", $program_id));
     }
     if (!$program) {
-        wp_redirect(admin_url('admin.php?page=wp-desa-aid'));
+        wp_redirect(admin_url('admin.php?page=wp-desa-keuangan&tab=bantuan'));
         exit;
     }
 
@@ -200,29 +200,9 @@ function wp_desa_format_rp($amount)
 
     <?php if ($action === 'recipients' && $program): ?>
         <!-- ======== RECIPIENTS VIEW ======== -->
-        <!-- Header -->
-        <div class="wp-desa-header">
-            <div>
-                <a href="?page=wp-desa-aid" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" style="margin-bottom:8px;">
-                    <span class="dashicons dashicons-arrow-left-alt2"></span> Kembali
-                </a>
-                <h1 class="wp-desa-title">Penerima: <?php echo esc_html($program->name); ?></h1>
-                <p class="wp-desa-helper">
-                    Total Penerima: <strong><?php echo (int) $recipient_total_items; ?></strong> / Kuota: <strong><?php echo (int) $program->quota; ?></strong>
-                </p>
-            </div>
-            <div class="wp-desa-actions">
-                <?php if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1): ?>
-                    <button class="wp-desa-btn wp-desa-btn-danger btn-generate-dummy">
-                        <span class="dashicons dashicons-database"></span> Generate Dummy
-                    </button>
-                <?php endif; ?>
-            </div>
-        </div>
-
         <!-- Add Recipient Form -->
         <div class="wp-desa-card wp-desa-mb-20">
-            <form method="post" action="?page=wp-desa-aid&action=add-recipient&program_id=<?php echo (int) $program->id; ?>" class="wp-desa-filter-bar">
+            <form method="post" action="?page=wp-desa-keuangan&tab=bantuan&action=add-recipient&program_id=<?php echo (int) $program->id; ?>" class="wp-desa-filter-bar">
                 <input type="hidden" name="wp_desa_add_recipient" value="1">
                 <label class="wp-desa-label" style="margin:0;white-space:nowrap;">Tambah Penerima via NIK</label>
                 <input type="text" name="nik" required class="wp-desa-input" placeholder="16 digit NIK" maxlength="16" style="max-width:200px;">
@@ -290,12 +270,12 @@ function wp_desa_format_rp($amount)
                     </div>
                     <div class="wp-desa-pagination-controls">
                         <a class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm <?php echo $rpaged <= 1 ? 'wp-desa-btn-disabled' : ''; ?>"
-                           href="?page=wp-desa-aid&action=recipients&program_id=<?php echo (int) $program->id; ?><?php echo $rpaged > 2 ? '&rpaged=' . ($rpaged - 1) : ''; ?>">
+                           href="?page=wp-desa-keuangan&tab=bantuan&action=recipients&program_id=<?php echo (int) $program->id; ?><?php echo $rpaged > 2 ? '&rpaged=' . ($rpaged - 1) : ''; ?>">
                             <span class="dashicons dashicons-arrow-left-alt2"></span>
                         </a>
                         <span class="wp-desa-pagination-page">Halaman <?php echo $rpaged; ?> dari <?php echo $recipient_total_pages; ?></span>
                         <a class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm <?php echo $rpaged >= $recipient_total_pages ? 'wp-desa-btn-disabled' : ''; ?>"
-                           href="?page=wp-desa-aid&action=recipients&program_id=<?php echo (int) $program->id; ?>&rpaged=<?php echo $rpaged + 1; ?>">
+                           href="?page=wp-desa-keuangan&tab=bantuan&action=recipients&program_id=<?php echo (int) $program->id; ?>&rpaged=<?php echo $rpaged + 1; ?>">
                             <span class="dashicons dashicons-arrow-right-alt2"></span>
                         </a>
                     </div>
@@ -305,16 +285,6 @@ function wp_desa_format_rp($amount)
 
     <?php elseif ($action === 'add' || $action === 'edit'): ?>
         <!-- ======== PROGRAM FORM VIEW ======== -->
-        <div class="wp-desa-header">
-            <div>
-                <a href="?page=wp-desa-aid" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" style="margin-bottom:8px;">
-                    <span class="dashicons dashicons-arrow-left-alt2"></span> Kembali
-                </a>
-                <h1 class="wp-desa-title"><?php echo $action === 'edit' ? 'Edit Program' : 'Tambah Program'; ?></h1>
-                <p class="wp-desa-helper"><?php echo $action === 'edit' ? 'Perbarui data program bantuan.' : 'Buat program bantuan sosial baru.'; ?></p>
-            </div>
-        </div>
-
         <div class="wp-desa-card">
             <form method="post">
                 <input type="hidden" name="wp_desa_save_program" value="1">
@@ -362,7 +332,7 @@ function wp_desa_format_rp($amount)
                 </div>
 
                 <div class="wp-desa-form-actions">
-                    <a href="?page=wp-desa-aid" class="wp-desa-btn wp-desa-btn-secondary">Batal</a>
+                    <a href="?page=wp-desa-keuangan&tab=bantuan" class="wp-desa-btn wp-desa-btn-secondary">Batal</a>
                     <button type="submit" class="wp-desa-btn wp-desa-btn-primary">Simpan Program</button>
                 </div>
             </form>
@@ -370,24 +340,6 @@ function wp_desa_format_rp($amount)
 
     <?php else: ?>
         <!-- ======== PROGRAM LIST VIEW ======== -->
-        <!-- Header -->
-        <div class="wp-desa-header">
-            <div>
-                <h1 class="wp-desa-title">Program & Bantuan Sosial</h1>
-                <p class="wp-desa-helper">Kelola program bantuan dan penerima manfaat.</p>
-            </div>
-            <div class="wp-desa-actions">
-                <?php if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1): ?>
-                    <button class="wp-desa-btn wp-desa-btn-danger btn-generate-dummy">
-                        <span class="dashicons dashicons-database"></span> Generate Dummy
-                    </button>
-                <?php endif; ?>
-                <a href="?page=wp-desa-aid&action=add" class="wp-desa-btn wp-desa-btn-primary">
-                    <span class="dashicons dashicons-plus-alt2"></span> Tambah Program
-                </a>
-            </div>
-        </div>
-
         <div class="wp-desa-card">
             <div style="overflow-x:auto">
                 <table class="wp-desa-table">
@@ -419,8 +371,8 @@ function wp_desa_format_rp($amount)
                                     <td><?php echo wp_desa_aid_status_badge($p->status); ?></td>
                                     <td>
                                         <div class="wp-desa-inline-actions">
-                                            <a href="?page=wp-desa-aid&action=recipients&program_id=<?php echo (int) $p->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Kelola Penerima</a>
-                                            <a href="?page=wp-desa-aid&action=edit&id=<?php echo (int) $p->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">
+                                            <a href="?page=wp-desa-keuangan&tab=bantuan&action=recipients&program_id=<?php echo (int) $p->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Kelola Penerima</a>
+                                            <a href="?page=wp-desa-keuangan&tab=bantuan&action=edit&id=<?php echo (int) $p->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">
                                                 <span class="dashicons dashicons-edit"></span>
                                             </a>
                                             <button class="wp-desa-btn wp-desa-btn-danger wp-desa-btn-sm btn-delete-aid" data-id="<?php echo (int) $p->id; ?>">
@@ -449,12 +401,12 @@ function wp_desa_format_rp($amount)
                     </div>
                     <div class="wp-desa-pagination-controls">
                         <a class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm <?php echo $paged <= 1 ? 'wp-desa-btn-disabled' : ''; ?>"
-                           href="?page=wp-desa-aid<?php echo $paged > 2 ? '&paged=' . ($paged - 1) : ''; ?>">
+                           href="?page=wp-desa-keuangan&tab=bantuan<?php echo $paged > 2 ? '&paged=' . ($paged - 1) : ''; ?>">
                             <span class="dashicons dashicons-arrow-left-alt2"></span>
                         </a>
                         <span class="wp-desa-pagination-page">Halaman <?php echo $paged; ?> dari <?php echo $total_pages; ?></span>
                         <a class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm <?php echo $paged >= $total_pages ? 'wp-desa-btn-disabled' : ''; ?>"
-                           href="?page=wp-desa-aid&paged=<?php echo $paged + 1; ?>">
+                           href="?page=wp-desa-keuangan&tab=bantuan&paged=<?php echo $paged + 1; ?>">
                             <span class="dashicons dashicons-arrow-right-alt2"></span>
                         </a>
                     </div>

@@ -1,10 +1,4 @@
 <div class="wrap wp-desa-wrapper">
-    <div class="wp-desa-header">
-        <div>
-            <h1 class="wp-desa-title">Statistik Penduduk</h1>
-            <p class="wp-desa-helper">Ringkasan demografi dan komposisi penduduk desa.</p>
-        </div>
-    </div>
 
     <!-- Cards Ringkasan -->
     <div class="wp-desa-stats-grid" style="grid-template-columns: repeat(4, 1fr);">
@@ -83,14 +77,28 @@
         <div class="wp-desa-card">
             <div style="padding: 20px;">
                 <p class="wp-desa-stat-title" style="margin-bottom: 12px;">Pekerjaan Terbanyak</p>
-                <p style="text-align: center; color: #c2c2c2; padding: 30px 0; margin: 0;">Belum ada data.</p>
+                <table class="wp-desa-table">
+                    <thead>
+                        <tr><th>Pekerjaan</th><th style="text-align:right">Jumlah</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr class="wp-desa-empty-state"><td colspan="2">Belum ada data.</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
         <div class="wp-desa-card">
             <div style="padding: 20px;">
                 <p class="wp-desa-stat-title" style="margin-bottom: 12px;">Status Perkawinan</p>
-                <p style="text-align: center; color: #c2c2c2; padding: 30px 0; margin: 0;">Belum ada data.</p>
+                <table class="wp-desa-table">
+                    <thead>
+                        <tr><th>Status</th><th style="text-align:right">Jumlah</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr class="wp-desa-empty-state"><td colspan="2">Belum ada data.</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

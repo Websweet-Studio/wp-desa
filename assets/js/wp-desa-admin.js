@@ -397,8 +397,7 @@
       $wrap = $(".wrap").filter(function () {
         return (
           $(this).find("#genderChart").length &&
-          !$(this).find(".wp-desa-hero").length &&
-          $(this).find("h1").text().indexOf("Statistik") >= 0
+          !$(this).find(".wp-desa-hero").length
         );
       });
     if (!$wrap.length) return;
@@ -568,7 +567,8 @@
     var $wrap;
     $(".wrap").each(function () {
       if (
-        $(this).find("h1").text().trim() === "Data Penduduk" &&
+        $(this).find(".wp-desa__subnav-title").text().trim() ===
+          "Data Penduduk" &&
         $(this).find(".wp-desa-table").length
       ) {
         $wrap = $(this);
@@ -672,7 +672,9 @@
   function initFinances() {
     var $wrap;
     $(".wrap").each(function () {
-      if ($(this).find("h1").text().indexOf("Keuangan") >= 0) {
+      if (
+        $(this).find(".wp-desa__subnav-title").text().indexOf("Keuangan") >= 0
+      ) {
         $wrap = $(this);
         return false;
       }
@@ -732,14 +734,15 @@
     // Settings: has wp-desa-toast and identitas tab
     if ($(".wp-desa-card-settings").length) initSettingsNotif();
 
-    // Statistik Penduduk
-    var h1 = $(".wrap h1").first().text().trim();
-    if (h1.indexOf("Statistik Penduduk") >= 0) initResidentsStats();
+    var pageTitle = $(".wp-desa__subnav-title").first().text().trim();
+
+    // Statistik Penduduk: unique chart canvas
+    if ($("#genderChart").length) initResidentsStats();
 
     // Data Penduduk
-    if (h1.indexOf("Data Penduduk") >= 0) initResidents();
+    if (pageTitle.indexOf("Data Penduduk") >= 0) initResidents();
 
     // Keuangan Desa
-    if (h1.indexOf("Keuangan") >= 0) initFinances();
+    if (pageTitle.indexOf("Keuangan") >= 0) initFinances();
   });
 })(jQuery, window, document);

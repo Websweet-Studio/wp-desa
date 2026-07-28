@@ -6,6 +6,7 @@ class Menu
 {
     public function register_menus()
     {
+        add_action('admin_init', [$this, 'handle_seed_clear']);
         add_action('admin_init', [$this, 'handle_settings_submit']);
 
         // Main Menu
@@ -182,6 +183,49 @@ class Menu
         AdminLayout::close();
     }
 
+    public function handle_seed_clear()
+    {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        global $wpdb;
+
+        // Seed Data
+        if (isset($_POST['wp_desa_seed_data'])) {
+            check_admin_referer('wp_desa_seed_action', 'wp_desa_seed_nonce');
+
+            require_once WP_DESA_PATH . 'src/Database/Seeder.php';
+            \WpDesa\Database\Seeder::run(100);
+
+            wp_redirect(admin_url('admin.php?page=wp-desa-settings&tab=sistem&seed_done=1'));
+            exit;
+        }
+
+        // Clear All Data
+        if (isset($_POST['wp_desa_clear_data'])) {
+            check_admin_referer('wp_desa_clear_action', 'wp_desa_clear_nonce');
+
+            $prefix = $wpdb->prefix;
+            $tables = [
+                'desa_residents',
+                'desa_letter_types',
+                'desa_letters',
+                'desa_complaints',
+                'desa_finances',
+                'desa_programs',
+                'desa_program_recipients',
+            ];
+
+            foreach ($tables as $table) {
+                $wpdb->query("TRUNCATE TABLE {$prefix}{$table}");
+            }
+
+            wp_redirect(admin_url('admin.php?page=wp-desa-settings&tab=sistem&clear_done=1'));
+            exit;
+        }
+    }
+
     public function handle_settings_submit()
     {
         if (!isset($_POST['wp_desa_settings_submit'])) {
@@ -205,7 +249,6 @@ class Menu
             'kepala_desa' => sanitize_text_field($_POST['kepala_desa']),
             'nip_kepala_desa' => sanitize_text_field($_POST['nip_kepala_desa']),
             'foto_kepala_desa' => esc_url_raw($_POST['foto_kepala_desa']),
-            'dev_mode' => isset($_POST['dev_mode']) ? 1 : 0,
         ];
 
         update_option('wp_desa_settings', $data);

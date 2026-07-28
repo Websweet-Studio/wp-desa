@@ -25,15 +25,6 @@ if ($action === 'detail' && isset($_GET['no_kk'])) {
     }
 ?>
 <div class="wrap wp-desa-wrapper">
-    <div class="wp-desa-header">
-        <div>
-            <a href="<?php echo $base_url; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" style="margin-bottom:8px;">
-                <span class="dashicons dashicons-arrow-left-alt2"></span> Kembali
-            </a>
-            <h1 class="wp-desa-title">Anggota KK: <span class="wp-desa-mono"><?php echo esc_html($no_kk); ?></span></h1>
-            <p class="wp-desa-helper">Daftar anggota keluarga dalam Kartu Keluarga ini.</p>
-        </div>
-    </div>
 
     <div class="wp-desa-card">
         <div style="overflow-x:auto">
@@ -99,12 +90,6 @@ $kk_list = $wpdb->get_results($wpdb->prepare(
 ));
 ?>
 <div class="wrap wp-desa-wrapper">
-    <div class="wp-desa-header">
-        <div>
-            <h1 class="wp-desa-title">Kartu Keluarga</h1>
-            <p class="wp-desa-helper">Kelompokkan penduduk berdasarkan Nomor Kartu Keluarga.</p>
-        </div>
-    </div>
 
     <div class="wp-desa-card">
         <div style="overflow-x:auto">

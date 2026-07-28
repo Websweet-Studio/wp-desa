@@ -96,44 +96,6 @@ function wp_desa_status_badge($status)
 ?>
 <div class="wrap wp-desa-wrapper">
 
-    <?php if ($action !== 'add'): ?>
-        <!-- Header -->
-        <div class="wp-desa-header">
-            <div>
-                <?php if ($action === 'edit'): ?>
-                    <a href="?page=wp-desa-residents" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" style="margin-bottom:8px;">
-                        <span class="dashicons dashicons-arrow-left-alt2"></span> Kembali
-                    </a>
-                <?php endif; ?>
-                <h1 class="wp-desa-title">
-                    <?php echo $action === 'edit' ? 'Edit Penduduk' : 'Data Penduduk'; ?>
-                </h1>
-                <p class="wp-desa-helper">
-                    <?php echo $action === 'edit' ? 'Perbarui data penduduk.' : 'Kelola data kependudukan desa dengan mudah.'; ?>
-                </p>
-            </div>
-            <?php if ($action === 'list'): ?>
-                <div class="wp-desa-actions">
-                    <?php if (!empty($settings['dev_mode']) && $settings['dev_mode'] == 1): ?>
-                        <button class="wp-desa-btn wp-desa-btn-danger">
-                            <span class="dashicons dashicons-database"></span> Generate Dummy
-                        </button>
-                    <?php endif; ?>
-                    <button class="wp-desa-btn wp-desa-btn-secondary">
-                        <span class="dashicons dashicons-download"></span> Export
-                    </button>
-                    <button class="wp-desa-btn wp-desa-btn-secondary">
-                        <span class="dashicons dashicons-upload"></span> Import
-                    </button>
-                    <a href="?page=wp-desa-residents&action=add" class="wp-desa-btn wp-desa-btn-primary">
-                        <span class="dashicons dashicons-plus-alt2"></span> Tambah Penduduk
-                    </a>
-                    <input type="file" style="display:none" accept=".csv">
-                </div>
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
-
     <?php if (isset($_GET['saved']) && $_GET['saved'] == 1): ?>
         <div class="notice notice-success is-dismissible">
             <p>Data berhasil disimpan.</p>

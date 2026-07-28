@@ -85,7 +85,7 @@
             <li><strong>Identitas & Kontak</strong> — Nama desa, kecamatan, kabupaten, alamat, email, telepon.</li>
             <li><strong>Logo & Media</strong> — Upload logo kabupaten untuk kop surat.</li>
             <li><strong>Kepala Desa</strong> — Nama, NIP, dan foto kepala desa.</li>
-            <li><strong>Pengaturan Sistem</strong> — Development mode untuk generate dummy data.</li>
+            <li><strong>Pengaturan Sistem</strong> — Generate dummy data dan hapus semua data.</li>
         </ul>
     </div>
 </div>
