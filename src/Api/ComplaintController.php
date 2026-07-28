@@ -159,19 +159,28 @@ class ComplaintController extends WP_REST_Controller
         $per_page = $request->get_param('per_page') ? intval($request->get_param('per_page')) : 20;
         $offset = ($page - 1) * $per_page;
 
-        $where = '';
+        $where_clause = '';
+        $args = [];
+
         if (!empty($status)) {
-            $where = $wpdb->prepare("WHERE status = %s", $status);
+            $where_clause = "WHERE status = %s";
+            $args[] = $status;
         }
 
         // Count total items
-        $count_sql = "SELECT COUNT(*) FROM $table_complaints $where";
+        $count_sql = "SELECT COUNT(*) FROM $table_complaints $where_clause";
+        if (!empty($args)) {
+            $count_sql = $wpdb->prepare($count_sql, ...$args);
+        }
         $total_items = (int) $wpdb->get_var($count_sql);
         $total_pages = ceil($total_items / $per_page);
 
         // Get actual data
-        $sql = "SELECT * FROM $table_complaints $where ORDER BY created_at DESC LIMIT %d OFFSET %d";
-        $prepared_sql = $wpdb->prepare($sql, $per_page, $offset);
+        $data_args = $args;
+        $data_args[] = $per_page;
+        $data_args[] = $offset;
+        $sql = "SELECT * FROM $table_complaints $where_clause ORDER BY created_at DESC LIMIT %d OFFSET %d";
+        $prepared_sql = $wpdb->prepare($sql, ...$data_args);
         $results = $wpdb->get_results($prepared_sql);
 
         // Get counts for all statuses

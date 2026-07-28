@@ -11,6 +11,7 @@
   // Read nonce from global injected by PHP
   var wpNonce = (window.wpDesaSettings && window.wpDesaSettings.nonce) || "";
   var wpApiUrl = (window.wpDesaSettings && window.wpDesaSettings.apiUrl) || "";
+  var restBase = (window.wpDesaSettings && window.wpDesaSettings.restBase) || "/wp-json/wp-desa/v1";
 
   // ===== Helpers =====
   function formatRupiah(val) {
@@ -70,7 +71,7 @@
 
     function fetchStats() {
       $.ajax({
-        url: "/wp-json/wp-desa/v1/dashboard/stats",
+        url: restBase + "/dashboard/stats",
         headers: { "X-WP-Nonce": wpNonce },
         success: function (data) {
           stats = data;
@@ -373,7 +374,7 @@
     $genBtn.on("click", function () {
       if (!confirm("Buat data dummy untuk SEMUA fitur?")) return;
       $.ajax({
-        url: "/wp-json/wp-desa/v1/dashboard/seed-all",
+        url: restBase + "/dashboard/seed-all",
         method: "POST",
         headers: { "X-WP-Nonce": wpNonce },
         success: function (data) {
@@ -415,7 +416,7 @@
       ageChart = null;
     var statsApiUrl =
       (window.wpDesaResidentsStats && window.wpDesaResidentsStats.apiUrl) ||
-      "/wp-json/wp-desa/v1/residents";
+      restBase + "/residents";
     var statsNonce =
       (window.wpDesaResidentsStats && window.wpDesaResidentsStats.nonce) ||
       wpNonce;
@@ -577,7 +578,7 @@
     });
     if (!$wrap || !$wrap.length) return;
 
-    var residentsUrl = wpApiUrl || "/wp-json/wp-desa/v1/residents";
+    var residentsUrl = wpApiUrl || restBase + "/residents";
 
     // Delete
     $wrap.on("click", ".btn-delete-resident", function () {
@@ -681,7 +682,7 @@
     });
     if (!$wrap || !$wrap.length) return;
 
-    var baseUrl = "/wp-json/wp-desa/v1/finances";
+    var baseUrl = restBase + "/finances";
     var filterYear = new Date().getFullYear();
 
     function fetchSummary() {

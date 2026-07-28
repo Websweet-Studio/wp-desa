@@ -203,24 +203,33 @@ class LetterController extends WP_REST_Controller
         $per_page = $request->get_param('per_page') ? intval($request->get_param('per_page')) : 20;
         $offset = ($page - 1) * $per_page;
 
-        $where = '';
+        $where_clause = '';
+        $args = [];
+
         if (!empty($status)) {
-            $where = $wpdb->prepare("WHERE l.status = %s", $status);
+            $where_clause = "WHERE l.status = %s";
+            $args[] = $status;
         }
 
         // Count total items
-        $count_sql = "SELECT COUNT(*) FROM $table_letters l $where";
+        $count_sql = "SELECT COUNT(*) FROM $table_letters l $where_clause";
+        if (!empty($args)) {
+            $count_sql = $wpdb->prepare($count_sql, ...$args);
+        }
         $total_items = (int) $wpdb->get_var($count_sql);
         $total_pages = ceil($total_items / $per_page);
 
+        $data_args = $args;
+        $data_args[] = $per_page;
+        $data_args[] = $offset;
         $sql = "SELECT l.*, t.name as type_name 
                 FROM $table_letters l 
                 JOIN $table_types t ON l.letter_type_id = t.id 
-                $where
+                $where_clause
                 ORDER BY l.created_at DESC
                 LIMIT %d OFFSET %d";
 
-        $prepared_sql = $wpdb->prepare($sql, $per_page, $offset);
+        $prepared_sql = $wpdb->prepare($sql, ...$data_args);
         $results = $wpdb->get_results($prepared_sql);
 
         // Get counts for all statuses

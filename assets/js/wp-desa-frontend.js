@@ -5,39 +5,73 @@
  * Depends on jQuery and Chart.js (for keuangan).
  */
 (function ($, window, document) {
-  'use strict';
+  "use strict";
+
+  // Read restBase from global injected by PHP
+  var restBase =
+    (window.wpDesaFrontend && window.wpDesaFrontend.restBase) ||
+    "/wp-json/wp-desa/v1";
+
+  // ==========================================================================
+  // Shared helper functions
+  // ==========================================================================
+  function formatCurrency(val) {
+    val = parseFloat(val) || 0;
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0,
+    }).format(val);
+  }
+
+  function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function formatDate(dateString) {
+    if (!dateString) return "-";
+    return new Date(dateString).toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  }
 
   // ==========================================================================
   // 1. initKeuanganDesa()
   // ==========================================================================
   function initKeuanganDesa() {
-    var $el = $('#wp-desa-keuangan');
+    var $el = $("#wp-desa-keuangan");
     if (!$el.length) return;
 
     var state = {
       filterYear: new Date().getFullYear(),
       years: [],
-      summary: { totals: [], income_sources: [], expense_sources: [], yearly_trend: [] },
+      summary: {
+        totals: [],
+        income_sources: [],
+        expense_sources: [],
+        yearly_trend: [],
+      },
       items: [],
       incomeChart: null,
       expenseChart: null,
-      trendChart: null
+      trendChart: null,
     };
 
     // DOM refs
-    var $yearSelect = $el.find('.wp-desa-select-year');
-    var $summaryCards = $el.find('.wp-desa-stat-value');   // 3 h3 elements
-    var $summarySubs = $el.find('.wp-desa-stat-sub span'); // 2 span elements (budget labels)
+    var $yearSelect = $el.find(".wp-desa-select-year");
+    var $summaryCards = $el.find(".wp-desa-stat-value"); // 3 h3 elements
+    var $summarySubs = $el.find(".wp-desa-stat-sub span"); // 2 span elements (budget labels)
 
     // Remove inert Alpine templates from tbody
-    var $tbody = $el.find('tbody');
-    $tbody.find('template').remove();
-
-    // ---- helpers ----
-    function formatCurrency(val) {
-      val = parseFloat(val) || 0;
-      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
-    }
+    var $tbody = $el.find("tbody");
+    $tbody.find("template").remove();
 
     function calcPct(realization, budget) {
       if (!budget || budget === 0) return 0;
@@ -45,10 +79,15 @@
     }
 
     function getSurplus() {
-      var income = 0, expense = 0;
+      var income = 0,
+        expense = 0;
       var totals = state.summary.totals || [];
-      var inc = totals.find(function (t) { return t.type === 'income'; });
-      var exp = totals.find(function (t) { return t.type === 'expense'; });
+      var inc = totals.find(function (t) {
+        return t.type === "income";
+      });
+      var exp = totals.find(function (t) {
+        return t.type === "expense";
+      });
       if (inc) income = parseFloat(inc.total_realization) || 0;
       if (exp) expense = parseFloat(exp.total_realization) || 0;
       return income - expense;
@@ -58,33 +97,46 @@
     function buildYears() {
       var cy = new Date().getFullYear();
       state.years = [];
-      for (var i = cy; i >= cy - 5; i--) { state.years.push(i); }
+      for (var i = cy; i >= cy - 5; i--) {
+        state.years.push(i);
+      }
       state.filterYear = cy;
-      var html = '';
-      $.each(state.years, function (_, y) { html += '<option value="' + y + '">' + y + '</option>'; });
+      var html = "";
+      $.each(state.years, function (_, y) {
+        html += '<option value="' + y + '">' + y + "</option>";
+      });
       $yearSelect.html(html).val(state.filterYear);
     }
 
     // ---- render summary cards ----
     function renderSummary() {
       var totals = state.summary.totals || [];
-      var inc = totals.find(function (t) { return t.type === 'income'; });
-      var exp = totals.find(function (t) { return t.type === 'expense'; });
+      var inc = totals.find(function (t) {
+        return t.type === "income";
+      });
+      var exp = totals.find(function (t) {
+        return t.type === "expense";
+      });
 
       // Card 0: Total Pendapatan
       if ($summaryCards.length >= 1) {
-        $summaryCards.eq(0).text(formatCurrency(inc ? inc.total_realization : 0));
+        $summaryCards
+          .eq(0)
+          .text(formatCurrency(inc ? inc.total_realization : 0));
       }
       // Card 1: Total Belanja
       if ($summaryCards.length >= 2) {
-        $summaryCards.eq(1).text(formatCurrency(exp ? exp.total_realization : 0));
+        $summaryCards
+          .eq(1)
+          .text(formatCurrency(exp ? exp.total_realization : 0));
       }
       // Card 2: Sisa Lebih (SiLPA)
       if ($summaryCards.length >= 3) {
         var surplus = getSurplus();
-        $summaryCards.eq(2)
+        $summaryCards
+          .eq(2)
           .text(formatCurrency(surplus))
-          .css('color', surplus >= 0 ? '#1f6b3c' : '#b3262b');
+          .css("color", surplus >= 0 ? "#1f6b3c" : "#b3262b");
       }
       // Budget subtitles
       if ($summarySubs.length >= 1) {
@@ -98,132 +150,206 @@
     // ---- render charts ----
     function renderCharts() {
       // Destroy existing
-      if (state.incomeChart) { state.incomeChart.destroy(); state.incomeChart = null; }
-      if (state.expenseChart) { state.expenseChart.destroy(); state.expenseChart = null; }
-      if (state.trendChart) { state.trendChart.destroy(); state.trendChart = null; }
+      if (state.incomeChart) {
+        state.incomeChart.destroy();
+        state.incomeChart = null;
+      }
+      if (state.expenseChart) {
+        state.expenseChart.destroy();
+        state.expenseChart = null;
+      }
+      if (state.trendChart) {
+        state.trendChart.destroy();
+        state.trendChart = null;
+      }
 
-      if (typeof Chart === 'undefined') {
+      if (typeof Chart === "undefined") {
         setTimeout(renderCharts, 500);
         return;
       }
 
       // Income pie chart
-      var incomeCtx = document.getElementById('publicIncomeChart');
-      if (incomeCtx && state.summary.income_sources && state.summary.income_sources.length > 0) {
+      var incomeCtx = document.getElementById("publicIncomeChart");
+      if (
+        incomeCtx &&
+        state.summary.income_sources &&
+        state.summary.income_sources.length > 0
+      ) {
         state.incomeChart = new Chart(incomeCtx, {
-          type: 'pie',
+          type: "pie",
           data: {
-            labels: state.summary.income_sources.map(function (i) { return i.category; }),
-            datasets: [{
-              data: state.summary.income_sources.map(function (i) { return i.total; }),
-              backgroundColor: ['#024ad8', '#4361ee', '#7aa5f5', '#c9e0fc', '#636363']
-            }]
+            labels: state.summary.income_sources.map(function (i) {
+              return i.category;
+            }),
+            datasets: [
+              {
+                data: state.summary.income_sources.map(function (i) {
+                  return i.total;
+                }),
+                backgroundColor: [
+                  "#024ad8",
+                  "#4361ee",
+                  "#7aa5f5",
+                  "#c9e0fc",
+                  "#636363",
+                ],
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, boxHeight: 6 } },
-              tooltip: { callbacks: { label: function (ctx) { return ctx.label + ': ' + formatCurrency(ctx.parsed); } } }
-            }
-          }
+              legend: {
+                position: "bottom",
+                labels: { padding: 16, usePointStyle: true, boxHeight: 6 },
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (ctx) {
+                    return ctx.label + ": " + formatCurrency(ctx.parsed);
+                  },
+                },
+              },
+            },
+          },
         });
       }
 
       // Expense doughnut chart
-      var expenseCtx = document.getElementById('publicExpenseChart');
-      if (expenseCtx && state.summary.expense_sources && state.summary.expense_sources.length > 0) {
+      var expenseCtx = document.getElementById("publicExpenseChart");
+      if (
+        expenseCtx &&
+        state.summary.expense_sources &&
+        state.summary.expense_sources.length > 0
+      ) {
         state.expenseChart = new Chart(expenseCtx, {
-          type: 'doughnut',
+          type: "doughnut",
           data: {
-            labels: state.summary.expense_sources.map(function (i) { return i.category; }),
-            datasets: [{
-              data: state.summary.expense_sources.map(function (i) { return i.total; }),
-              backgroundColor: ['#b3262b', '#ff5050', '#e0734a', '#9a5b1e', '#636363']
-            }]
+            labels: state.summary.expense_sources.map(function (i) {
+              return i.category;
+            }),
+            datasets: [
+              {
+                data: state.summary.expense_sources.map(function (i) {
+                  return i.total;
+                }),
+                backgroundColor: [
+                  "#b3262b",
+                  "#ff5050",
+                  "#e0734a",
+                  "#9a5b1e",
+                  "#636363",
+                ],
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, boxHeight: 6 } },
-              tooltip: { callbacks: { label: function (ctx) { return ctx.label + ': ' + formatCurrency(ctx.parsed); } } }
-            }
-          }
+              legend: {
+                position: "bottom",
+                labels: { padding: 16, usePointStyle: true, boxHeight: 6 },
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (ctx) {
+                    return ctx.label + ": " + formatCurrency(ctx.parsed);
+                  },
+                },
+              },
+            },
+          },
         });
       }
 
       // Trend line chart
-      var trendCtx = document.getElementById('publicTrendChart');
-      if (trendCtx && state.summary.yearly_trend && state.summary.yearly_trend.length > 0) {
+      var trendCtx = document.getElementById("publicTrendChart");
+      if (
+        trendCtx &&
+        state.summary.yearly_trend &&
+        state.summary.yearly_trend.length > 0
+      ) {
         var years = [];
         var seen = {};
         $.each(state.summary.yearly_trend, function (_, item) {
-          if (!seen[item.year]) { seen[item.year] = true; years.push(item.year); }
+          if (!seen[item.year]) {
+            seen[item.year] = true;
+            years.push(item.year);
+          }
         });
         years.sort();
 
         var incomeMap = {};
         var expenseMap = {};
         $.each(state.summary.yearly_trend, function (_, item) {
-          if (item.type === 'income') incomeMap[item.year] = item.total_realization;
-          else if (item.type === 'expense') expenseMap[item.year] = item.total_realization;
+          if (item.type === "income")
+            incomeMap[item.year] = item.total_realization;
+          else if (item.type === "expense")
+            expenseMap[item.year] = item.total_realization;
         });
 
-        var incomeData = years.map(function (y) { return incomeMap[y] || 0; });
-        var expenseData = years.map(function (y) { return expenseMap[y] || 0; });
+        var incomeData = years.map(function (y) {
+          return incomeMap[y] || 0;
+        });
+        var expenseData = years.map(function (y) {
+          return expenseMap[y] || 0;
+        });
 
         state.trendChart = new Chart(trendCtx, {
-          type: 'line',
+          type: "line",
           data: {
             labels: years,
             datasets: [
               {
-                label: 'Pendapatan',
+                label: "Pendapatan",
                 data: incomeData,
-                borderColor: '#1f6b3c',
-                backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                borderColor: "#1f6b3c",
+                backgroundColor: "rgba(22, 163, 74, 0.1)",
                 borderWidth: 2,
                 tension: 0.3,
                 fill: true,
-                pointRadius: 3
+                pointRadius: 3,
               },
               {
-                label: 'Belanja',
+                label: "Belanja",
                 data: expenseData,
-                borderColor: '#b3262b',
-                backgroundColor: 'rgba(220, 38, 38, 0.08)',
+                borderColor: "#b3262b",
+                backgroundColor: "rgba(220, 38, 38, 0.08)",
                 borderWidth: 2,
                 tension: 0.3,
                 fill: true,
-                pointRadius: 3
-              }
-            ]
+                pointRadius: 3,
+              },
+            ],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
+            interaction: { mode: "index", intersect: false },
             stacked: false,
             plugins: {
-              legend: { position: 'bottom' },
+              legend: { position: "bottom" },
               tooltip: {
                 callbacks: {
                   label: function (context) {
                     var value = context.parsed.y || 0;
-                    return context.dataset.label + ': ' + formatCurrency(value);
-                  }
-                }
-              }
+                    return context.dataset.label + ": " + formatCurrency(value);
+                  },
+                },
+              },
             },
             scales: {
               y: {
                 ticks: {
-                  callback: function (value) { return formatCurrency(value); }
-                }
-              }
-            }
-          }
+                  callback: function (value) {
+                    return formatCurrency(value);
+                  },
+                },
+              },
+            },
+          },
         });
       }
     }
@@ -231,38 +357,64 @@
     // ---- render table ----
     function renderTable() {
       var items = state.items || [];
-      var rows = '';
+      var rows = "";
 
       if (items.length === 0) {
-        rows = '<tr><td colspan="4" class="wp-desa-empty-state">Belum ada data keuangan untuk tahun ini.</td></tr>';
+        rows =
+          '<tr><td colspan="4" class="wp-desa-empty-state">Belum ada data keuangan untuk tahun ini.</td></tr>';
       } else {
         $.each(items, function (_, item) {
           var pct = calcPct(item.realization_amount, item.budget_amount);
           var badgeBg, badgeColor;
-          if (pct > 90) { badgeBg = '#e6f4ea'; badgeColor = '#1f6b3c'; }
-          else if (pct > 50) { badgeBg = '#fef3e4'; badgeColor = '#9a5b1e'; }
-          else { badgeBg = '#fce8e6'; badgeColor = '#b3262b'; }
+          if (pct > 90) {
+            badgeBg = "#e6f4ea";
+            badgeColor = "#1f6b3c";
+          } else if (pct > 50) {
+            badgeBg = "#fef3e4";
+            badgeColor = "#9a5b1e";
+          } else {
+            badgeBg = "#fce8e6";
+            badgeColor = "#b3262b";
+          }
 
-          rows += '<tr>';
-          rows += '<td><div class="wp-desa-row-title">' + escapeHtml(item.category || '') + '</div><div class="wp-desa-row-subtitle">' + escapeHtml(item.description || '') + '</div></td>';
-          rows += '<td class="wp-desa-cell-number">' + formatCurrency(item.budget_amount) + '</td>';
-          rows += '<td class="wp-desa-cell-number wp-desa-cell-number-strong">' + formatCurrency(item.realization_amount) + '</td>';
-          rows += '<td class="wp-desa-cell-percentage"><div class="wp-desa-percentage" style="background:' + badgeBg + ';color:' + badgeColor + ';">' + pct + '%</div></td>';
-          rows += '</tr>';
+          rows += "<tr>";
+          rows +=
+            '<td><div class="wp-desa-row-title">' +
+            escapeHtml(item.category || "") +
+            '</div><div class="wp-desa-row-subtitle">' +
+            escapeHtml(item.description || "") +
+            "</div></td>";
+          rows +=
+            '<td class="wp-desa-cell-number">' +
+            formatCurrency(item.budget_amount) +
+            "</td>";
+          rows +=
+            '<td class="wp-desa-cell-number wp-desa-cell-number-strong">' +
+            formatCurrency(item.realization_amount) +
+            "</td>";
+          rows +=
+            '<td class="wp-desa-cell-percentage"><div class="wp-desa-percentage" style="background:' +
+            badgeBg +
+            ";color:" +
+            badgeColor +
+            ';">' +
+            pct +
+            "%</div></td>";
+          rows += "</tr>";
         });
       }
       $tbody.html(rows);
     }
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
-
     // ---- fetch ----
     function fetchSummary() {
       $.getJSON(_summaryUrl(), function (data) {
-        state.summary = data || { totals: [], income_sources: [], expense_sources: [], yearly_trend: [] };
+        state.summary = data || {
+          totals: [],
+          income_sources: [],
+          expense_sources: [],
+          yearly_trend: [],
+        };
         renderSummary();
         renderCharts();
       });
@@ -270,21 +422,25 @@
 
     function fetchData() {
       $.getJSON(_dataUrl(), function (data) {
-        state.items = Array.isArray(data && data.data) ? data.data : (Array.isArray(data) ? data : []);
+        state.items = Array.isArray(data && data.data)
+          ? data.data
+          : Array.isArray(data)
+            ? data
+            : [];
         renderTable();
       });
     }
 
     function _summaryUrl() {
-      return '/wp-json/wp-desa/v1/finances/summary?year=' + state.filterYear;
+      return restBase + "/finances/summary?year=" + state.filterYear;
     }
 
     function _dataUrl() {
-      return '/wp-json/wp-desa/v1/finances?year=' + state.filterYear;
+      return restBase + "/finances?year=" + state.filterYear;
     }
 
     // ---- events ----
-    $yearSelect.on('change', function () {
+    $yearSelect.on("change", function () {
       state.filterYear = parseInt($(this).val(), 10);
       fetchSummary();
       fetchData();
@@ -300,32 +456,27 @@
   // 2. initBantuanDesa()
   // ==========================================================================
   function initBantuanDesa() {
-    var $el = $('#wp-desa-bantuan');
+    var $el = $("#wp-desa-bantuan");
     if (!$el.length) return;
 
     var state = {
       programs: [],
       activeProgramId: null,
-      recipients: []
+      recipients: [],
     };
 
     // The grid div that holds program cards (immediately after the h2)
-    var $grid = $el.children('div').first();
+    var $grid = $el.children("div").first();
 
     // ---- helpers ----
-    function formatCurrency(val) {
-      val = parseFloat(val) || 0;
-      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
-    }
-
     function formatStatus(status) {
-      var map = { pending: 'Menunggu', approved: 'Disetujui', rejected: 'Ditolak', distributed: 'Disalurkan' };
+      var map = {
+        pending: "Menunggu",
+        approved: "Disetujui",
+        rejected: "Ditolak",
+        distributed: "Disalurkan",
+      };
       return map[status] || status;
-    }
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     // ---- render programs ----
@@ -335,14 +486,14 @@
       if (!state.programs.length) {
         $grid.html(
           '<div style="text-align:center;padding:60px 20px;background:var(--cloud);border-radius:var(--rounded-xl);border:1px solid var(--fog);color:var(--graphite);">' +
-          '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:10px;"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>' +
-          '<p style="margin:0;font-size:1.1em;">Belum ada program bantuan aktif saat ini.</p></div>'
+            '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:10px;"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>' +
+            '<p style="margin:0;font-size:1.1em;">Belum ada program bantuan aktif saat ini.</p></div>',
         );
         return;
       }
 
       $.each(state.programs, function (_, p) {
-        var isActive = (state.activeProgramId === p.id);
+        var isActive = state.activeProgramId === p.id;
         var card =
           '<div class="wp-desa-stat-card" style="text-align:left;padding:0;overflow:hidden;border:1px solid var(--fog);margin-bottom:0;">' +
           '<div style="padding:var(--sp-xl)">' +
@@ -350,27 +501,45 @@
           '<div style="flex:1;min-width:250px;">' +
           '<div style="display:flex;align-items:center;gap:var(--sp-xs);margin-bottom:var(--sp-xs);">' +
           '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#024ad8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>' +
-          '<h3 style="margin:0;font-family:var(--font-display);font-size:20px;font-weight:500;line-height:1.0;color:var(--ink);">' + escapeHtml(p.name) + '</h3>' +
-          '</div>' +
-          '<p style="margin:0 0 var(--sp-sm) 0;font-size:14px;color:var(--graphite);line-height:1.5;">' + escapeHtml(p.description) + '</p>' +
+          '<h3 style="margin:0;font-family:var(--font-display);font-size:20px;font-weight:500;line-height:1.0;color:var(--ink);">' +
+          escapeHtml(p.name) +
+          "</h3>" +
+          "</div>" +
+          '<p style="margin:0 0 var(--sp-sm) 0;font-size:14px;color:var(--graphite);line-height:1.5;">' +
+          escapeHtml(p.description) +
+          "</p>" +
           '<div style="display:flex;gap:var(--sp-xs);flex-wrap:wrap;">' +
           '<span style="background:var(--primary-soft);color:var(--primary-deep);padding:4px 12px;border-radius:var(--rounded-pill);font-size:12px;font-weight:500;display:inline-flex;align-items:center;gap:4px;">' +
           '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>' +
-          '<span>' + escapeHtml(p.origin) + '</span></span>' +
+          "<span>" +
+          escapeHtml(p.origin) +
+          "</span></span>" +
           '<span style="background:var(--cloud);color:var(--ink);padding:4px 12px;border-radius:var(--rounded-pill);font-size:12px;font-weight:500;display:inline-flex;align-items:center;gap:4px;">' +
           '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
-          '<span>' + escapeHtml(p.year) + '</span></span>' +
-          '</div>' +
-          '</div>' +
+          "<span>" +
+          escapeHtml(p.year) +
+          "</span></span>" +
+          "</div>" +
+          "</div>" +
           '<div style="text-align:right;min-width:150px;display:flex;flex-direction:column;align-items:flex-end;">' +
-          '<div style="font-weight:500;font-size:24px;line-height:1.17;color:var(--success);">' + formatCurrency(p.amount_per_recipient) + '</div>' +
-          '<div style="font-size:14px;color:var(--graphite);margin-top:var(--sp-xxs);margin-bottom:var(--sp-sm);">Kuota: ' + (p.quota || 0) + ' Penerima</div>' +
-          '<button class="wp-desa-btn ' + (isActive ? 'wp-desa-btn-secondary' : 'wp-desa-btn-primary') + ' btn-view-recipients" data-program-id="' + p.id + '" style="font-size:14px;padding:8px 16px;">' +
-          '<span>' + (isActive ? 'Tutup Daftar' : 'Lihat Penerima') + '</span>' +
-          '</button>' +
-          '</div>' +
-          '</div>' +
-          '</div>';
+          '<div style="font-weight:500;font-size:24px;line-height:1.17;color:var(--success);">' +
+          formatCurrency(p.amount_per_recipient) +
+          "</div>" +
+          '<div style="font-size:14px;color:var(--graphite);margin-top:var(--sp-xxs);margin-bottom:var(--sp-sm);">Kuota: ' +
+          (p.quota || 0) +
+          " Penerima</div>" +
+          '<button class="wp-desa-btn ' +
+          (isActive ? "wp-desa-btn-secondary" : "wp-desa-btn-primary") +
+          ' btn-view-recipients" data-program-id="' +
+          p.id +
+          '" style="font-size:14px;padding:8px 16px;">' +
+          "<span>" +
+          (isActive ? "Tutup Daftar" : "Lihat Penerima") +
+          "</span>" +
+          "</button>" +
+          "</div>" +
+          "</div>" +
+          "</div>";
 
         // Recipients panel
         if (isActive) {
@@ -384,13 +553,15 @@
             '<th style="text-align:left;padding:12px 15px;">Nama</th>' +
             '<th style="text-align:left;padding:12px 15px;">Alamat</th>' +
             '<th style="text-align:center;padding:12px 15px;">Status</th>' +
-            '</tr></thead>' +
-            '<tbody>' + renderRecipientRows() + '</tbody>' +
-            '</table>' +
-            '</div></div></div>';
+            "</tr></thead>" +
+            "<tbody>" +
+            renderRecipientRows() +
+            "</tbody>" +
+            "</table>" +
+            "</div></div></div>";
         }
 
-        card += '</div>';
+        card += "</div>";
         $grid.append(card);
       });
     }
@@ -399,14 +570,28 @@
       if (!state.recipients.length) {
         return '<tr><td colspan="3" style="text-align:center;padding:var(--sp-xl);color:var(--graphite);">Belum ada data penerima yang ditampilkan.</td></tr>';
       }
-      var rows = '';
+      var rows = "";
       $.each(state.recipients, function (idx, r) {
-        var bg = idx % 2 === 0 ? 'var(--canvas)' : 'var(--cloud)';
-        rows += '<tr style="background:' + bg + ';border-bottom:1px solid var(--fog);">';
-        rows += '<td style="padding:12px 15px;font-weight:500;color:var(--ink);">' + escapeHtml(r.nama_lengkap) + '</td>';
-        rows += '<td style="padding:12px 15px;color:var(--graphite);">' + escapeHtml(r.alamat) + '</td>';
-        rows += '<td style="text-align:center;padding:12px 15px;"><span class="status-badge status-' + (r.status || '') + '">' + formatStatus(r.status) + '</span></td>';
-        rows += '</tr>';
+        var bg = idx % 2 === 0 ? "var(--canvas)" : "var(--cloud)";
+        rows +=
+          '<tr style="background:' +
+          bg +
+          ';border-bottom:1px solid var(--fog);">';
+        rows +=
+          '<td style="padding:12px 15px;font-weight:500;color:var(--ink);">' +
+          escapeHtml(r.nama_lengkap) +
+          "</td>";
+        rows +=
+          '<td style="padding:12px 15px;color:var(--graphite);">' +
+          escapeHtml(r.alamat) +
+          "</td>";
+        rows +=
+          '<td style="text-align:center;padding:12px 15px;"><span class="status-badge status-' +
+          (r.status || "") +
+          '">' +
+          formatStatus(r.status) +
+          "</span></td>";
+        rows += "</tr>";
       });
       return rows;
     }
@@ -422,22 +607,27 @@
       state.activeProgramId = program.id;
       state.recipients = [];
 
-      $.getJSON('/wp-json/wp-desa/v1/aid-programs/' + program.id + '/recipients', function (data) {
-        state.recipients = Array.isArray(data) ? data : [];
-        renderPrograms();
-      });
+      $.getJSON(
+        restBase + "/aid-programs/" + program.id + "/recipients",
+        function (data) {
+          state.recipients = Array.isArray(data) ? data : [];
+          renderPrograms();
+        },
+      );
     }
 
     // ---- events ----
-    $grid.on('click', '.btn-view-recipients', function () {
-      var pid = parseInt($(this).data('program-id'), 10);
-      var program = state.programs.find(function (p) { return p.id === pid; });
+    $grid.on("click", ".btn-view-recipients", function () {
+      var pid = parseInt($(this).data("program-id"), 10);
+      var program = state.programs.find(function (p) {
+        return p.id === pid;
+      });
       if (program) viewRecipients(program);
     });
 
     // ---- fetch ----
     function fetchPrograms() {
-      $.getJSON('/wp-json/wp-desa/v1/aid-programs', function (data) {
+      $.getJSON(restBase + "/aid-programs", function (data) {
         state.programs = Array.isArray(data) ? data : [];
         renderPrograms();
       });
@@ -451,29 +641,36 @@
   // 3. initAduanWarga()
   // ==========================================================================
   function initAduanWarga() {
-    var $el = $('#wp-desa-aduan');
+    var $el = $("#wp-desa-aduan");
     if (!$el.length) return;
 
     var state = {
-      tab: 'form',
-      form: { reporter_name: '', reporter_contact: '', category: '', subject: '', description: '', photo: null },
-      message: { type: '', content: '' },
+      tab: "form",
+      form: {
+        reporter_name: "",
+        reporter_contact: "",
+        category: "",
+        subject: "",
+        description: "",
+        photo: null,
+      },
+      message: { type: "", content: "" },
       trackingCode: null,
       submitting: false,
-      trackCode: '',
+      trackCode: "",
       trackResult: null,
       trackError: null,
-      tracking: false
+      tracking: false,
     };
 
     // DOM refs
-    var $tabs = $el.find('.wp-desa-tab-btn');
-    var $content = $el.find('.wp-desa-content');
-    var $formPanel = $content.children('[x-show]').eq(0);   // tab === 'form'
-    var $trackPanel = $content.children('[x-show]').eq(1);  // tab === 'track'
+    var $tabs = $el.find(".wp-desa-tab-btn");
+    var $content = $el.find(".wp-desa-content");
+    var $formPanel = $content.children("[x-show]").eq(0); // tab === 'form'
+    var $trackPanel = $content.children("[x-show]").eq(1); // tab === 'track'
 
     // Form elements
-    var $form = $formPanel.find('form');
+    var $form = $formPanel.find("form");
     var $reporterName = $form.find('input[x-model="form.reporter_name"]');
     var $reporterContact = $form.find('input[x-model="form.reporter_contact"]');
     var $category = $form.find('select[x-model="form.category"]');
@@ -484,7 +681,9 @@
 
     // Message / tracking code displays
     var $messageDiv = $formPanel.find('[x-show="message.content"]');
-    var $trackingCodeDiv = $formPanel.find('template[x-if="trackingCode"]').parent(); // find the div around the template
+    var $trackingCodeDiv = $formPanel
+      .find('template[x-if="trackingCode"]')
+      .parent(); // find the div around the template
     // Actually the template is inside the message div. We'll handle inline.
 
     // Tracking panel elements
@@ -494,33 +693,30 @@
     var $trackErrorDiv = $trackPanel.find('[x-show="trackError"]');
 
     // ---- helpers ----
-    function formatDate(dateString) {
-      if (!dateString) return '-';
-      return new Date(dateString).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-    }
-
     function formatStatus(status) {
-      var map = { pending: 'Menunggu', in_progress: 'Diproses', resolved: 'Selesai', rejected: 'Ditolak' };
+      var map = {
+        pending: "Menunggu",
+        in_progress: "Diproses",
+        resolved: "Selesai",
+        rejected: "Ditolak",
+      };
       return map[status] || status;
-    }
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     // ---- tab switching ----
     function switchTab(tab) {
       state.tab = tab;
-      $tabs.removeClass('active');
+      $tabs.removeClass("active");
       $tabs.each(function () {
         var $btn = $(this);
         // Detect which tab this button targets based on text content
-        if (tab === 'form' && $btn.text().indexOf('Buat') >= 0) $btn.addClass('active');
-        if (tab === 'track' && $btn.text().indexOf('Cek') >= 0) $btn.addClass('active');
+        if (tab === "form" && $btn.text().indexOf("Buat") >= 0)
+          $btn.addClass("active");
+        if (tab === "track" && $btn.text().indexOf("Cek") >= 0)
+          $btn.addClass("active");
       });
 
-      if (tab === 'form') {
+      if (tab === "form") {
         $formPanel.show();
         $trackPanel.hide();
       } else {
@@ -533,85 +729,97 @@
     function submitComplaint(e) {
       e.preventDefault();
       state.submitting = true;
-      state.message = { type: '', content: '' };
+      state.message = { type: "", content: "" };
       state.trackingCode = null;
       updateSubmitUI();
 
       var formData = new FormData();
-      formData.append('reporter_name', $reporterName.val() || '');
-      formData.append('reporter_contact', $reporterContact.val() || '');
-      formData.append('category', $category.val() || '');
-      formData.append('subject', $subject.val() || '');
-      formData.append('description', $description.val() || '');
-      var photoFile = $photoInput[0] && $photoInput[0].files && $photoInput[0].files[0];
-      if (photoFile) formData.append('photo', photoFile);
+      formData.append("reporter_name", $reporterName.val() || "");
+      formData.append("reporter_contact", $reporterContact.val() || "");
+      formData.append("category", $category.val() || "");
+      formData.append("subject", $subject.val() || "");
+      formData.append("description", $description.val() || "");
+      var photoFile =
+        $photoInput[0] && $photoInput[0].files && $photoInput[0].files[0];
+      if (photoFile) formData.append("photo", photoFile);
 
       $.ajax({
-        url: '/wp-json/wp-desa/v1/complaints/submit',
-        method: 'POST',
+        url: restBase + "/complaints/submit",
+        method: "POST",
         data: formData,
         processData: false,
         contentType: false,
         success: function (data) {
           state.submitting = false;
           if (data.success) {
-            state.message = { type: 'success', content: data.message };
+            state.message = { type: "success", content: data.message };
             state.trackingCode = data.tracking_code;
             // Reset form
-            $reporterName.val('');
-            $reporterContact.val('');
-            $category.val('');
-            $subject.val('');
-            $description.val('');
-            $photoInput.val('');
+            $reporterName.val("");
+            $reporterContact.val("");
+            $category.val("");
+            $subject.val("");
+            $description.val("");
+            $photoInput.val("");
           } else {
-            state.message = { type: 'error', content: data.message || 'Terjadi kesalahan.' };
+            state.message = {
+              type: "error",
+              content: data.message || "Terjadi kesalahan.",
+            };
           }
           updateSubmitUI();
         },
         error: function () {
           state.submitting = false;
-          state.message = { type: 'error', content: 'Gagal menghubungi server.' };
+          state.message = {
+            type: "error",
+            content: "Gagal menghubungi server.",
+          };
           updateSubmitUI();
-        }
+        },
       });
     }
 
     function updateSubmitUI() {
       // Message box
       if (state.message.content) {
-        var bg = state.message.type === 'success' ? '#e6f4ea' : '#fce8e6';
-        var color = state.message.type === 'success' ? '#1f6b3c' : '#b3262b';
-        var border = state.message.type === 'success' ? '#c3e6cb' : '#fecaca';
+        var bg = state.message.type === "success" ? "#e6f4ea" : "#fce8e6";
+        var color = state.message.type === "success" ? "#1f6b3c" : "#b3262b";
+        var border = state.message.type === "success" ? "#c3e6cb" : "#fecaca";
 
-        var msgHtml = '<span style="font-weight:500;">' + escapeHtml(state.message.content) + '</span>';
+        var msgHtml =
+          '<span style="font-weight:500;">' +
+          escapeHtml(state.message.content) +
+          "</span>";
 
         if (state.trackingCode) {
           msgHtml +=
             '<div style="margin-top:15px;background:var(--canvas);padding:15px;border-radius:8px;border:1px dashed #1f6b3c;">' +
             '<div style="font-size:0.9em;margin-bottom:5px;color:#1f6b3c;">Kode Tracking Anda:</div>' +
-            '<div class="wp-desa-tracking-code" style="font-family:monospace;font-size:1.5em;font-weight:700;color:#1a1a1a;letter-spacing:1px;">' + escapeHtml(state.trackingCode) + '</div>' +
+            '<div class="wp-desa-tracking-code" style="font-family:monospace;font-size:1.5em;font-weight:700;color:#1a1a1a;letter-spacing:1px;">' +
+            escapeHtml(state.trackingCode) +
+            "</div>" +
             '<p class="wp-desa-helper" style="margin:5px 0 0 0;">Simpan kode ini untuk mengecek status laporan.</p>' +
-            '</div>';
+            "</div>";
         }
 
         $messageDiv
           .html(msgHtml)
-          .css({ background: bg, color: color, border: '1px solid ' + border })
+          .css({ background: bg, color: color, border: "1px solid " + border })
           .show();
       } else {
         $messageDiv.hide().empty();
       }
 
       // Submit button state
-      var $submittingSpan = $submitBtn.find('span').eq(1);
-      var $normalSpan = $submitBtn.find('span').eq(0);
+      var $submittingSpan = $submitBtn.find("span").eq(1);
+      var $normalSpan = $submitBtn.find("span").eq(0);
       if (state.submitting) {
-        $submitBtn.prop('disabled', true);
+        $submitBtn.prop("disabled", true);
         $normalSpan.hide();
         $submittingSpan.show();
       } else {
-        $submitBtn.prop('disabled', false);
+        $submitBtn.prop("disabled", false);
         $normalSpan.show();
         $submittingSpan.hide();
       }
@@ -625,31 +833,37 @@
       state.trackError = null;
       updateTrackUI();
 
-      $.getJSON('/wp-json/wp-desa/v1/complaints/track?code=' + encodeURIComponent($trackCodeInput.val()), function (data) {
+      $.getJSON(
+        restBase +
+          "/complaints/track?code=" +
+          encodeURIComponent($trackCodeInput.val()),
+        function (data) {
+          state.tracking = false;
+          if (data && data.id) {
+            state.trackResult = data;
+          } else {
+            state.trackError =
+              (data && data.message) || "Data tidak ditemukan.";
+          }
+          updateTrackUI();
+        },
+      ).fail(function () {
         state.tracking = false;
-        if (data && data.id) {
-          state.trackResult = data;
-        } else {
-          state.trackError = (data && data.message) || 'Data tidak ditemukan.';
-        }
-        updateTrackUI();
-      }).fail(function () {
-        state.tracking = false;
-        state.trackError = 'Gagal menghubungi server.';
+        state.trackError = "Gagal menghubungi server.";
         updateTrackUI();
       });
     }
 
     function updateTrackUI() {
       // Track button
-      var $normalText = $trackBtn.find('span').eq(0);
-      var $loadingIcon = $trackBtn.find('i, svg').eq(0);
+      var $normalText = $trackBtn.find("span").eq(0);
+      var $loadingIcon = $trackBtn.find("i, svg").eq(0);
       if (state.tracking) {
-        $trackBtn.prop('disabled', true);
+        $trackBtn.prop("disabled", true);
         $normalText.hide();
         $loadingIcon.show();
       } else {
-        $trackBtn.prop('disabled', false);
+        $trackBtn.prop("disabled", false);
         $normalText.show();
         $loadingIcon.hide();
       }
@@ -658,35 +872,51 @@
       if (state.trackResult) {
         var r = state.trackResult;
         var statusStyleMap = {
-          pending: 'background:#fef3c7;color:#92400e;',
-          in_progress: 'background:#dbeafe;color:#1e40af;',
-          resolved: 'background:#e6f4ea;color:#1f6b3c;',
-          rejected: 'background:#fce8e6;color:#b3262b;'
+          pending: "background:#fef3c7;color:#92400e;",
+          in_progress: "background:#dbeafe;color:#1e40af;",
+          resolved: "background:#e6f4ea;color:#1f6b3c;",
+          rejected: "background:#fce8e6;color:#b3262b;",
         };
-        var statusStyle = statusStyleMap[r.status] || '';
+        var statusStyle = statusStyleMap[r.status] || "";
 
         var html =
           '<div style="text-align:center;margin-bottom:20px;">' +
           '<div style="width:60px;height:60px;background:#c9e0fc;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;color:#024ad8;">' +
           '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>' +
-          '</div>' +
+          "</div>" +
           '<h4 style="margin:0;color:#1a1a1a;font-size:1.2em;">Status Laporan</h4>' +
-          '<p style="margin:5px 0 0 0;color:#636363;font-family:monospace;">' + escapeHtml(r.code) + '</p>' +
-          '</div>' +
-          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Judul</span><span class="wp-desa-card-value">' + escapeHtml(r.subject) + '</span></div>' +
-          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Kategori</span><span class="wp-desa-card-value">' + escapeHtml(r.category) + '</span></div>' +
-          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Tanggal</span><span class="wp-desa-card-value">' + formatDate(r.created_at) + '</span></div>' +
+          '<p style="margin:5px 0 0 0;color:#636363;font-family:monospace;">' +
+          escapeHtml(r.code) +
+          "</p>" +
+          "</div>" +
+          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Judul</span><span class="wp-desa-card-value">' +
+          escapeHtml(r.subject) +
+          "</span></div>" +
+          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Kategori</span><span class="wp-desa-card-value">' +
+          escapeHtml(r.category) +
+          "</span></div>" +
+          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Tanggal</span><span class="wp-desa-card-value">' +
+          formatDate(r.created_at) +
+          "</span></div>" +
           '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Status</span>' +
-          '<span class="wp-desa-badge wp-desa-badge-' + (r.status || '') + '" style="padding:4px 12px;border-radius:20px;font-size:0.85em;font-weight:600;' + statusStyle + '">' + formatStatus(r.status) + '</span></div>';
+          '<span class="wp-desa-badge wp-desa-badge-' +
+          (r.status || "") +
+          '" style="padding:4px 12px;border-radius:20px;font-size:0.85em;font-weight:600;' +
+          statusStyle +
+          '">' +
+          formatStatus(r.status) +
+          "</span></div>";
 
         if (r.response) {
           html +=
             '<div style="margin-top:20px;background:var(--cloud);padding:15px;border-radius:8px;border:1px solid var(--fog);">' +
             '<strong style="display:flex;align-items:center;gap:6px;margin-bottom:8px;color:#1a1a1a;">' +
             '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Tanggapan Admin:' +
-            '</strong>' +
-            '<p style="margin:0;color:#4b5563;line-height:1.6;">' + escapeHtml(r.response) + '</p>' +
-            '</div>';
+            "</strong>" +
+            '<p style="margin:0;color:#4b5563;line-height:1.6;">' +
+            escapeHtml(r.response) +
+            "</p>" +
+            "</div>";
         }
 
         $trackResultDiv.html(html).show();
@@ -704,14 +934,14 @@
     }
 
     // ---- events ----
-    $tabs.on('click', function () {
+    $tabs.on("click", function () {
       var text = $(this).text().trim();
-      if (text.indexOf('Buat') >= 0) switchTab('form');
-      else if (text.indexOf('Cek') >= 0) switchTab('track');
+      if (text.indexOf("Buat") >= 0) switchTab("form");
+      else if (text.indexOf("Cek") >= 0) switchTab("track");
     });
 
-    $form.on('submit', submitComplaint);
-    $trackPanel.find('form').on('submit', checkStatus);
+    $form.on("submit", submitComplaint);
+    $trackPanel.find("form").on("submit", checkStatus);
 
     // ---- boot ----
     // Initially hide both panels and all show/hide elements, then show form tab
@@ -720,53 +950,55 @@
     $messageDiv.hide();
     // Hide the tracking code template parent (empty div after template removed)
     // The tracking code section is inside $messageDiv but rendered via template. Remove the template.
-    $formPanel.find('template').remove();
+    $formPanel.find("template").remove();
 
     // Hide submit button loading state initially
-    $submitBtn.find('span').eq(1).hide();
+    $submitBtn.find("span").eq(1).hide();
 
     // Hide tracking result/error initially
     $trackResultDiv.hide();
     $trackErrorDiv.hide();
 
     // Show form tab
-    switchTab('form');
+    switchTab("form");
   }
 
   // ==========================================================================
   // 4. initLayananSurat()
   // ==========================================================================
   function initLayananSurat() {
-    var $el = $('#wp-desa-layanan');
+    var $el = $("#wp-desa-layanan");
     if (!$el.length) return;
 
     var state = {
-      tab: 'request',
+      tab: "request",
       types: [],
-      form: { nik: '', name: '', phone: '', letter_type_id: '', details: '' },
-      message: { type: '', content: '' },
+      form: { nik: "", name: "", phone: "", letter_type_id: "", details: "" },
+      message: { type: "", content: "" },
       trackingCode: null,
       submitting: false,
-      trackCode: '',
+      trackCode: "",
       trackResult: null,
       trackError: null,
-      tracking: false
+      tracking: false,
     };
 
     // DOM refs
-    var $tabs = $el.find('.wp-desa-tab-btn');
-    var $requestPanel = $el.find('[x-show="tab === \'request\'"]');
-    var $trackingPanel = $el.find('[x-show="tab === \'tracking\'"]');
+    var $tabs = $el.find(".wp-desa-tab-btn");
+    var $requestPanel = $el.find("[x-show=\"tab === 'request'\"]");
+    var $trackingPanel = $el.find("[x-show=\"tab === 'tracking'\"]");
 
     // Request form elements
-    var $form = $requestPanel.find('form');
+    var $form = $requestPanel.find("form");
     var $nik = $requestPanel.find('input[x-model="form.nik"]');
     var $name = $requestPanel.find('input[x-model="form.name"]');
     var $phone = $requestPanel.find('input[x-model="form.phone"]');
-    var $letterTypeSelect = $requestPanel.find('select[x-model="form.letter_type_id"]');
+    var $letterTypeSelect = $requestPanel.find(
+      'select[x-model="form.letter_type_id"]',
+    );
     var $details = $requestPanel.find('textarea[x-model="form.details"]');
     var $submitBtn = $requestPanel.find('button[type="submit"]');
-    var $typeDescription = $requestPanel.find('small.wp-desa-helper');
+    var $typeDescription = $requestPanel.find("small.wp-desa-helper");
 
     // Message / tracking displays
     var $msgContent = $requestPanel.find('[x-show="message.content"]');
@@ -774,37 +1006,35 @@
 
     // Tracking panel elements
     var $trackCodeInput = $trackingPanel.find('input[x-model="trackCode"]');
-    var $trackBtn = $trackingPanel.find('button');
+    var $trackBtn = $trackingPanel.find("button");
     var $trackResultDiv = $trackingPanel.find('[x-show="trackResult"]');
     var $trackErrorDiv = $trackingPanel.find('[x-show="trackError"]');
 
     // ---- helpers ----
-    function formatDate(dateString) {
-      if (!dateString) return '-';
-      return new Date(dateString).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-    }
-
     function formatStatus(status) {
-      var map = { pending: 'Menunggu', processed: 'Diproses', ready: 'Siap Diambil', completed: 'Selesai', rejected: 'Ditolak' };
+      var map = {
+        pending: "Menunggu",
+        processed: "Diproses",
+        ready: "Siap Diambil",
+        completed: "Selesai",
+        rejected: "Ditolak",
+      };
       return map[status] || status;
-    }
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     // ---- tab switching ----
     function switchTab(tab) {
       state.tab = tab;
-      $tabs.removeClass('active');
+      $tabs.removeClass("active");
       $tabs.each(function () {
         var $btn = $(this);
-        if (tab === 'request' && $btn.text().indexOf('Buat') >= 0) $btn.addClass('active');
-        if (tab === 'tracking' && $btn.text().indexOf('Cek') >= 0) $btn.addClass('active');
+        if (tab === "request" && $btn.text().indexOf("Buat") >= 0)
+          $btn.addClass("active");
+        if (tab === "tracking" && $btn.text().indexOf("Cek") >= 0)
+          $btn.addClass("active");
       });
 
-      if (tab === 'request') {
+      if (tab === "request") {
         $requestPanel.show();
         $trackingPanel.hide();
       } else {
@@ -816,67 +1046,75 @@
     // ---- update type description ----
     function updateTypeDescription() {
       var selectedId = $letterTypeSelect.val();
-      var found = state.types.find(function (t) { return String(t.id) === String(selectedId); });
-      $typeDescription.text(found ? found.description || '' : '');
+      var found = state.types.find(function (t) {
+        return String(t.id) === String(selectedId);
+      });
+      $typeDescription.text(found ? found.description || "" : "");
     }
 
     // ---- submit request ----
     function submitRequest(e) {
       e.preventDefault();
       state.submitting = true;
-      state.message = { type: '', content: '' };
+      state.message = { type: "", content: "" };
       state.trackingCode = null;
       updateRequestUI();
 
       $.ajax({
-        url: '/wp-json/wp-desa/v1/letters/request',
-        method: 'POST',
-        contentType: 'application/json',
+        url: restBase + "/letters/request",
+        method: "POST",
+        contentType: "application/json",
         data: JSON.stringify({
-          nik: $nik.val() || '',
-          name: $name.val() || '',
-          phone: $phone.val() || '',
-          letter_type_id: $letterTypeSelect.val() || '',
-          details: $details.val() || ''
+          nik: $nik.val() || "",
+          name: $name.val() || "",
+          phone: $phone.val() || "",
+          letter_type_id: $letterTypeSelect.val() || "",
+          details: $details.val() || "",
         }),
         success: function (data) {
           state.submitting = false;
           if (data.success) {
-            state.message = { type: 'success', content: data.message };
+            state.message = { type: "success", content: data.message };
             state.trackingCode = data.tracking_code;
             // Reset form
-            $nik.val('');
-            $name.val('');
-            $phone.val('');
-            $letterTypeSelect.val('');
-            $details.val('');
-            $typeDescription.text('');
+            $nik.val("");
+            $name.val("");
+            $phone.val("");
+            $letterTypeSelect.val("");
+            $details.val("");
+            $typeDescription.text("");
           } else {
-            state.message = { type: 'error', content: data.message || 'Terjadi kesalahan.' };
+            state.message = {
+              type: "error",
+              content: data.message || "Terjadi kesalahan.",
+            };
           }
           updateRequestUI();
         },
         error: function () {
           state.submitting = false;
-          state.message = { type: 'error', content: 'Gagal menghubungi server.' };
+          state.message = {
+            type: "error",
+            content: "Gagal menghubungi server.",
+          };
           updateRequestUI();
-        }
+        },
       });
     }
 
     function updateRequestUI() {
       // Message
       if (state.message.content) {
-        var isSuccess = state.message.type === 'success';
-        var bg = isSuccess ? '#e6f4ea' : '#fce8e6';
-        var color = isSuccess ? '#1f6b3c' : '#b3262b';
-        var borderColor = isSuccess ? '#c3e6cb' : '#fecaca';
+        var isSuccess = state.message.type === "success";
+        var bg = isSuccess ? "#e6f4ea" : "#fce8e6";
+        var color = isSuccess ? "#1f6b3c" : "#b3262b";
+        var borderColor = isSuccess ? "#c3e6cb" : "#fecaca";
         $msgContent
           .text(state.message.content)
           .css({ background: bg, color: color, borderColor: borderColor })
           .show();
       } else {
-        $msgContent.hide().text('');
+        $msgContent.hide().text("");
       }
 
       // Tracking code box
@@ -888,14 +1126,14 @@
       }
 
       // Submit button
-      var $normalSpan = $submitBtn.find('span').eq(0);
-      var $loadingSpan = $submitBtn.find('span').eq(1);
+      var $normalSpan = $submitBtn.find("span").eq(0);
+      var $loadingSpan = $submitBtn.find("span").eq(1);
       if (state.submitting) {
-        $submitBtn.prop('disabled', true);
+        $submitBtn.prop("disabled", true);
         $normalSpan.hide();
         $loadingSpan.show();
       } else {
-        $submitBtn.prop('disabled', false);
+        $submitBtn.prop("disabled", false);
         $normalSpan.show();
         $loadingSpan.hide();
       }
@@ -909,31 +1147,37 @@
       state.trackError = null;
       updateTrackUI();
 
-      $.getJSON('/wp-json/wp-desa/v1/letters/track?code=' + encodeURIComponent($trackCodeInput.val()), function (data) {
+      $.getJSON(
+        restBase +
+          "/letters/track?code=" +
+          encodeURIComponent($trackCodeInput.val()),
+        function (data) {
+          state.tracking = false;
+          if (data && data.id) {
+            state.trackResult = data;
+          } else {
+            state.trackError =
+              (data && data.message) || "Data tidak ditemukan.";
+          }
+          updateTrackUI();
+        },
+      ).fail(function () {
         state.tracking = false;
-        if (data && data.id) {
-          state.trackResult = data;
-        } else {
-          state.trackError = (data && data.message) || 'Data tidak ditemukan.';
-        }
-        updateTrackUI();
-      }).fail(function () {
-        state.tracking = false;
-        state.trackError = 'Gagal menghubungi server.';
+        state.trackError = "Gagal menghubungi server.";
         updateTrackUI();
       });
     }
 
     function updateTrackUI() {
       // Button
-      var $normalSpan = $trackBtn.find('span').eq(0);
-      var $loadingSpan = $trackBtn.find('span').eq(1);
+      var $normalSpan = $trackBtn.find("span").eq(0);
+      var $loadingSpan = $trackBtn.find("span").eq(1);
       if (state.tracking) {
-        $trackBtn.prop('disabled', true);
+        $trackBtn.prop("disabled", true);
         $normalSpan.hide();
         $loadingSpan.show();
       } else {
-        $trackBtn.prop('disabled', false);
+        $trackBtn.prop("disabled", false);
         $normalSpan.show();
         $loadingSpan.hide();
       }
@@ -942,19 +1186,29 @@
       if (state.trackResult) {
         var r = state.trackResult;
         var statusStyleMap = {
-          pending: 'background:#fef3c7;color:#92400e;',
-          processed: 'background:#dbeafe;color:#1e40af;',
-          ready: 'background:#e6f4ea;color:#1f6b3c;',
-          completed: 'background:#d1fae5;color:#065f46;',
-          rejected: 'background:#fce8e6;color:#b3262b;'
+          pending: "background:#fef3c7;color:#92400e;",
+          processed: "background:#dbeafe;color:#1e40af;",
+          ready: "background:#e6f4ea;color:#1f6b3c;",
+          completed: "background:#d1fae5;color:#065f46;",
+          rejected: "background:#fce8e6;color:#b3262b;",
         };
-        var statusStyle = statusStyleMap[r.status] || '';
+        var statusStyle = statusStyleMap[r.status] || "";
 
         var html =
-          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Nama Pengaju</span><span class="wp-desa-card-value">' + escapeHtml(r.name) + '</span></div>' +
-          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Tanggal</span><span class="wp-desa-card-value">' + formatDate(r.created_at) + '</span></div>' +
+          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Nama Pengaju</span><span class="wp-desa-card-value">' +
+          escapeHtml(r.name) +
+          "</span></div>" +
+          '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Tanggal</span><span class="wp-desa-card-value">' +
+          formatDate(r.created_at) +
+          "</span></div>" +
           '<div class="wp-desa-card-row"><span class="wp-desa-card-label">Status</span>' +
-          '<span class="wp-desa-badge wp-desa-badge-' + (r.status || '') + '" style="padding:4px 12px;border-radius:20px;font-size:0.85em;font-weight:600;' + statusStyle + '">' + formatStatus(r.status) + '</span></div>';
+          '<span class="wp-desa-badge wp-desa-badge-' +
+          (r.status || "") +
+          '" style="padding:4px 12px;border-radius:20px;font-size:0.85em;font-weight:600;' +
+          statusStyle +
+          '">' +
+          formatStatus(r.status) +
+          "</span></div>";
 
         $trackResultDiv.html(html).show();
         $trackErrorDiv.hide().empty();
@@ -971,27 +1225,28 @@
 
     // ---- fetch types ----
     function fetchTypes() {
-      $.getJSON('/wp-json/wp-desa/v1/letters/types', function (data) {
+      $.getJSON(restBase + "/letters/types", function (data) {
         state.types = Array.isArray(data) ? data : [];
         var opts = '<option value="">Pilih Jenis Surat</option>';
         $.each(state.types, function (_, t) {
-          opts += '<option value="' + t.id + '">' + escapeHtml(t.name) + '</option>';
+          opts +=
+            '<option value="' + t.id + '">' + escapeHtml(t.name) + "</option>";
         });
         $letterTypeSelect.html(opts);
       });
     }
 
     // ---- events ----
-    $tabs.on('click', function () {
+    $tabs.on("click", function () {
       var text = $(this).text().trim();
-      if (text.indexOf('Buat') >= 0) switchTab('request');
-      else if (text.indexOf('Cek') >= 0) switchTab('tracking');
+      if (text.indexOf("Buat") >= 0) switchTab("request");
+      else if (text.indexOf("Cek") >= 0) switchTab("tracking");
     });
 
-    $form.on('submit', submitRequest);
-    $letterTypeSelect.on('change', updateTypeDescription);
-    $trackingPanel.find('form, .wp-desa-form-group').on('submit', checkStatus);
-    $trackBtn.on('click', checkStatus);
+    $form.on("submit", submitRequest);
+    $letterTypeSelect.on("change", updateTypeDescription);
+    $trackingPanel.find("form, .wp-desa-form-group").on("submit", checkStatus);
+    $trackBtn.on("click", checkStatus);
 
     // ---- boot ----
     $requestPanel.hide();
@@ -1000,11 +1255,11 @@
     $trackingBox.hide();
     $trackResultDiv.hide();
     $trackErrorDiv.hide();
-    $submitBtn.find('span').eq(1).hide(); // loading
-    $trackBtn.find('span').eq(1).hide();  // loading
+    $submitBtn.find("span").eq(1).hide(); // loading
+    $trackBtn.find("span").eq(1).hide(); // loading
 
     fetchTypes();
-    switchTab('request');
+    switchTab("request");
   }
 
   // ==========================================================================
@@ -1016,5 +1271,4 @@
     initAduanWarga();
     initLayananSurat();
   });
-
 })(jQuery, window, document);

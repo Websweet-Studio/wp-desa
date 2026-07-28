@@ -1064,7 +1064,9 @@ class Shortcode
     global $post;
 
     // Enqueue Frontend JS (replaces Alpine.js, requires jQuery)
-    wp_enqueue_script('wp-desa-frontend', WP_DESA_URL . 'assets/js/wp-desa-frontend.js', ['jquery'], filemtime(WP_DESA_PATH . 'assets/js/wp-desa-frontend.js'), true);
+    $ver = (defined('WP_DEBUG') && WP_DEBUG) ? filemtime(WP_DESA_PATH . 'assets/js/wp-desa-frontend.js') : WP_DESA_VERSION;
+    wp_enqueue_script('wp-desa-frontend', WP_DESA_URL . 'assets/js/wp-desa-frontend.js', ['jquery'], $ver, true);
+    wp_add_inline_script('wp-desa-frontend', 'var wpDesaFrontend={restBase:"' . esc_url_raw(rest_url('wp-desa/v1')) . '"};', 'before');
 
     // Enqueue Frontend Styles
     wp_enqueue_style('wp-desa-frontend', WP_DESA_URL . 'assets/css/frontend/style.css', [], '1.0.0');

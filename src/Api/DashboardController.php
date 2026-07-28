@@ -34,6 +34,7 @@ class DashboardController extends WP_REST_Controller {
     public function seed_all() {
         require_once plugin_dir_path(dirname(__FILE__)) . 'Database/Seeder.php';
         $count = \WpDesa\Database\Seeder::run(50);
+        delete_transient('wp_desa_dashboard_stats');
         return rest_ensure_response([
             'success' => true,
             'message' => 'Berhasil membuat data dummy (Penduduk, Surat, Aduan, Keuangan, Bantuan).',
@@ -42,6 +43,12 @@ class DashboardController extends WP_REST_Controller {
     }
 
     public function get_stats() {
+        $cache_key = 'wp_desa_dashboard_stats';
+        $cached = get_transient($cache_key);
+        if ($cached !== false) {
+            return rest_ensure_response($cached);
+        }
+
         global $wpdb;
         $table_name = $wpdb->prefix . 'desa_residents';
 
@@ -104,7 +111,7 @@ class DashboardController extends WP_REST_Controller {
             LIMIT 5
         ");
 
-        return rest_ensure_response([
+        $data = [
             'total_residents' => $total_residents,
             'gender_stats' => $gender_stats,
             'job_stats' => $job_stats,
@@ -121,6 +128,9 @@ class DashboardController extends WP_REST_Controller {
                 'year' => $current_year
             ],
             'program_stats' => $program_stats,
-        ]);
+        ];
+
+        set_transient($cache_key, $data, 5 * MINUTE_IN_SECONDS);
+        return rest_ensure_response($data);
     }
 }
