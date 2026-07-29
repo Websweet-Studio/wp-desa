@@ -11,8 +11,10 @@ class AdminLayout
             ['page' => 'wp-desa-residents', 'label' => 'Penduduk'],
             ['page' => 'wp-desa-layanan', 'label' => 'Layanan'],
             ['page' => 'wp-desa-keuangan', 'label' => 'Keuangan'],
+            ['page' => 'wp-desa-pemerintahan', 'label' => 'Pemerintahan'],
             ['page' => 'wp-desa-settings', 'label' => 'Pengaturan'],
             ['page' => 'wp-desa-dokumentasi', 'label' => 'Dokumentasi'],
+            ['page' => 'wp-desa-peta', 'label' => 'Peta Desa'],
         ];
     }
 
@@ -75,7 +77,7 @@ class AdminLayout
     {
         global $plugin_page;
 
-        $wp_desa_pages = ['wp-desa', 'wp-desa-residents', 'wp-desa-layanan', 'wp-desa-keuangan', 'wp-desa-settings', 'wp-desa-dokumentasi'];
+        $wp_desa_pages = ['wp-desa', 'wp-desa-residents', 'wp-desa-layanan', 'wp-desa-keuangan', 'wp-desa-pemerintahan', 'wp-desa-settings', 'wp-desa-dokumentasi', 'wp-desa-peta'];
 
         if (in_array($plugin_page, $wp_desa_pages)) {
             $parent_file = 'wp-desa';

@@ -60,6 +60,16 @@ class Menu
             [$this, 'render_settings_page']
         );
 
+        // Submenu Pemerintahan (Struktur Organisasi & Produk Hukum)
+        add_submenu_page(
+            'wp-desa',
+            'Pemerintahan',
+            'Pemerintahan',
+            'manage_options',
+            'wp-desa-pemerintahan',
+            [$this, 'render_pemerintahan_page']
+        );
+
         // Submenu Dokumentasi
         add_submenu_page(
             'wp-desa',
@@ -68,6 +78,16 @@ class Menu
             'manage_options',
             'wp-desa-dokumentasi',
             [$this, 'render_dokumentasi_page']
+        );
+
+        // Submenu Peta Desa (GIS & Wisata)
+        add_submenu_page(
+            'wp-desa',
+            'Peta Desa',
+            'Peta Desa',
+            'manage_options',
+            'wp-desa-peta',
+            [$this, 'render_peta_page']
         );
     }
 
@@ -79,8 +99,10 @@ class Menu
             'wp-desa_page_wp-desa-residents',
             'wp-desa_page_wp-desa-layanan',
             'wp-desa_page_wp-desa-keuangan',
+            'wp-desa_page_wp-desa-pemerintahan',
             'wp-desa_page_wp-desa-settings',
-            'wp-desa_page_wp-desa-dokumentasi'
+            'wp-desa_page_wp-desa-dokumentasi',
+            'wp-desa_page_wp-desa-peta'
         ];
 
         if (in_array($hook, $allowed_pages)) {
@@ -285,6 +307,34 @@ class Menu
         AdminLayout::close();
     }
 
+    public function render_pemerintahan_page()
+    {
+        $subnav = [
+            ['tab' => 'struktur', 'label' => 'Struktur Organisasi'],
+            ['tab' => 'produk-hukum', 'label' => 'Produk Hukum'],
+        ];
+
+        $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'struktur';
+
+        AdminLayout::open('Pemerintahan', 'wp-desa-pemerintahan', $subnav);
+
+        if ($current_tab === 'produk-hukum') {
+            $edit_url = admin_url('edit.php?post_type=desa_produk_hukum');
+            echo '<div class="wp-desa-wrapper">';
+            echo '<div class="wp-desa-header-actions" style="margin-bottom:20px;">';
+            echo '<h2>Produk Hukum Desa</h2>';
+            echo '<a href="' . esc_url(admin_url('post-new.php?post_type=desa_produk_hukum')) . '" class="button button-primary">Tambah Produk Hukum</a>';
+            echo '</div>';
+            echo '<p style="color:#64748b;">Kelola peraturan desa (Perdes), surat keputusan, dan produk hukum lainnya melalui menu WordPress custom post type.</p>';
+            echo '<a href="' . esc_url($edit_url) . '" class="button">Buka Daftar Produk Hukum</a>';
+            echo '</div>';
+        } else {
+            require_once WP_DESA_PATH . 'templates/admin/perangkat.php';
+        }
+
+        AdminLayout::close();
+    }
+
     public function render_dokumentasi_page()
     {
         $subnav = [
@@ -300,6 +350,62 @@ class Menu
             require_once WP_DESA_PATH . 'templates/admin/docs-shortcode.php';
         } else {
             require_once WP_DESA_PATH . 'templates/admin/docs-penggunaan.php';
+        }
+
+        AdminLayout::close();
+    }
+
+    public function register_ajax_handlers()
+    {
+        add_action('wp_ajax_wp_desa_save_peta', [$this, 'ajax_save_peta']);
+    }
+
+    public function ajax_save_peta()
+    {
+        if (!current_user_can('manage_options')) {
+            wp_die('Unauthorized');
+        }
+        check_ajax_referer('wp_rest');
+
+        if (!isset($_POST['settings'])) {
+            wp_die('No data');
+        }
+
+        $existing = get_option('wp_desa_settings', []);
+        $new_data = json_decode(stripslashes($_POST['settings']), true);
+
+        if (is_array($new_data)) {
+            $merged = array_merge($existing, $new_data);
+            update_option('wp_desa_settings', $merged);
+            wp_send_json_success();
+        }
+
+        wp_send_json_error();
+    }
+
+    public function render_peta_page()
+    {
+        $subnav = [
+            ['tab' => 'wilayah', 'label' => 'Peta Wilayah'],
+            ['tab' => 'wisata', 'label' => 'Destinasi Wisata'],
+        ];
+
+        $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'wilayah';
+
+        AdminLayout::open('Peta Desa', 'wp-desa-peta', $subnav);
+
+        if ($current_tab === 'wisata') {
+            $edit_url = admin_url('edit.php?post_type=desa_wisata');
+            echo '<div class="wp-desa-wrapper">';
+            echo '<div class="wp-desa-header-actions" style="margin-bottom:20px;">';
+            echo '<h2>Destinasi Wisata Desa</h2>';
+            echo '<a href="' . esc_url(admin_url('post-new.php?post_type=desa_wisata')) . '" class="button button-primary">Tambah Destinasi Wisata</a>';
+            echo '</div>';
+            echo '<p style="color:#64748b;">Kelola destinasi wisata desa melalui custom post type WordPress. Setiap destinasi dapat dilengkapi dengan foto, deskripsi, dan lokasi koordinat.</p>';
+            echo '<a href="' . esc_url($edit_url) . '" class="button">Buka Daftar Destinasi Wisata</a>';
+            echo '</div>';
+        } else {
+            require_once WP_DESA_PATH . 'templates/admin/peta.php';
         }
 
         AdminLayout::close();

@@ -6,6 +6,7 @@ use WpDesa\Admin\Menu;
 use WpDesa\Admin\AdminLayout;
 use WpDesa\Api\ResidentController;
 use WpDesa\Api\DashboardController;
+use WpDesa\Api\PerangkatController;
 
 class Plugin
 {
@@ -43,6 +44,7 @@ class Plugin
             add_action('admin_menu', [$menu, 'register_menus']);
             add_action('admin_enqueue_scripts', [$menu, 'enqueue_scripts']);
             add_action('in_admin_header', [$menu, 'remove_notices']);
+            $menu->register_ajax_handlers();
 
             $meta_boxes = new \WpDesa\Admin\MetaBoxes();
             $meta_boxes->register();
@@ -75,6 +77,9 @@ class Plugin
 
         $aid = new \WpDesa\Api\AidController();
         add_action('rest_api_init', [$aid, 'register_routes']);
+
+        $perangkat = new PerangkatController();
+        add_action('rest_api_init', [$perangkat, 'register_routes']);
     }
 
     private function load_frontend()
