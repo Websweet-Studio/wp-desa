@@ -61,6 +61,60 @@
                 ['limit', '3', 'Jumlah potensi ditampilkan'],
             ],
         ],
+        [
+            'code' => '[wp_desa_struktur style="tree"]',
+            'desc' => 'Menampilkan bagan struktur organisasi perangkat desa. Mendukung 5 mode tampilan.',
+            'params' => [
+                ['style', 'tree', 'Tampilan: tree (hierarki), tabel/table, card/cards, carousel, list'],
+            ],
+        ],
+        [
+            'code' => '[wp_desa_produk_hukum limit="10"]',
+            'desc' => 'Menampilkan daftar produk hukum desa (Perdes, SK Kades) dalam bentuk list.',
+            'params' => [
+                ['limit', '10', 'Jumlah produk hukum ditampilkan'],
+                ['category', '', 'Filter berdasarkan slug kategori'],
+            ],
+        ],
+        [
+            'code' => '[wp_desa_berita limit="6"]',
+            'desc' => 'Menampilkan daftar berita desa dalam bentuk grid card dengan thumbnail.',
+            'params' => [
+                ['limit', '6', 'Jumlah berita ditampilkan'],
+                ['category', '', 'Filter berdasarkan slug kategori'],
+            ],
+        ],
+        [
+            'code' => '[wp_desa_agenda limit="5"]',
+            'desc' => 'Menampilkan agenda desa mendatang dalam bentuk list kronologis.',
+            'params' => [
+                ['limit', '5', 'Jumlah agenda ditampilkan'],
+                ['category', '', 'Filter berdasarkan slug kategori'],
+            ],
+        ],
+        [
+            'code' => '[wp_desa_galeri limit="12"]',
+            'desc' => 'Menampilkan galeri foto desa dalam bentuk grid.',
+            'params' => [
+                ['limit', '12', 'Jumlah galeri ditampilkan'],
+                ['category', '', 'Filter berdasarkan slug kategori'],
+            ],
+        ],
+        [
+            'code' => '[wp_desa_peta height="500"]',
+            'desc' => 'Menampilkan peta interaktif desa (Leaflet/OpenStreetMap) dengan marker lokasi penting.',
+            'params' => [
+                ['height', '500', 'Tinggi peta dalam piksel'],
+            ],
+        ],
+        [
+            'code' => '[wp_desa_wisata limit="6"]',
+            'desc' => 'Menampilkan daftar destinasi wisata desa dalam bentuk grid card.',
+            'params' => [
+                ['limit', '6', 'Jumlah destinasi ditampilkan'],
+                ['category', '', 'Filter berdasarkan slug kategori wisata'],
+            ],
+        ],
     ];
 
     foreach ($shortcodes as $sc):

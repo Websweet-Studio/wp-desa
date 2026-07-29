@@ -1190,16 +1190,37 @@ class Shortcode
 
         public function render_struktur($atts = [])
         {
+            $atts = shortcode_atts([
+                'style' => 'tree',
+            ], $atts);
+
             global $wpdb;
             $table = $wpdb->prefix . 'desa_perangkat';
-
             $items = $wpdb->get_results("SELECT * FROM $table ORDER BY parent_id ASC, urutan ASC, id ASC");
 
             if (empty($items)) {
                 return '<div style="text-align:center;padding:40px 20px;color:#94a3b8;">Belum ada data perangkat desa.</div>';
             }
 
-            // Build tree structure
+            switch ($atts['style']) {
+                case 'tabel':
+                case 'table':
+                    return $this->render_struktur_tabel($items);
+                case 'card':
+                case 'cards':
+                    return $this->render_struktur_cards($items);
+                case 'carousel':
+                    return $this->render_struktur_carousel($items);
+                case 'list':
+                    return $this->render_struktur_list($items);
+                case 'tree':
+                default:
+                    return $this->render_struktur_tree($items);
+            }
+        }
+
+        private function render_struktur_tree($items)
+        {
             $tree = [];
             $by_id = [];
             foreach ($items as $item) {
@@ -1220,13 +1241,13 @@ class Shortcode
         <div class="wp-desa-struktur" style="display: flex; flex-direction: column; align-items: center; gap: 0;">
             <?php foreach ($tree as $root) : ?>
                 <div class="wp-desa-struktur-node-root" style="text-align: center;">
-                    <?php echo $this->render_struktur_node($root); ?>
+                    <?php echo $this->render_struktur_node_card($root); ?>
                     <?php if ($root->children) : ?>
                         <div class="wp-desa-struktur-children" style="display: flex; justify-content: center; gap: 20px; margin-top: 20px; padding-top: 20px; position: relative; border-top: 2px solid #e2e8f0; flex-wrap: wrap;">
                             <?php foreach ($root->children as $child) : ?>
                                 <div class="wp-desa-struktur-branch" style="display: flex; flex-direction: column; align-items: center; gap: 0;">
                                     <div style="width: 2px; height: 20px; background: #e2e8f0;"></div>
-                                    <?php echo $this->render_struktur_node($child); ?>
+                                    <?php echo $this->render_struktur_node_card($child); ?>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -1236,58 +1257,157 @@ class Shortcode
         </div>
     </div>
     <style>
-        .wp-desa-struktur-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 16px 20px;
-            min-width: 180px;
-            max-width: 220px;
-            text-align: center;
-            transition: box-shadow 0.2s;
-        }
-        .wp-desa-struktur-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-        .wp-desa-struktur-card .foto {
-            width: 64px; height: 64px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; background: #f0f0f0;
-        }
-        .wp-desa-struktur-card .foto-placeholder {
-            width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 10px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8;
-        }
-        .wp-desa-struktur-card .nama {
-            font-weight: 600; font-size: 0.95em; color: #1e293b; margin-bottom: 4px;
-        }
-        .wp-desa-struktur-card .jabatan {
-            font-size: 0.85em; font-weight: 500; color: #2563eb; margin-bottom: 4px;
-        }
-        .wp-desa-struktur-card .nip {
-            font-size: 0.8em; color: #94a3b8;
-        }
+        .wp-desa-struktur-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 20px; min-width: 180px; max-width: 220px; text-align: center; transition: box-shadow 0.2s; }
+        .wp-desa-struktur-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .wp-desa-struktur-card .foto { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; background: #f0f0f0; }
+        .wp-desa-struktur-card .foto-placeholder { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 10px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8; }
+        .wp-desa-struktur-card .nama { font-weight: 600; font-size: 0.95em; color: #1e293b; margin-bottom: 4px; }
+        .wp-desa-struktur-card .jabatan { font-size: 0.85em; font-weight: 500; color: #2563eb; margin-bottom: 4px; }
+        .wp-desa-struktur-card .nip { font-size: 0.8em; color: #94a3b8; }
     </style>
 <?php
             return ob_get_clean();
         }
 
-        private function render_struktur_node($item)
+        private function render_struktur_node_card($item)
         {
-            $foto_html = '';
-            if (!empty($item->foto)) {
-                $foto_html = '<img src="' . esc_url($item->foto) . '" class="foto" alt="' . esc_attr($item->nama) . '">';
-            } else {
-                $foto_html = '<div class="foto-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>';
-            }
+            $foto = !empty($item->foto)
+                ? '<img src="' . esc_url($item->foto) . '" class="foto" alt="' . esc_attr($item->nama) . '">'
+                : '<div class="foto-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>';
 
             $html = '<div class="wp-desa-struktur-card">';
-            $html .= $foto_html;
+            $html .= $foto;
             $html .= '<div class="nama">' . esc_html($item->nama) . '</div>';
             $html .= '<div class="jabatan">' . esc_html($item->jabatan) . '</div>';
             if (!empty($item->nip)) {
                 $html .= '<div class="nip">NIP: ' . esc_html($item->nip) . '</div>';
             }
             $html .= '</div>';
-
             return $html;
+        }
+
+        private function render_struktur_tabel($items)
+        {
+            $no = 0;
+            ob_start();
+            ?>
+    <div class="wp-desa-struktur-wrapper" style="overflow-x: auto; padding: 10px 0;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.95em;">
+            <thead>
+                <tr style="background:#1e293b;color:#fff;">
+                    <th style="padding:12px 16px;text-align:left;">No</th>
+                    <th style="padding:12px 16px;text-align:left;">Foto</th>
+                    <th style="padding:12px 16px;text-align:left;">Nama</th>
+                    <th style="padding:12px 16px;text-align:left;">Jabatan</th>
+                    <th style="padding:12px 16px;text-align:left;">NIP</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($items as $item) : $no++; ?>
+                    <tr style="border-bottom:1px solid #e2e8f0;">
+                        <td style="padding:10px 16px;"><?php echo $no; ?></td>
+                        <td style="padding:10px 16px;">
+                            <?php if (!empty($item->foto)) : ?>
+                                <img src="<?php echo esc_url($item->foto); ?>" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                            <?php else : ?>
+                                <span style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;background:#e2e8f0;border-radius:50%;color:#94a3b8;">?</span>
+                            <?php endif; ?>
+                        </td>
+                        <td style="padding:10px 16px;font-weight:600;"><?php echo esc_html($item->nama); ?></td>
+                        <td style="padding:10px 16px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 10px;border-radius:4px;font-size:0.85em;"><?php echo esc_html($item->jabatan); ?></span></td>
+                        <td style="padding:10px 16px;color:#64748b;"><?php echo !empty($item->nip) ? esc_html($item->nip) : '-'; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+<?php
+            return ob_get_clean();
+        }
+
+        private function render_struktur_cards($items)
+        {
+            ob_start();
+            ?>
+    <div class="wp-desa-struktur-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px;padding:10px 0;">
+        <?php foreach ($items as $item) : ?>
+            <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;text-align:center;transition:box-shadow 0.2s;">
+                <?php if (!empty($item->foto)) : ?>
+                    <img src="<?php echo esc_url($item->foto); ?>" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 12px;display:block;">
+                <?php else : ?>
+                    <div style="width:80px;height:80px;border-radius:50%;margin:0 auto 12px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                <?php endif; ?>
+                <div style="font-weight:600;font-size:1.05em;color:#1e293b;margin-bottom:4px;"><?php echo esc_html($item->nama); ?></div>
+                <div style="font-size:0.85em;font-weight:500;color:#2563eb;margin-bottom:4px;"><?php echo esc_html($item->jabatan); ?></div>
+                <?php if (!empty($item->nip)) : ?>
+                    <div style="font-size:0.8em;color:#94a3b8;">NIP: <?php echo esc_html($item->nip); ?></div>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
+<?php
+            return ob_get_clean();
+        }
+
+        private function render_struktur_carousel($items)
+        {
+            $id = 'wp-desa-carousel-' . uniqid();
+            ob_start();
+            ?>
+    <div class="wp-desa-carousel-wrapper" style="position:relative;padding:10px 40px;">
+        <div id="<?php echo $id; ?>" class="wp-desa-carousel-track" style="display:flex;gap:24px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;padding:10px 4px;scroll-snap-type:x mandatory;">
+            <?php foreach ($items as $item) : ?>
+                <div style="flex:0 0 250px;scroll-snap-align:start;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;text-align:center;">
+                    <?php if (!empty($item->foto)) : ?>
+                        <img src="<?php echo esc_url($item->foto); ?>" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 12px;display:block;">
+                    <?php else : ?>
+                        <div style="width:80px;height:80px;border-radius:50%;margin:0 auto 12px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;">
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </div>
+                    <?php endif; ?>
+                    <div style="font-weight:600;font-size:1em;color:#1e293b;margin-bottom:4px;"><?php echo esc_html($item->nama); ?></div>
+                    <div style="font-size:0.85em;font-weight:500;color:#2563eb;"><?php echo esc_html($item->jabatan); ?></div>
+                    <?php if (!empty($item->nip)) : ?>
+                        <div style="font-size:0.8em;color:#94a3b8;margin-top:4px;"><?php echo esc_html($item->nip); ?></div>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <button type="button" class="wp-desa-carousel-btn wp-desa-carousel-prev" style="position:absolute;top:50%;left:0;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-size:18px;line-height:1;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.1);" onclick="document.getElementById('<?php echo $id; ?>').scrollBy({left:-290,behavior:'smooth'})">‹</button>
+        <button type="button" class="wp-desa-carousel-btn wp-desa-carousel-next" style="position:absolute;top:50%;right:0;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-size:18px;line-height:1;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.1);" onclick="document.getElementById('<?php echo $id; ?>').scrollBy({left:290,behavior:'smooth'})">›</button>
+    </div>
+<?php
+            return ob_get_clean();
+        }
+
+        private function render_struktur_list($items)
+        {
+            ob_start();
+            ?>
+    <div class="wp-desa-struktur-list" style="display:flex;flex-direction:column;gap:8px;padding:10px 0;">
+        <?php foreach ($items as $item) : ?>
+            <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;">
+                <?php if (!empty($item->foto)) : ?>
+                    <img src="<?php echo esc_url($item->foto); ?>" style="width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0;">
+                <?php else : ?>
+                    <div style="width:48px;height:48px;border-radius:50%;flex-shrink:0;background:#e2e8f0;display:flex;align-items:center;justify-content:center;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                <?php endif; ?>
+                <div style="flex:1;">
+                    <div style="font-weight:600;color:#1e293b;"><?php echo esc_html($item->nama); ?></div>
+                    <div style="display:flex;gap:12px;font-size:0.85em;color:#64748b;margin-top:2px;">
+                        <span style="background:#dbeafe;color:#1e40af;padding:1px 8px;border-radius:4px;"><?php echo esc_html($item->jabatan); ?></span>
+                        <?php if (!empty($item->nip)) : ?><span>NIP: <?php echo esc_html($item->nip); ?></span><?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+<?php
+            return ob_get_clean();
         }
 
         public function render_produk_hukum_frontend($atts = [])
