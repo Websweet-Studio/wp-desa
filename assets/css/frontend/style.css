@@ -34,6 +34,13 @@
 .wp-desa-wrapper {
   font-family: var(--font-body);
   color: var(--ink);
+  min-width: 0;
+}
+
+.wp-desa-wrapper *,
+.wp-desa-wrapper *::before,
+.wp-desa-wrapper *::after {
+  box-sizing: border-box;
 }
 
 /* Tabs */
@@ -372,6 +379,7 @@
   padding: var(--sp-xl);
   text-align: center;
   border: 1px solid var(--fog);
+  min-width: 0;
 }
 
 /* Profil Card */

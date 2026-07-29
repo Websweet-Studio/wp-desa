@@ -45,6 +45,23 @@ class TemplateLoader
             return WP_DESA_PATH . 'templates/public/single-desa_potensi.php';
         }
 
+        // Produk Hukum
+        if (is_post_type_archive('desa_produk_hukum') || is_tax('desa_produk_hukum_cat')) {
+            $theme_file = locate_template(['archive-desa_produk_hukum.php']);
+            if ($theme_file) {
+                return $theme_file;
+            }
+            return WP_DESA_PATH . 'templates/public/archive-desa_produk_hukum.php';
+        }
+
+        if (is_singular('desa_produk_hukum')) {
+            $theme_file = locate_template(['single-desa_produk_hukum.php']);
+            if ($theme_file) {
+                return $theme_file;
+            }
+            return WP_DESA_PATH . 'templates/public/single-desa_produk_hukum.php';
+        }
+
         return $template;
     }
 }

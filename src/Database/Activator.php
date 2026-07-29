@@ -125,6 +125,20 @@ class Activator
             UNIQUE KEY program_resident (program_id, resident_id)
         ) $charset_collate;";
 
+        // 8. Perangkat Desa Table
+        $table_perangkat = $wpdb->prefix . 'desa_perangkat';
+        $sql_perangkat = "CREATE TABLE $table_perangkat (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            nama varchar(200) NOT NULL,
+            jabatan varchar(100) NOT NULL,
+            nip varchar(50) DEFAULT '',
+            foto varchar(500) DEFAULT '',
+            parent_id mediumint(9) DEFAULT 0,
+            urutan int(9) DEFAULT 0,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY  (id)
+        ) $charset_collate;";
+
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql_residents);
         dbDelta($sql_letter_types);
@@ -133,6 +147,7 @@ class Activator
         dbDelta($sql_finances);
         dbDelta($sql_programs);
         dbDelta($sql_recipients);
+        dbDelta($sql_perangkat);
 
         // Seed Letter Types if empty (Force check)
         // Using $wpdb->get_var directly sometimes fails in activation hook context if dbDelta just ran
