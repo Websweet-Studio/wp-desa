@@ -6,7 +6,7 @@ class Seeder {
     public static function run($count = 100) {
         global $wpdb;
         $table_name = $wpdb->prefix . 'desa_residents';
-        
+
         // Ensure table exists
         \WpDesa\Database\Activator::activate();
 
@@ -17,20 +17,27 @@ class Seeder {
         $marital_statuses = ['Belum Kawin', 'Kawin', 'Cerai Hidup', 'Cerai Mati'];
 
         $inserted = 0;
-        
+        $duplicate_attempts = 0;
+        $max_duplicate_attempts = 50;
+
         for ($i = 0; $i < $count; $i++) {
             $nik = self::generate_nik();
-            $no_kk = self::generate_nik(); // Reuse NIK generator for KK as format is similar
-            
+            $no_kk = self::generate_nik();
+
             // Check uniqueness
             if ($wpdb->get_var($wpdb->prepare("SELECT id FROM $table_name WHERE nik = %s", $nik))) {
-                $i--; // Retry
+                $duplicate_attempts++;
+                if ($duplicate_attempts >= $max_duplicate_attempts) {
+                    break; // Too many duplicates, table likely full
+                }
+                $i--;
                 continue;
             }
+            $duplicate_attempts = 0; // Reset on success
 
             $gender = rand(0, 1) ? 'Laki-laki' : 'Perempuan';
             $name = $first_names[array_rand($first_names)] . ' ' . $last_names[array_rand($last_names)];
-            
+
             $data = [
                 'nik' => $nik,
                 'no_kk' => $no_kk,
@@ -49,9 +56,9 @@ class Seeder {
             }
         }
 
-        // Also seed letters
-        self::seed_letters(intval($count / 2)); // 50% of resident count
-        
+        // Seed letters
+        self::seed_letters(intval($count / 2));
+
         // Seed Complaints
         self::seed_complaints(intval($count / 4));
 
@@ -61,22 +68,377 @@ class Seeder {
         // Seed Aid
         self::seed_aid(intval($count / 2));
 
+        // Seed Perangkat Desa
+        self::seed_perangkat(max(5, intval($count / 5)));
+
+        // Seed CPTs
+        self::seed_potensi(max(3, intval($count / 5)));
+        self::seed_umkm(max(3, intval($count / 5)));
+        self::seed_produk_hukum(max(3, intval($count / 4)));
+        self::seed_berita(max(5, intval($count / 3)));
+        self::seed_agenda(max(3, intval($count / 4)));
+        self::seed_galeri(max(3, intval($count / 5)));
+        self::seed_wisata(max(3, intval($count / 5)));
+
+        return $inserted;
+    }
+
+    public static function seed_perangkat($count = 10) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'desa_perangkat';
+
+        \WpDesa\Database\Activator::activate();
+
+        $jabatans = [
+            'Kepala Desa', 'Sekretaris Desa', 'Kaur Tata Usaha', 'Kaur Keuangan',
+            'Kaur Perencanaan', 'Kasi Pemerintahan', 'Kasi Kesejahteraan',
+            'Kasi Pelayanan', 'Kadus I', 'Kadus II', 'Kadus III',
+            'Kadus IV', 'Ketua BPD', 'Wakil Ketua BPD', 'Sekretaris BPD',
+            'Anggota BPD', 'Ketua LPMD', 'Kepala Dusun',
+        ];
+
+        $first_names = ['Budi', 'Siti', 'Agus', 'Dewi', 'Rudi', 'Sri', 'Joko', 'Rina', 'Andi', 'Lina', 'Eko', 'Yani', 'Bambang', 'Nur', 'Iwan', 'Wati', 'Hendra', 'Ratna', 'Yudi', 'Sari'];
+        $last_names = ['Santoso', 'Wijaya', 'Saputra', 'Lestari', 'Hidayat', 'Wahyuni', 'Pratama', 'Utami', 'Nugroho', 'Pertiwi', 'Kusuma', 'Rahmawati', 'Setiawan', 'Susanti', 'Purnomo', 'Indah', 'Gunawan', 'Suryani', 'Wibowo', 'Mulyani'];
+
+        $inserted = 0;
+        for ($i = 0; $i < min($count, count($jabatans)); $i++) {
+            $name = $first_names[array_rand($first_names)] . ' ' . $last_names[array_rand($last_names)];
+            $jabatan = $jabatans[$i];
+
+            $nip = sprintf('%08d', rand(11111111, 99999999)) . ' ' . sprintf('%06d', rand(111111, 999999));
+
+            $urutan = $i + 1;
+            $parent_id = 0;
+            if ($i > 0) {
+                $parent_id = 1; // Semua dibawah Kepala Desa (id=1)
+            }
+
+            $wpdb->insert($table, [
+                'nama' => $name,
+                'jabatan' => $jabatan,
+                'nip' => $nip,
+                'foto' => '',
+                'parent_id' => $parent_id,
+                'urutan' => $urutan,
+                'created_at' => current_time('mysql'),
+            ]);
+            $inserted++;
+        }
+
+        return $inserted;
+    }
+
+    public static function seed_potensi($count = 10) {
+        if (!post_type_exists('desa_potensi')) {
+            (new \WpDesa\Core\PostTypes())->register_potensi_desa();
+        }
+
+        $categories = ['Pertanian', 'Peternakan', 'Perikanan', 'Pariwisata desa'];
+        $titles = [
+            'Lahan Padi Organik', 'Peternakan Sapi Perah', 'Tambak Ikan Lele',
+            'Wisata Air Terjun', 'Kebun Sayur Hidroponik', 'Sentra Kerajinan Bambu',
+            'Perkebunan Kopi Arabika', 'Budidaya Jamur Tiram', 'Ekowisata Mangrove',
+            'Lahan Jagung Manis', 'Peternakan Ayam Kampung', 'Budidaya Ikan Nila',
+            'Desa Wisata Batik', 'Kebun Buah Naga', 'Tambak Udang Vaname',
+        ];
+        $descriptions = [
+            'Potensi unggulan desa yang dikelola secara berkelanjutan.',
+            'Dikembangkan sejak tahun 2010 dan menjadi sumber ekonomi utama warga.',
+            'Bekerja sama dengan dinas terkait untuk pengembangan lebih lanjut.',
+            'Telah mendapatkan bantuan dari pemerintah provinsi.',
+        ];
+
+        $inserted = 0;
+        for ($i = 0; $i < $count; $i++) {
+            $title = $titles[$i % count($titles)] . ' #' . ($i + 1);
+            $post_id = wp_insert_post([
+                'post_title' => $title,
+                'post_content' => '<p>' . $descriptions[array_rand($descriptions)] . '</p><p>Lokasi di ' . ['Dusun A', 'Dusun B', 'Dusun C', 'Dusun D'][array_rand(['Dusun A', 'Dusun B', 'Dusun C', 'Dusun D'])] . ', desa kami.</p>',
+                'post_status' => 'publish',
+                'post_type' => 'desa_potensi',
+                'post_date' => date('Y-m-d H:i:s', rand(strtotime('-1 year'), time())),
+                'post_excerpt' => $descriptions[array_rand($descriptions)],
+            ]);
+
+            if ($post_id && !is_wp_error($post_id)) {
+                wp_set_object_terms($post_id, $categories[$i % count($categories)], 'desa_potensi_cat', true);
+                $inserted++;
+            }
+        }
+
+        return $inserted;
+    }
+
+    public static function seed_umkm($count = 10) {
+        if (!post_type_exists('desa_umkm')) {
+            (new \WpDesa\Core\PostTypes())->register_umkm_desa();
+        }
+
+        $categories = ['Kuliner', 'Fashion', 'Kerajinan', 'Pertanian', 'Jasa'];
+        $products = [
+            'Kripik Pisang', 'Tahu Baxo', 'Batik Tulis', 'Anyaman Bambu',
+            'Kopi Bubuk', 'Abon Sapi', 'Kerupuk Udang', 'Syal Batik',
+            'Tas Rotan', 'Lumpia Basah', 'Wedang Jahe', 'Bros Sulam',
+            'Lumpia Basah', 'Sambal Pecel', 'Keripik Singkong',
+        ];
+        $phones = ['081234567890', '081298765432', '085611223344', '087788990011', '082134567890'];
+
+        $inserted = 0;
+        for ($i = 0; $i < $count; $i++) {
+            $product = $products[array_rand($products)];
+            $title = $product . ' - ' . ['Maju Jaya', 'Berkah Abadi', 'Karya Mandiri', 'Sejahtera', 'Makmur Sentosa'][array_rand(['Maju Jaya', 'Berkah Abadi', 'Karya Mandiri', 'Sejahtera', 'Makmur Sentosa'])];
+
+            $post_id = wp_insert_post([
+                'post_title' => $title,
+                'post_content' => '<p>Produk unggulan ' . $product . ' dari desa kami. Dibuat dengan bahan-bahan pilihan dan berkualitas tinggi.</p><p>Telah dipasarkan hingga ke luar kota.</p>',
+                'post_status' => 'publish',
+                'post_type' => 'desa_umkm',
+                'post_date' => date('Y-m-d H:i:s', rand(strtotime('-1 year'), time())),
+                'post_excerpt' => 'Produk ' . $product . ' berkualitas tinggi dari desa.',
+            ]);
+
+            if ($post_id && !is_wp_error($post_id)) {
+                update_post_meta($post_id, '_desa_umkm_phone', $phones[array_rand($phones)]);
+                update_post_meta($post_id, '_desa_umkm_location', 'Jl. ' . ['Merdeka', 'Sudirman', 'Ahmad Yani', 'Diponegoro', 'Pahlawan'][array_rand(['Merdeka', 'Sudirman', 'Ahmad Yani', 'Diponegoro', 'Pahlawan'])] . ' No. ' . rand(1, 100) . ', ' . ['RT 01/RW 01', 'RT 02/RW 01', 'RT 03/RW 02', 'RT 01/RW 03'][array_rand(['RT 01/RW 01', 'RT 02/RW 01', 'RT 03/RW 02', 'RT 01/RW 03'])]);
+                update_post_meta($post_id, '_desa_umkm_gallery', '');
+                wp_set_object_terms($post_id, $categories[array_rand($categories)], 'desa_umkm_cat', true);
+                $inserted++;
+            }
+        }
+
+        return $inserted;
+    }
+
+    public static function seed_produk_hukum($count = 10) {
+        if (!post_type_exists('desa_produk_hukum')) {
+            (new \WpDesa\Core\PostTypes())->register_produk_hukum();
+        }
+
+        $categories = ['Peraturan Desa', 'Keputusan Kepala Desa', 'Peraturan Bersama', 'Surat Edaran'];
+        $titles = [
+            'Peraturan Desa tentang Pengelolaan Sampah',
+            'Peraturan Desa tentang Keamanan Lingkungan',
+            'Keputusan Kepala Desa tentang Tim Pengelola Kegiatan',
+            'Peraturan Desa tentang Retribusi Pasar Desa',
+            'Keputusan Kepala Desa tentang Penetapan Kader Posyandu',
+            'Peraturan Desa tentang Pengelolaan BUMDes',
+            'Surat Edaran tentang Tertib Administrasi',
+            'Peraturan Desa tentang Izin Mendirikan Bangunan',
+            'Keputusan Kepala Desa tentang Pembentukan Panitia',
+            'Peraturan Desa tentang Pajak Bumi dan Bangunan',
+        ];
+
+        $inserted = 0;
+        for ($i = 0; $i < min($count, count($titles)); $i++) {
+            $post_id = wp_insert_post([
+                'post_title' => $titles[$i],
+                'post_content' => '<p>' . $titles[$i] . ' tahun ' . date('Y') . '.</p><p>Ditetapkan di desa pada tanggal ' . rand(1, 28) . ' ' . ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][array_rand(['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'])] . ' ' . date('Y') . '.</p>',
+                'post_status' => 'publish',
+                'post_type' => 'desa_produk_hukum',
+                'post_date' => date('Y-m-d H:i:s', rand(strtotime('-1 year'), time())),
+                'post_excerpt' => substr($titles[$i], 0, 100),
+            ]);
+
+            if ($post_id && !is_wp_error($post_id)) {
+                wp_set_object_terms($post_id, $categories[$i % count($categories)], 'desa_produk_hukum_cat', true);
+                $inserted++;
+            }
+        }
+
+        return $inserted;
+    }
+
+    public static function seed_berita($count = 10) {
+        if (!post_type_exists('desa_berita')) {
+            (new \WpDesa\Core\PostTypes())->register_berita();
+        }
+
+        $categories = ['Kegiatan Desa', 'Pembangunan', 'Pengumuman', 'Kesehatan', 'Pendidikan'];
+        $titles = [
+            'Kegiatan Gotong Royong Bulanan',
+            'Pembangunan Jalan Desa Tahap II',
+            'Pengumuman Penerimaan BLT Dana Desa',
+            'Pelaksanaan Posyandu Bulanan',
+            'Sosialisasi Bahaya Narkoba',
+            'Peresmian Gedung Serbaguna',
+            'Pelatihan UMKM Digital',
+            'Kegiatan Kerja Bakti Lingkungan',
+            'Penyuluhan Pertanian Organik',
+            'Pembagian Bantuan Sembako',
+            'Musyawarah Perencanaan Pembangunan',
+            'Lomba 17 Agustusan Tingkat Desa',
+        ];
+        $contents = [
+            '<p>Kegiatan gotong royong bulan ini dilaksanakan di Dusun A dan diikuti oleh seluruh warga.</p><p>Alhamdulillah kegiatan berjalan lancar dan penuh kekeluargaan.</p>',
+            '<p>Pembangunan jalan desa tahap II telah dimulai. Proyek ini didanai dari Dana Desa tahun berjalan.</p><p>Target penyelesaian dalam 3 bulan ke depan.</p>',
+            '<p>Pemerintah desa mengumumkan penerima BLT Dana Desa tahun ini sebanyak ' . rand(100, 300) . ' KK.</p><p>Pembayaran dilakukan setiap bulan melalui rekening masing-masing.</p>',
+        ];
+
+        $inserted = 0;
+        for ($i = 0; $i < $count; $i++) {
+            $post_id = wp_insert_post([
+                'post_title' => $titles[$i % count($titles)],
+                'post_content' => $contents[array_rand($contents)],
+                'post_status' => 'publish',
+                'post_type' => 'desa_berita',
+                'post_date' => date('Y-m-d H:i:s', rand(strtotime('-6 months'), time())),
+                'post_excerpt' => 'Berita terbaru dari desa kami.',
+            ]);
+
+            if ($post_id && !is_wp_error($post_id)) {
+                wp_set_object_terms($post_id, $categories[$i % count($categories)], 'desa_berita_cat', true);
+                $inserted++;
+            }
+        }
+
+        return $inserted;
+    }
+
+    public static function seed_agenda($count = 10) {
+        if (!post_type_exists('desa_agenda')) {
+            (new \WpDesa\Core\PostTypes())->register_agenda();
+        }
+
+        $categories = ['Rapat', 'Kegiatan', 'Acara', 'Pelatihan'];
+        $titles = [
+            'Rapat Musyawarah Desa',
+            'Kegiatan Posyandu Balita',
+            'Sosialisasi Program Keluarga Harapan',
+            'Pelatihan Pembuatan Pupuk Organik',
+            'Acara Peringatan Hari Kemerdekaan',
+            'Rapat Koordinasi BPD',
+            'Pelatihan Digital Marketing UMKM',
+            'Rapat Perencanaan Pembangunan',
+            'Acara Halal Bihalal',
+            'Kegiatan Kerja Bakti',
+        ];
+        $locations = ['Kantor Desa', 'Balai Dusun A', 'Balai Dusun B', 'Lapangan Desa', 'Aula Serbaguna'];
+
+        $inserted = 0;
+        for ($i = 0; $i < $count; $i++) {
+            $start = rand(strtotime('today'), strtotime('+3 months'));
+            $end = $start + rand(3600, 86400); // 1 hour to 1 day later
+
+            $post_id = wp_insert_post([
+                'post_title' => $titles[$i % count($titles)],
+                'post_content' => '<p>' . $titles[$i % count($titles)] . ' akan dilaksanakan pada:</p><p>Tanggal: ' . date('d F Y', $start) . '<br>Waktu: ' . date('H:i', $start) . ' - ' . date('H:i', $end) . '<br>Lokasi: ' . $locations[array_rand($locations)] . '</p>',
+                'post_status' => 'publish',
+                'post_type' => 'desa_agenda',
+                'post_date' => date('Y-m-d H:i:s', rand(strtotime('-1 month'), time())),
+            ]);
+
+            if ($post_id && !is_wp_error($post_id)) {
+                update_post_meta($post_id, '_desa_agenda_date', date('Y-m-d', $start));
+                update_post_meta($post_id, '_desa_agenda_time', date('H:i', $start));
+                update_post_meta($post_id, '_desa_agenda_location', $locations[array_rand($locations)]);
+                update_post_meta($post_id, '_desa_agenda_end_date', date('Y-m-d', $end));
+                wp_set_object_terms($post_id, $categories[$i % count($categories)], 'desa_agenda_cat', true);
+                $inserted++;
+            }
+        }
+
+        return $inserted;
+    }
+
+    public static function seed_galeri($count = 10) {
+        if (!post_type_exists('desa_galeri')) {
+            (new \WpDesa\Core\PostTypes())->register_galeri();
+        }
+
+        $categories = ['Kegiatan', 'Wisata', 'Pembangunan', 'Kebudayaan'];
+        $titles = [
+            'Dokumentasi Gotong Royong',
+            'Foto Wisata Desa',
+            'Kegiatan Pembangunan Jalan',
+            'Pentas Seni Budaya',
+            'Kegiatan Posyandu',
+            'Panen Raya Pertanian',
+            'Lomba 17 Agustusan',
+            'Kunjungan Dinas',
+            'Pelatihan Warga',
+            'Musyawarah Desa',
+        ];
+
+        $inserted = 0;
+        for ($i = 0; $i < $count; $i++) {
+            $post_id = wp_insert_post([
+                'post_title' => $titles[$i % count($titles)],
+                'post_content' => '<p>Galeri foto ' . $titles[$i % count($titles)] . '.</p>',
+                'post_status' => 'publish',
+                'post_type' => 'desa_galeri',
+                'post_date' => date('Y-m-d H:i:s', rand(strtotime('-1 year'), time())),
+            ]);
+
+            if ($post_id && !is_wp_error($post_id)) {
+                update_post_meta($post_id, '_desa_galeri_images', '');
+                update_post_meta($post_id, '_desa_galeri_type', ['foto', 'video'][array_rand(['foto', 'video'])]);
+                wp_set_object_terms($post_id, $categories[$i % count($categories)], 'desa_galeri_cat', true);
+                $inserted++;
+            }
+        }
+
+        return $inserted;
+    }
+
+    public static function seed_wisata($count = 10) {
+        if (!post_type_exists('desa_wisata')) {
+            (new \WpDesa\Core\PostTypes())->register_wisata();
+        }
+
+        $categories = ['Wisata Alam', 'Wisata Budaya', 'Wisata Kuliner', 'Wisata Religi'];
+        $titles = [
+            'Air Terjun Curug Indah',
+            'Desa Wisata Batik Tulis',
+            'Bukit Panorama Desa',
+            'Sentra Kuliner Tradisional',
+            'Makam Keramat Desa',
+            'Goa Alam Bersejarah',
+            'Pasar Tradisional Desa',
+            'Sungai Wisata Keliling',
+            'Perbukitan Hutan Pinus',
+            'Taman Edukasi Pertanian',
+        ];
+        $locations = ['Dusun A', 'Dusun B', 'Dusun C', 'Dusun D'];
+        $phones = ['081234567890', '081298765432', '085611223344'];
+
+        $inserted = 0;
+        for ($i = 0; $i < $count; $i++) {
+            $loc = $locations[array_rand($locations)];
+            $post_id = wp_insert_post([
+                'post_title' => $titles[$i % count($titles)],
+                'post_content' => '<p>' . $titles[$i % count($titles)] . ' terletak di ' . $loc . ', desa kami.</p><p>Tempat ini menjadi destinasi favorit wisatawan lokal maupun luar kota.</p><p>Jam buka: 08.00 - 17.00 WIB setiap hari.</p>',
+                'post_status' => 'publish',
+                'post_type' => 'desa_wisata',
+                'post_date' => date('Y-m-d H:i:s', rand(strtotime('-1 year'), time())),
+                'post_excerpt' => 'Destinasi wisata ' . $titles[$i % count($titles)] . ' di ' . $loc . '.',
+            ]);
+
+            if ($post_id && !is_wp_error($post_id)) {
+                update_post_meta($post_id, '_desa_wisata_location', $loc);
+                update_post_meta($post_id, '_desa_wisata_address', 'Jl. ' . ['Wisata', 'Raya Desa', 'Pariwisata', 'Alternatif'][array_rand(['Wisata', 'Raya Desa', 'Pariwisata', 'Alternatif'])] . ' No. ' . rand(1, 50) . ', ' . $loc);
+                update_post_meta($post_id, '_desa_wisata_phone', $phones[array_rand($phones)]);
+                wp_set_object_terms($post_id, $categories[$i % count($categories)], 'desa_wisata_cat', true);
+                $inserted++;
+            }
+        }
+
         return $inserted;
     }
 
     public static function seed_aid($count = 50) {
         global $wpdb;
-        
-        // Ensure table exists (in case called individually)
+
         \WpDesa\Database\Activator::activate();
 
         $table_programs = $wpdb->prefix . 'desa_programs';
         $table_recipients = $wpdb->prefix . 'desa_program_recipients';
         $table_residents = $wpdb->prefix . 'desa_residents';
 
+        $year = date('Y');
+
         // 1. Create Programs
         $programs = [
-            ['name' => 'BLT Dana Desa 2024', 'origin' => 'Dana Desa', 'amount' => 300000, 'quota' => 100],
+            ['name' => 'BLT Dana Desa ' . $year, 'origin' => 'Dana Desa', 'amount' => 300000, 'quota' => 100],
             ['name' => 'PKH (Program Keluarga Harapan)', 'origin' => 'Kemensos', 'amount' => 750000, 'quota' => 50],
             ['name' => 'Bantuan UMKM', 'origin' => 'Kemenkop', 'amount' => 2400000, 'quota' => 30],
             ['name' => 'Bantuan Sembako', 'origin' => 'Pemda', 'amount' => 200000, 'quota' => 150]
@@ -84,7 +446,6 @@ class Seeder {
 
         $program_ids = [];
         foreach ($programs as $prog) {
-            // Check if exists
             $existing = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_programs WHERE name = %s", $prog['name']));
             if ($existing) {
                 $program_ids[] = $existing;
@@ -95,7 +456,7 @@ class Seeder {
                 'name' => $prog['name'],
                 'description' => 'Bantuan ' . $prog['name'],
                 'origin' => $prog['origin'],
-                'year' => date('Y'),
+                'year' => $year,
                 'status' => 'active',
                 'quota' => $prog['quota'],
                 'amount_per_recipient' => $prog['amount'],
@@ -108,7 +469,7 @@ class Seeder {
         $total = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table_residents");
         if ($total === 0) return;
         $count = min($count, $total);
-        $offset = rand(0, $total - $count);
+        $offset = rand(0, max(0, $total - $count));
         $residents = $wpdb->get_col($wpdb->prepare("SELECT id FROM $table_residents ORDER BY id LIMIT %d OFFSET %d", $count, $offset));
         if (empty($residents)) return;
 
@@ -116,8 +477,7 @@ class Seeder {
 
         foreach ($residents as $resident_id) {
             $program_id = $program_ids[array_rand($program_ids)];
-            
-            // Check uniqueness
+
             $exists = $wpdb->get_var($wpdb->prepare(
                 "SELECT id FROM $table_recipients WHERE program_id = %d AND resident_id = %d",
                 $program_id, $resident_id
@@ -139,7 +499,7 @@ class Seeder {
 
     public static function seed_letters($count = 50) {
         global $wpdb;
-        
+
         \WpDesa\Database\Activator::activate();
 
         $table_letters = $wpdb->prefix . 'desa_letters';
@@ -150,7 +510,7 @@ class Seeder {
         $total = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table_residents");
         if ($total === 0) return 0;
         $count = min($count, $total);
-        $offset = rand(0, $total - $count);
+        $offset = rand(0, max(0, $total - $count));
         $residents = $wpdb->get_results($wpdb->prepare("SELECT nik, nama_lengkap FROM $table_residents ORDER BY id LIMIT %d OFFSET %d", $count, $offset));
         if (empty($residents)) return 0;
 
@@ -172,7 +532,7 @@ class Seeder {
         $inserted = 0;
 
         foreach ($residents as $resident) {
-            $tracking_code = strtoupper(wp_generate_password(8, false));
+            $tracking_code = 'LTR-' . strtoupper(wp_generate_password(8, false));
             $created_at = date('Y-m-d H:i:s', rand(strtotime('-3 months'), time()));
 
             $data = [
@@ -198,8 +558,7 @@ class Seeder {
     public static function seed_complaints($count = 20) {
         global $wpdb;
         $table_complaints = $wpdb->prefix . 'desa_complaints';
-        
-        // Ensure table exists
+
         \WpDesa\Database\Activator::activate();
 
         $names = ['Anonim', 'Budi Santoso', 'Siti Aminah', 'Warga Peduli', 'Ahmad Dani', 'Rina Nose', 'Joko Anwar', ''];
@@ -230,7 +589,7 @@ class Seeder {
             $tracking_code = 'ADU-' . strtoupper(wp_generate_password(6, false));
             $created_at = date('Y-m-d H:i:s', rand(strtotime('-3 months'), time()));
             $status = $statuses[array_rand($statuses)];
-            
+
             $data = [
                 'tracking_code' => $tracking_code,
                 'reporter_name' => $names[array_rand($names)] ?: 'Anonim',
@@ -238,7 +597,7 @@ class Seeder {
                 'category' => $categories[array_rand($categories)],
                 'subject' => $subjects[array_rand($subjects)],
                 'description' => $descriptions[array_rand($descriptions)],
-                'photo_url' => '', // Dummy photo URL or empty
+                'photo_url' => '',
                 'status' => $status,
                 'response' => ($status == 'resolved' || $status == 'rejected') ? 'Terima kasih atas laporannya. Akan segera kami tindak lanjuti.' : '',
                 'created_at' => $created_at,
@@ -256,35 +615,39 @@ class Seeder {
     public static function seed_finances($count = 50) {
         global $wpdb;
         $table_finances = $wpdb->prefix . 'desa_finances';
-        
+
         \WpDesa\Database\Activator::activate();
 
-        $year = date('Y');
         $income_categories = ['Dana Desa', 'Alokasi Dana Desa', 'Bantuan Keuangan Provinsi', 'Bantuan Keuangan Kabupaten', 'Pendapatan Asli Desa (PAD)', 'Lain-lain Pendapatan'];
         $expense_categories = ['Bidang Penyelenggaraan Pemerintahan', 'Bidang Pelaksanaan Pembangunan', 'Bidang Pembinaan Kemasyarakatan', 'Bidang Pemberdayaan Masyarakat', 'Bidang Penanggulangan Bencana'];
-        
+
         $inserted = 0;
+        $current_year = (int) date('Y');
+        $years = range($current_year - 2, $current_year);
+        $per_year = max(1, intval($count / count($years)));
 
-        for ($i = 0; $i < $count; $i++) {
-            $type = rand(0, 1) ? 'income' : 'expense';
-            $category = $type == 'income' ? $income_categories[array_rand($income_categories)] : $expense_categories[array_rand($expense_categories)];
-            
-            $budget = rand(1000000, 500000000);
-            $realization = rand(0, $budget);
-            
-            $data = [
-                'year' => $year,
-                'type' => $type,
-                'category' => $category,
-                'description' => 'Transaksi ' . $category . ' #' . ($i + 1),
-                'budget_amount' => $budget,
-                'realization_amount' => $realization,
-                'transaction_date' => date('Y-m-d', rand(strtotime($year . '-01-01'), strtotime($year . '-12-31'))),
-                'created_at' => current_time('mysql'),
-            ];
+        foreach ($years as $year) {
+            for ($i = 0; $i < $per_year; $i++) {
+                $type = rand(0, 1) ? 'income' : 'expense';
+                $category = $type == 'income' ? $income_categories[array_rand($income_categories)] : $expense_categories[array_rand($expense_categories)];
 
-            if ($wpdb->insert($table_finances, $data)) {
-                $inserted++;
+                $budget = rand(1000000, 500000000);
+                $realization = rand(0, $budget);
+
+                $data = [
+                    'year' => $year,
+                    'type' => $type,
+                    'category' => $category,
+                    'description' => 'Transaksi ' . $category . ' #' . ($i + 1) . ' tahun ' . $year,
+                    'budget_amount' => $budget,
+                    'realization_amount' => $realization,
+                    'transaction_date' => date('Y-m-d', rand(strtotime($year . '-01-01'), min(strtotime($year . '-12-31'), strtotime('today')))),
+                    'created_at' => current_time('mysql'),
+                ];
+
+                if ($wpdb->insert($table_finances, $data)) {
+                    $inserted++;
+                }
             }
         }
 
@@ -293,15 +656,24 @@ class Seeder {
 
     private static function generate_nik() {
         // Simple mock NIK generator: 16 digits
-        // PPKKCCTGDMMYYSSSS
-        $prov = sprintf('%02d', rand(11, 99));
-        $city = sprintf('%02d', rand(1, 99));
-        $kec = sprintf('%02d', rand(1, 99));
-        $date = sprintf('%02d', rand(1, 31));
-        $month = sprintf('%02d', rand(1, 12));
-        $year = sprintf('%02d', rand(0, 99));
-        $seq = sprintf('%04d', rand(1, 9999));
-        
-        return $prov . $city . $kec . $date . $month . $year . $seq;
+        // Format: PPKKCCTGDMMYYSSSS
+        $max_attempts = 5;
+        for ($attempt = 0; $attempt < $max_attempts; $attempt++) {
+            $prov = sprintf('%02d', rand(11, 99));
+            $city = sprintf('%02d', rand(1, 99));
+            $kec = sprintf('%02d', rand(1, 99));
+            $day = rand(1, 31);
+            $month = rand(1, 12);
+            $year = sprintf('%02d', rand(0, 99));
+            $seq = sprintf('%04d', rand(1, 9999));
+
+            // Validate date
+            if (checkdate($month, $day, 2000)) { // year doesn't matter for checkdate, use 2000
+                return $prov . $city . $kec . sprintf('%02d', $day) . sprintf('%02d', $month) . $year . $seq;
+            }
+        }
+
+        // Fallback: use safe values
+        return $prov . $city . $kec . '15' . '06' . $year . $seq;
     }
 }

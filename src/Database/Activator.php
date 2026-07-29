@@ -149,9 +149,18 @@ class Activator
         dbDelta($sql_recipients);
         dbDelta($sql_perangkat);
 
-        // Seed Letter Types if empty (Force check)
-        // Using $wpdb->get_var directly sometimes fails in activation hook context if dbDelta just ran
-        // But let's try to be robust.
+        // Seed Letter Types if empty
+        self::seed_letter_types();
+
+        // Seed Potensi Categories
+        self::seed_potensi_categories();
+    }
+
+    public static function seed_letter_types()
+    {
+        global $wpdb;
+        $table_letter_types = $wpdb->prefix . 'desa_letter_types';
+
         $count = $wpdb->get_var("SELECT COUNT(*) FROM $table_letter_types");
 
         if ($count == 0) {
@@ -171,9 +180,6 @@ class Activator
                 ]);
             }
         }
-
-        // Seed Potensi Categories
-        self::seed_potensi_categories();
     }
 
     private static function seed_potensi_categories()
