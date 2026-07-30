@@ -2516,7 +2516,7 @@ class Shortcode
           <a href="<?php echo get_post_type_archive_link('desa_wisata'); ?>" style="display:inline-block;padding:10px 28px;background:var(--primary);color:var(--on-primary);border-radius:6px;text-decoration:none;font-weight:500;">Lihat Semua Destinasi Wisata</a>
         </div>
       <?php endif; ?>
-<?php
+    <?php
           else :
             echo '<div style="text-align:center;padding:30px;color:var(--graphite);">Belum ada destinasi wisata.</div>';
           endif;
@@ -2634,32 +2634,47 @@ class Shortcode
 
           $jam_kerja = get_option('temadesa_jam_kerja', []);
           $hari_label = [
-            'senin'=>'Senin','selasa'=>'Selasa','rabu'=>'Rabu','kamis'=>'Kamis',
-            'jumat'=>'Jumat','sabtu'=>'Sabtu','minggu'=>'Minggu',
+            'senin' => 'Senin',
+            'selasa' => 'Selasa',
+            'rabu' => 'Rabu',
+            'kamis' => 'Kamis',
+            'jumat' => 'Jumat',
+            'sabtu' => 'Sabtu',
+            'minggu' => 'Minggu',
           ];
-          $hari_urut = ['senin','selasa','rabu','kamis','jumat','sabtu','minggu'];
+          $hari_urut = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu'];
           $hari_ini = strtolower(date('l'));
           $hari_map = [
-            'monday'=>'senin','tuesday'=>'selasa','wednesday'=>'rabu',
-            'thursday'=>'kamis','friday'=>'jumat','saturday'=>'sabtu','sunday'=>'minggu',
+            'monday' => 'senin',
+            'tuesday' => 'selasa',
+            'wednesday' => 'rabu',
+            'thursday' => 'kamis',
+            'friday' => 'jumat',
+            'saturday' => 'sabtu',
+            'sunday' => 'minggu',
           ];
           $today_key = $hari_map[$hari_ini] ?? '';
 
           ob_clean();
           $jam_rows = '';
           foreach ($hari_urut as $key) {
-            $val = isset($jam_kerja[$key]) ? $jam_kerja[$key] : ['buka'=>'08:00','tutup'=>'16:00','libur'=>false];
+            $val = isset($jam_kerja[$key]) ? $jam_kerja[$key] : ['buka' => '08:00', 'tutup' => '16:00', 'libur' => false];
             $tc = ($key === $today_key) ? ' class="ringkasan-today"' : '';
             $jam_rows .= sprintf(
               '<tr%s><td>%s</td><td>%s</td></tr>',
               $tc,
               esc_html($hari_label[$key]),
-              !empty($val['libur']) ? '<em>Libur</em>' : esc_html(($val['buka']??'').' — '.($val['tutup']??''))
+              !empty($val['libur']) ? '<em>Libur</em>' : esc_html(($val['buka'] ?? '') . ' — ' . ($val['tutup'] ?? ''))
             );
           }
 
-          $table_r = $wpdb->prefix.'desa_residents';
-          $total = 0; $kk = 0; $male = 0; $female = 0;
+          $table_r = $wpdb->prefix . 'desa_residents';
+          $total = 0;
+          $kk = 0;
+          $male = 0;
+          $female = 0;
+          $anak = 0;
+          $dewasa = 0;
           if ($wpdb->get_var("SHOW TABLES LIKE '$table_r'") === $table_r) {
             $total  = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table_r");
             $male   = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table_r WHERE jenis_kelamin = 'Laki-laki'");
@@ -2668,60 +2683,108 @@ class Shortcode
             if (!empty($has_kk)) {
               $kk = (int) $wpdb->get_var("SELECT COUNT(DISTINCT no_kk) FROM $table_r WHERE no_kk != ''");
             }
+            $umur = $wpdb->get_row("SELECT
+              SUM(CASE WHEN TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) < 18 THEN 1 ELSE 0 END) AS anak,
+              SUM(CASE WHEN TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) >= 18 THEN 1 ELSE 0 END) AS dewasa
+              FROM $table_r");
+            if ($umur) {
+              $anak = (int)$umur->anak;
+              $dewasa = (int)$umur->dewasa;
+            }
           }
+          $rasio_l = $total > 0 ? round($male / $total * 100) : 0;
+          $rasio_p = $total > 0 ? round($female / $total * 100) : 0;
 
-          $table_f = $wpdb->prefix.'desa_finances';
-          $income = 0; $expense = 0; $silpa = 0; $tahun = '';
+          $table_f = $wpdb->prefix . 'desa_finances';
+          $income = 0;
+          $expense = 0;
+          $silpa = 0;
+          $tahun = '';
+          $budget_income = 0;
+          $budget_expense = 0;
           if ($wpdb->get_var("SHOW TABLES LIKE '$table_f'") === $table_f) {
             $tahun = $wpdb->get_var("SELECT MAX(year) FROM $table_f");
             if ($tahun) {
-              $totals = $wpdb->get_results($wpdb->prepare(
-                "SELECT type, SUM(realization_amount) as total FROM $table_f WHERE year = %d GROUP BY type", $tahun
+              $rows = $wpdb->get_results($wpdb->prepare(
+                "SELECT type, SUM(realization_amount) as total, SUM(budget_amount) as budget FROM $table_f WHERE year = %d GROUP BY type",
+                $tahun
               ));
-              foreach ($totals as $t) {
-                if ($t->type === 'income')  $income  = (float) $t->total;
-                if ($t->type === 'expense') $expense = (float) $t->total;
+              foreach ($rows as $r) {
+                if ($r->type === 'income') {
+                  $income = (float)$r->total;
+                  $budget_income = (float)$r->budget;
+                }
+                if ($r->type === 'expense') {
+                  $expense = (float)$r->total;
+                  $budget_expense = (float)$r->budget;
+                }
               }
               $silpa = $income - $expense;
             }
           }
+          $pct_income  = $budget_income > 0 ? round($income / $budget_income * 100) : 0;
+          $pct_expense = $budget_expense > 0 ? round($expense / $budget_expense * 100) : 0;
 
-          $rp = function($n) { return 'Rp '.number_format($n,0,',','.'); };
-  ?>
+          $rp = function ($n) {
+            return 'Rp ' . number_format($n, 0, ',', '.');
+          };
+    ?>
     <div class="wp-desa-ringkasan-grid">
       <div class="wp-desa-ringkasan-card">
         <div class="wp-desa-ringkasan-card-header">
           <span class="wp-desa-ringkasan-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
           </span>
           <h3>Jam Kerja</h3>
         </div>
-        <table class="wp-desa-ringkasan-jam"><tbody><?php echo $jam_rows; ?></tbody></table>
+        <div class="wp-desa-ringkasan-card-body">
+          <table class="wp-desa-ringkasan-jam">
+            <tbody><?php echo $jam_rows; ?></tbody>
+          </table>
+        </div>
       </div>
 
       <div class="wp-desa-ringkasan-card">
         <div class="wp-desa-ringkasan-card-header">
           <span class="wp-desa-ringkasan-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
           </span>
           <h3>Statistik Penduduk</h3>
         </div>
-        <div class="wp-desa-ringkasan-stats">
-          <div class="wp-desa-ringkasan-stat-item">
-            <span class="wp-desa-ringkasan-stat-number"><?php echo number_format_i18n($total); ?></span>
-            <span class="wp-desa-ringkasan-stat-label">Total Penduduk</span>
-          </div>
-          <div class="wp-desa-ringkasan-stat-item">
-            <span class="wp-desa-ringkasan-stat-number"><?php echo number_format_i18n($male); ?></span>
-            <span class="wp-desa-ringkasan-stat-label">Laki-laki</span>
-          </div>
-          <div class="wp-desa-ringkasan-stat-item">
-            <span class="wp-desa-ringkasan-stat-number"><?php echo number_format_i18n($female); ?></span>
-            <span class="wp-desa-ringkasan-stat-label">Perempuan</span>
-          </div>
-          <div class="wp-desa-ringkasan-stat-item">
-            <span class="wp-desa-ringkasan-stat-number"><?php echo number_format_i18n($kk); ?></span>
-            <span class="wp-desa-ringkasan-stat-label">Kepala Keluarga</span>
+        <div class="wp-desa-ringkasan-card-body">
+          <div class="wp-desa-ringkasan-stats">
+            <div class="wp-desa-ringkasan-stat-item">
+              <span class="wp-desa-ringkasan-stat-number"><?php echo number_format_i18n($total); ?></span>
+              <span class="wp-desa-ringkasan-stat-label">Total Penduduk</span>
+            </div>
+            <div class="wp-desa-ringkasan-stat-item">
+              <span class="wp-desa-ringkasan-stat-number"><?php echo number_format_i18n($kk); ?></span>
+              <span class="wp-desa-ringkasan-stat-label">Kepala Keluarga</span>
+            </div>
+            <div class="wp-desa-ringkasan-stat-item">
+              <span class="wp-desa-ringkasan-stat-number"><?php echo number_format_i18n($male); ?></span>
+              <span class="wp-desa-ringkasan-stat-label">Laki-laki (<?php echo $rasio_l; ?>%)</span>
+            </div>
+            <div class="wp-desa-ringkasan-stat-item">
+              <span class="wp-desa-ringkasan-stat-number"><?php echo number_format_i18n($female); ?></span>
+              <span class="wp-desa-ringkasan-stat-label">Perempuan (<?php echo $rasio_p; ?>%)</span>
+            </div>
+            <div class="wp-desa-ringkasan-stat-item">
+              <span class="wp-desa-ringkasan-stat-number"><?php echo number_format_i18n($dewasa); ?></span>
+              <span class="wp-desa-ringkasan-stat-label">Usia &#8805; 18 tahun</span>
+            </div>
+            <div class="wp-desa-ringkasan-stat-item">
+              <span class="wp-desa-ringkasan-stat-number"><?php echo number_format_i18n($anak); ?></span>
+              <span class="wp-desa-ringkasan-stat-label">Usia &lt; 18 tahun</span>
+            </div>
           </div>
         </div>
       </div>
@@ -2729,29 +2792,45 @@ class Shortcode
       <div class="wp-desa-ringkasan-card">
         <div class="wp-desa-ringkasan-card-header">
           <span class="wp-desa-ringkasan-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23" />
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg>
           </span>
           <h3>Laporan Keuangan</h3>
         </div>
-        <?php if ($tahun) : ?><p class="wp-desa-ringkasan-tahun">Tahun Anggaran <?php echo esc_html($tahun); ?></p><?php endif; ?>
-        <div class="wp-desa-ringkasan-stats">
-          <div class="wp-desa-ringkasan-stat-item">
-            <span class="wp-desa-ringkasan-stat-number wp-desa-ringkasan-income"><?php echo $rp($income); ?></span>
-            <span class="wp-desa-ringkasan-stat-label">Pendapatan</span>
-          </div>
-          <div class="wp-desa-ringkasan-stat-item">
-            <span class="wp-desa-ringkasan-stat-number wp-desa-ringkasan-expense"><?php echo $rp($expense); ?></span>
-            <span class="wp-desa-ringkasan-stat-label">Belanja</span>
-          </div>
-          <div class="wp-desa-ringkasan-stat-item">
-            <span class="wp-desa-ringkasan-stat-number <?php echo $silpa>=0?'wp-desa-ringkasan-income':'wp-desa-ringkasan-expense'; ?>"><?php echo $rp($silpa); ?></span>
-            <span class="wp-desa-ringkasan-stat-label">SiLPA</span>
+        <div class="wp-desa-ringkasan-card-body">
+          <?php if ($tahun) : ?><div class="wp-desa-ringkasan-subtitle">Tahun Anggaran <?php echo esc_html($tahun); ?></div><?php endif; ?>
+          <div class="wp-desa-ringkasan-stats">
+            <div class="wp-desa-ringkasan-stat-item">
+              <span class="wp-desa-ringkasan-stat-number"><?php echo $rp($budget_income); ?></span>
+              <span class="wp-desa-ringkasan-stat-label">Anggaran Pendapatan</span>
+            </div>
+            <div class="wp-desa-ringkasan-stat-item">
+              <span class="wp-desa-ringkasan-stat-number"><?php echo $rp($budget_expense); ?></span>
+              <span class="wp-desa-ringkasan-stat-label">Anggaran Belanja</span>
+            </div>
+            <div class="wp-desa-ringkasan-stat-item">
+              <span class="wp-desa-ringkasan-stat-number wp-desa-ringkasan-income"><?php echo $rp($income); ?></span>
+              <span class="wp-desa-ringkasan-stat-label">Realisasi Pendapatan</span>
+            </div>
+            <div class="wp-desa-ringkasan-stat-item">
+              <span class="wp-desa-ringkasan-stat-number wp-desa-ringkasan-expense"><?php echo $rp($expense); ?></span>
+              <span class="wp-desa-ringkasan-stat-label">Realisasi Belanja</span>
+            </div>
+            <div class="wp-desa-ringkasan-stat-item">
+              <span class="wp-desa-ringkasan-stat-number"><?php echo $pct_income; ?>%</span>
+              <span class="wp-desa-ringkasan-stat-label">Realisasi Pendapatan</span>
+            </div>
+            <div class="wp-desa-ringkasan-stat-item">
+              <span class="wp-desa-ringkasan-stat-number <?php echo $silpa >= 0 ? 'wp-desa-ringkasan-income' : 'wp-desa-ringkasan-expense'; ?>"><?php echo $rp($silpa); ?></span>
+              <span class="wp-desa-ringkasan-stat-label">SiLPA</span>
+            </div>
           </div>
         </div>
-        <div class="wp-desa-ringkasan-footer">APBDes — Realisasi</div>
       </div>
     </div>
-  <?php
+<?php
           return ob_get_clean();
         }
       }

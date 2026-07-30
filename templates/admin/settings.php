@@ -204,7 +204,6 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
 
                 <!-- Tab: Pengaturan Sistem -->
                 <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'sistem' ? 'display:none;' : ''; ?>">
-                    <!-- Seed / Clear Data -->
                     <div class="wp-desa-form-grid">
                         <div class="wp-desa-box-gray">
                             <div class="wp-desa-flex-between-center" style="margin-bottom:16px;">
@@ -212,13 +211,9 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
                                     <label class="wp-desa-label wp-desa-label-lg">Generate Data Dummy</label>
                                     <p class="wp-desa-helper wp-desa-m-0">Buat data contoh untuk semua fitur (penduduk, surat, aduan, keuangan, bantuan).</p>
                                 </div>
-                                <form method="post" style="margin:0;" onsubmit="return confirm('Buat data dummy untuk SEMUA fitur?')">
-                                    <?php wp_nonce_field('wp_desa_seed_action', 'wp_desa_seed_nonce'); ?>
-                                    <input type="hidden" name="wp_desa_seed_data" value="1">
-                                    <button type="submit" class="wp-desa-btn wp-desa-btn-primary">
-                                        <span class="dashicons dashicons-database"></span> Generate Dummy
-                                    </button>
-                                </form>
+                                <button type="button" class="wp-desa-btn wp-desa-btn-primary" onclick="document.getElementById('seed-form').submit();">
+                                    <span class="dashicons dashicons-database"></span> Generate Dummy
+                                </button>
                             </div>
                         </div>
 
@@ -228,13 +223,9 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
                                     <label class="wp-desa-label wp-desa-label-lg">Hapus Semua Data</label>
                                     <p class="wp-desa-helper wp-desa-m-0">Kosongkan semua data dari tabel fitur plugin. Data pengaturan tidak dihapus.</p>
                                 </div>
-                                <form method="post" style="margin:0;" onsubmit="return confirm('Yakin hapus SEMUA data? Tindakan ini tidak bisa dibatalkan.')">
-                                    <?php wp_nonce_field('wp_desa_clear_action', 'wp_desa_clear_nonce'); ?>
-                                    <input type="hidden" name="wp_desa_clear_data" value="1">
-                                    <button type="submit" class="wp-desa-btn wp-desa-btn-danger">
-                                        <span class="dashicons dashicons-trash"></span> Hapus Semua Data
-                                    </button>
-                                </form>
+                                <button type="button" class="wp-desa-btn wp-desa-btn-danger" onclick="return confirm('Yakin hapus SEMUA data? Tindakan ini tidak bisa dibatalkan.') && document.getElementById('clear-form').submit();">
+                                    <span class="dashicons dashicons-trash"></span> Hapus Semua Data
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -258,6 +249,16 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
             </div>
 
         </div><!-- /flex row -->
+    </form>
+
+    <!-- Standalone forms for Seed / Clear -->
+    <form id="seed-form" method="post" style="display:none;">
+        <?php wp_nonce_field('wp_desa_seed_action', 'wp_desa_seed_nonce'); ?>
+        <input type="hidden" name="wp_desa_seed_data" value="1">
+    </form>
+    <form id="clear-form" method="post" style="display:none;">
+        <?php wp_nonce_field('wp_desa_clear_action', 'wp_desa_clear_nonce'); ?>
+        <input type="hidden" name="wp_desa_clear_data" value="1">
     </form>
 
     <!-- Notification Toast -->
