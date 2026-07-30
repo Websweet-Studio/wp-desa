@@ -76,15 +76,15 @@ if (isset($_GET['deleted'])) $success_msg = 'Data perangkat berhasil dihapus.';
 <div class="wp-desa-wrapper">
 
     <?php if ($success_msg): ?>
-        <div class="wp-desa-card" style="padding:16px;margin-bottom:20px;background:#ecfdf5;border:1px solid #6ee7b7;border-radius:8px;color:#065f46;">
-            <?php echo esc_html($success_msg); ?>
-        </div>
+        <div class="notice notice-success is-dismissible"><p><?php echo esc_html($success_msg); ?></p></div>
     <?php endif; ?>
 
     <?php if (in_array($action, ['add', 'edit'])): ?>
         <!-- ======== FORM VIEW ======== -->
-        <div class="wp-desa-card" style="padding:var(--sp-xl);">
-            <h3 style="margin:0 0 var(--sp-lg) 0;"><?php echo $edit_item ? 'Edit Perangkat' : 'Tambah Perangkat'; ?></h3>
+        <a href="?page=wp-desa-pemerintahan&tab=struktur" style="display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--graphite);font-size:13px;margin-bottom:var(--sp-sm);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="m15 18-6-6 6-6"/></svg> Kembali
+        </a>
+        <div class="wp-desa-card">
             <form method="post" id="wp-desa-perangkat-form">
                 <?php wp_nonce_field('wp_desa_perangkat_action', 'wp_desa_perangkat_nonce'); ?>
                 <input type="hidden" name="wp_desa_save_perangkat" value="1">
@@ -155,15 +155,19 @@ if (isset($_GET['deleted'])) $success_msg = 'Data perangkat berhasil dihapus.';
 
     <?php else: ?>
         <!-- ======== LIST VIEW ======== -->
-        <div class="wp-desa-header-actions">
-            <h2 style="margin:0;">Daftar Perangkat Desa</h2>
-            <a href="?page=wp-desa-pemerintahan&tab=struktur&action=add" class="wp-desa-btn wp-desa-btn-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah Perangkat
-            </a>
-        </div>
-
-        <div class="wp-desa-card" style="margin-top:20px;">
-            <table class="wp-list-table widefat fixed striped">
+        <div class="wp-desa-card">
+            <div class="wp-desa-filter-bar" style="display:flex;align-items:center;justify-content:space-between;padding:var(--sp-md);border-bottom:1px solid var(--fog);">
+                <div style="display:flex;gap:var(--sp-sm);align-items:center;">
+                    <span class="wp-desa-pagination-info">Total: <?php echo count($all_perangkat); ?> perangkat</span>
+                </div>
+                <div>
+                    <a href="?page=wp-desa-pemerintahan&tab=struktur&action=add" class="wp-desa-btn wp-desa-btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 .83.18 2 2 0 0 0 .83-.18l8.58-3.9a1 1 0 0 0 0-1.831z"/><path d="M16 17h6"/><path d="M19 14v6"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 .825.178"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l2.116-.962"/></svg> Tambah Perangkat
+                    </a>
+                </div>
+            </div>
+            <div style="overflow-x:auto">
+            <table class="wp-desa-table">
                 <thead>
                     <tr>
                         <th style="width:40px;">No</th>
@@ -171,7 +175,7 @@ if (isset($_GET['deleted'])) $success_msg = 'Data perangkat berhasil dihapus.';
                         <th>Nama</th>
                         <th>Jabatan</th>
                         <th>NIP</th>
-                        <th style="width:160px;">Aksi</th>
+                        <th style="text-align:right;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -184,27 +188,31 @@ if (isset($_GET['deleted'])) $success_msg = 'Data perangkat berhasil dihapus.';
                                     <?php if ($p->foto): ?>
                                         <img src="<?php echo esc_url($p->foto); ?>" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">
                                     <?php else: ?>
-                                        <span class="dashicons dashicons-admin-users" style="font-size:40px;width:40px;height:40px;color:#ccc;"></span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;display:block;margin:0 auto;"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
                                     <?php endif; ?>
                                 </td>
                                 <td><strong><?php echo esc_html($p->nama); ?></strong></td>
                                 <td><?php echo esc_html($p->jabatan); ?></td>
                                 <td><?php echo $p->nip ? esc_html($p->nip) : '-'; ?></td>
-                                <td>
-                                    <a href="?page=wp-desa-pemerintahan&tab=struktur&action=edit&id=<?php echo (int) $p->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Edit</a>
-                                    <a href="<?php echo wp_nonce_url(admin_url('admin.php?page=wp-desa-pemerintahan&tab=struktur&action=edit&delete=1&id=' . (int) $p->id), 'wp_desa_delete_perangkat_' . (int) $p->id); ?>" class="wp-desa-btn wp-desa-btn-danger-outline wp-desa-btn-sm" onclick="return confirm('Yakin hapus perangkat ini?')">Hapus</a>
+                                <td style="text-align:right;">
+                                    <div class="wp-desa-inline-actions-end">
+                                    <a href="?page=wp-desa-pemerintahan&tab=struktur&action=edit&id=<?php echo (int) $p->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v2"/><path d="M21.34 15.664a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/><path d="M8 22H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></a>
+                                    <a href="<?php echo wp_nonce_url(admin_url('admin.php?page=wp-desa-pemerintahan&tab=struktur&action=edit&delete=1&id=' . (int) $p->id), 'wp_desa_delete_perangkat_' . (int) $p->id); ?>" class="wp-desa-btn wp-desa-btn-danger-outline wp-desa-btn-sm" title="Hapus" onclick="return confirm('Yakin hapus perangkat ini?')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></a>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="6" style="text-align:center;padding:30px;">
-                                Belum ada data perangkat. <a href="?page=wp-desa-pemerintahan&tab=struktur&action=add">Tambah sekarang</a>.
+                            <td colspan="6" class="wp-desa-empty-state">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+                                <div class="wp-desa-mt-8">Belum ada data perangkat. <a href="?page=wp-desa-pemerintahan&tab=struktur&action=add" style="text-decoration:underline;">Tambah sekarang</a>.</div>
                             </td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
+            </div>
         </div>
     <?php endif; ?>
 </div>

@@ -9,7 +9,7 @@
                     <h3 class="wp-desa-stat-value">-</h3>
                 </div>
                 <div class="wp-desa-stat-icon" style="background: #c9e0fc; color: #024ad8;">
-                    <span class="dashicons dashicons-groups"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11v6"/><path d="M20 13h2"/><path d="M3 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 2.072.578"/><circle cx="10" cy="7" r="4"/><circle cx="20" cy="19" r="2"/></svg>
                 </div>
             </div>
         </div>
@@ -21,7 +21,7 @@
                     <h3 class="wp-desa-stat-value">-</h3>
                 </div>
                 <div class="wp-desa-stat-icon" style="background: #e6f4ea; color: #1f6b3c;">
-                    <span class="dashicons dashicons-admin-home"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 21a8 8 0 0 0-16 0"/><circle cx="10" cy="8" r="5"/><path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/></svg>
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@
                     <h3 class="wp-desa-stat-value">-</h3>
                 </div>
                 <div class="wp-desa-stat-icon" style="background: #c9e0fc; color: #024ad8;">
-                    <span class="dashicons dashicons-admin-users"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="m21 3-6.75 6.75"/><circle cx="10" cy="14" r="6"/></svg>
                 </div>
             </div>
         </div>
@@ -45,7 +45,7 @@
                     <h3 class="wp-desa-stat-value">-</h3>
                 </div>
                 <div class="wp-desa-stat-icon" style="background: #f9d4d2; color: #b3262b;">
-                    <span class="dashicons dashicons-admin-users"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15v7"/><path d="M9 19h6"/><circle cx="12" cy="9" r="6"/></svg>
                 </div>
             </div>
         </div>

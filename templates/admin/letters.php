@@ -154,7 +154,7 @@ $counts['all'] = array_sum($counts);
                     <div style="display: flex; align-items: flex-end; gap: 8px;">
                         <button type="submit" class="wp-desa-btn wp-desa-btn-primary">Simpan Perubahan</button>
                         <a href="<?php echo admin_url('admin-post.php?action=wp_desa_print_letter&id=' . (int) $letter->id . '&_wpnonce=' . wp_create_nonce('wp_desa_print_letter')); ?>" class="wp-desa-btn wp-desa-btn-secondary" target="_blank">
-                            <span class="dashicons dashicons-printer"></span> Cetak Surat
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="8"/></svg> Cetak Surat
                         </a>
                     </div>
                 </div>
@@ -211,9 +211,9 @@ $counts['all'] = array_sum($counts);
                                 <td><?php echo wp_desa_letter_badge($l->status); ?></td>
                                 <td style="text-align: right;">
                                     <div class="wp-desa-inline-actions-end">
-                                        <a href="?page=wp-desa-layanan&tab=surat&action=detail&id=<?php echo (int) $l->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Lihat Detail</a>
+                                        <a href="?page=wp-desa-layanan&tab=surat&action=detail&id=<?php echo (int) $l->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" title="Lihat Detail"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></a>
                                         <a href="<?php echo admin_url('admin-post.php?action=wp_desa_print_letter&id=' . (int) $l->id . '&_wpnonce=' . wp_create_nonce('wp_desa_print_letter')); ?>" class="wp-desa-btn wp-desa-btn-primary wp-desa-btn-sm" title="Cetak Surat" target="_blank">
-                                            <span class="dashicons dashicons-printer"></span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="8"/></svg>
                                         </a>
                                     </div>
                                 </td>
@@ -222,7 +222,7 @@ $counts['all'] = array_sum($counts);
                     <?php else: ?>
                         <tr>
                             <td colspan="6" class="wp-desa-empty-state">
-                                <span class="dashicons dashicons-warning"></span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--graphite);margin-bottom:var(--sp-md);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                                 <div class="wp-desa-mt-8">Belum ada permohonan surat.</div>
                             </td>
                         </tr>
@@ -237,11 +237,11 @@ $counts['all'] = array_sum($counts);
                     </div>
                     <div class="wp-desa-pagination-controls">
                         <a class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm <?php echo $paged <= 1 ? 'wp-desa-btn-disabled' : ''; ?>" href="?page=wp-desa-layanan&tab=surat<?php echo $paged > 2 ? '&paged=' . ($paged - 1) : ''; ?><?php echo $status_filter ? '&status=' . $status_filter : ''; ?>">
-                            <span class="dashicons dashicons-arrow-left-alt2"></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                         </a>
                         <span class="wp-desa-pagination-page">Halaman <?php echo $paged; ?> dari <?php echo $total_pages; ?></span>
                         <a class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm <?php echo $paged >= $total_pages ? 'wp-desa-btn-disabled' : ''; ?>" href="?page=wp-desa-layanan&tab=surat&paged=<?php echo $paged + 1; ?><?php echo $status_filter ? '&status=' . $status_filter : ''; ?>">
-                            <span class="dashicons dashicons-arrow-right-alt2"></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                         </a>
                     </div>
                 </div>

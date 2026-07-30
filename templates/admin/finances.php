@@ -129,11 +129,11 @@ function wp_desa_format_rp($amount)
         <div class="wp-desa-tabs wp-desa-tab-counts">
             <a href="?page=wp-desa-keuangan&tab=keuangan&view=data"
                class="wp-desa-tab <?php echo $view === 'data' ? 'active' : ''; ?>">
-                <span class="dashicons dashicons-list-view wp-desa-icon-gap"></span> Data APBDes
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><path d="M3 3v18h18"/><rect x="7" y="7" width="4" height="14" rx="1"/><rect x="13" y="4" width="4" height="17" rx="1"/></svg> Data APBDes
             </a>
-            <a href="?page=wp-desa-keuangan&tab=keuangan"
+            <a href="?page=wp-desa-keuangan&tab=keuangan&view=dashboard"
                class="wp-desa-tab <?php echo $view === 'dashboard' ? 'active' : ''; ?>">
-                <span class="dashicons dashicons-chart-pie wp-desa-icon-gap"></span> Dashboard & Grafik
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Dashboard & Grafik
             </a>
         </div>
     </div>
@@ -189,8 +189,8 @@ function wp_desa_format_rp($amount)
                                         <td><?php echo wp_desa_format_rp($f->realization_amount); ?></td>
                                         <td class="wp-desa-text-right">
                                             <div class="wp-desa-inline-actions-end">
-                                                <a href="?page=wp-desa-keuangan&tab=keuangan&view=data&action=edit&id=<?php echo (int) $f->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Edit</a>
-                                                <button class="wp-desa-btn wp-desa-btn-danger-outline wp-desa-btn-sm btn-delete-finance" data-id="<?php echo (int) $f->id; ?>">Hapus</button>
+                                                <a href="?page=wp-desa-keuangan&tab=keuangan&view=data&action=edit&id=<?php echo (int) $f->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v2"/><path d="M21.34 15.664a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/><path d="M8 22H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></a>
+                                                <button class="wp-desa-btn wp-desa-btn-danger-outline wp-desa-btn-sm btn-delete-finance" data-id="<?php echo (int) $f->id; ?>" title="Hapus"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -322,6 +322,81 @@ function wp_desa_format_rp($amount)
                 </div>
             </div>
         </div>
+
+<script>
+jQuery(function($) {
+    function fmt(n) {
+        return 'Rp ' + Number(n).toLocaleString('id-ID');
+    }
+
+    $.getJSON(wpDesaSettings.restBase + '/finances/summary')
+        .done(function(res) {
+            // Stat cards
+            var income = 0, expense = 0;
+            $.each(res.totals, function(_, t) {
+                if (t.type === 'income') income = parseFloat(t.total_realization);
+                if (t.type === 'expense') expense = parseFloat(t.total_realization);
+            });
+
+            // Total Pendapatan
+            $('.wp-desa-stat-card:eq(0) .wp-desa-stat-value').text(fmt(income));
+            $('.wp-desa-stat-card:eq(0) .wp-desa-stat-desc span').text(fmt(income));
+
+            // Total Belanja
+            $('.wp-desa-stat-card:eq(1) .wp-desa-stat-value').text(fmt(expense));
+            $('.wp-desa-stat-card:eq(1) .wp-desa-stat-desc span').text(fmt(expense));
+
+            // Surplus/Defisit
+            var surplus = income - expense;
+            var $sd = $('.wp-desa-stat-card:eq(2) .wp-desa-stat-value');
+            $sd.text(fmt(Math.abs(surplus))).css('color', surplus >= 0 ? '#1f6b3c' : '#b3262b');
+            $('.wp-desa-stat-card:eq(2) .wp-desa-stat-desc span').text(res.year);
+
+            // Income chart
+            var ctx1 = document.getElementById('incomeChart');
+            if (ctx1 && res.income_sources.length) {
+                new Chart(ctx1, {
+                    type: 'doughnut',
+                    data: {
+                        labels: res.income_sources.map(function(s) { return s.category; }),
+                        datasets: [{
+                            data: res.income_sources.map(function(s) { return parseFloat(s.total); }),
+                            backgroundColor: ['#024ad8','#296ef9','#639cff','#9cc0ff','#c9e0fc','#f0f5ff'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true, plugins: { legend: { position: 'bottom', labels: { padding: 16, font: { size: 12 } } } },
+                        cutout: '65%'
+                    }
+                });
+            }
+
+            // Expense chart
+            var ctx2 = document.getElementById('expenseChart');
+            if (ctx2 && res.expense_sources.length) {
+                new Chart(ctx2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: res.expense_sources.map(function(s) { return s.category; }),
+                        datasets: [{
+                            data: res.expense_sources.map(function(s) { return parseFloat(s.total); }),
+                            backgroundColor: ['#b3262b','#d65a5e','#e89194','#f2bcbe','#f9d4d2','#fceaea'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true, plugins: { legend: { position: 'bottom', labels: { padding: 16, font: { size: 12 } } } },
+                        cutout: '65%'
+                    }
+                });
+            }
+        })
+        .fail(function() {
+            $('.wp-desa-stat-card .wp-desa-stat-value').text('Error');
+        });
+});
+</script>
     <?php endif; ?>
 
 </div>

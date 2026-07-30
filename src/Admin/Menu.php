@@ -330,15 +330,7 @@ class Menu
         AdminLayout::open('Pemerintahan', 'wp-desa-pemerintahan', $subnav);
 
         if ($current_tab === 'produk-hukum') {
-            $edit_url = admin_url('edit.php?post_type=desa_produk_hukum');
-            echo '<div class="wp-desa-wrapper">';
-            echo '<div class="wp-desa-header-actions" style="margin-bottom:20px;">';
-            echo '<h2>Produk Hukum Desa</h2>';
-            echo '<a href="' . esc_url(admin_url('post-new.php?post_type=desa_produk_hukum')) . '" class="button button-primary">Tambah Produk Hukum</a>';
-            echo '</div>';
-            echo '<p style="color:#64748b;">Kelola peraturan desa (Perdes), surat keputusan, dan produk hukum lainnya melalui menu WordPress custom post type.</p>';
-            echo '<a href="' . esc_url($edit_url) . '" class="button">Buka Daftar Produk Hukum</a>';
-            echo '</div>';
+            require_once WP_DESA_PATH . 'templates/admin/produk-hukum.php';
         } else {
             require_once WP_DESA_PATH . 'templates/admin/perangkat.php';
         }

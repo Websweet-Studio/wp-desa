@@ -226,7 +226,7 @@ $counts['all'] = array_sum($counts);
                                 <td><?php echo wp_desa_complaint_badge($c->status); ?></td>
                                 <td style="text-align: right;">
                                     <div class="wp-desa-inline-actions-end">
-                                        <a href="?page=wp-desa-layanan&tab=aduan&action=detail&id=<?php echo (int) $c->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Detail</a>
+                                        <a href="?page=wp-desa-layanan&tab=aduan&action=detail&id=<?php echo (int) $c->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" title="Detail"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></a>
                                     </div>
                                 </td>
                             </tr>
@@ -234,7 +234,7 @@ $counts['all'] = array_sum($counts);
                     <?php else: ?>
                         <tr>
                             <td colspan="7" class="wp-desa-empty-state">
-                                <span class="dashicons dashicons-warning"></span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--graphite);margin-bottom:var(--sp-md);"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                                 <div class="wp-desa-mt-8">Belum ada aspirasi atau pengaduan.</div>
                             </td>
                         </tr>
@@ -249,11 +249,11 @@ $counts['all'] = array_sum($counts);
                     </div>
                     <div class="wp-desa-pagination-controls">
                         <a class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm <?php echo $paged <= 1 ? 'wp-desa-btn-disabled' : ''; ?>" href="?page=wp-desa-layanan&tab=aduan<?php echo $paged > 2 ? '&paged=' . ($paged - 1) : ''; ?><?php echo $status_filter ? '&status=' . $status_filter : ''; ?>">
-                            <span class="dashicons dashicons-arrow-left-alt2"></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                         </a>
                         <span class="wp-desa-pagination-page">Halaman <?php echo $paged; ?> dari <?php echo $total_pages; ?></span>
                         <a class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm <?php echo $paged >= $total_pages ? 'wp-desa-btn-disabled' : ''; ?>" href="?page=wp-desa-layanan&tab=aduan&paged=<?php echo $paged + 1; ?><?php echo $status_filter ? '&status=' . $status_filter : ''; ?>">
-                            <span class="dashicons dashicons-arrow-right-alt2"></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                         </a>
                     </div>
                 </div>

@@ -54,7 +54,7 @@ if ($action === 'detail' && isset($_GET['no_kk'])) {
                     <?php else: ?>
                         <tr>
                             <td colspan="6" class="wp-desa-empty-state">
-                                <span class="dashicons dashicons-warning"></span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--graphite);margin-bottom:var(--sp-md);"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                                 <div class="wp-desa-mt-8">Tidak ditemukan anggota untuk KK ini.</div>
                             </td>
                         </tr>
@@ -92,6 +92,16 @@ $kk_list = $wpdb->get_results($wpdb->prepare(
 <div class="wrap wp-desa-wrapper">
 
     <div class="wp-desa-card">
+        <div class="wp-desa-filter-bar" style="display:flex;align-items:center;justify-content:space-between;padding:var(--sp-sm) var(--sp-xl);border-bottom:1px solid var(--fog);">
+            <div style="display:flex;gap:var(--sp-sm);align-items:center;">
+                <span class="wp-desa-pagination-info">Total: <?php echo (int) $total_items; ?> KK</span>
+            </div>
+            <div>
+                <a href="?page=wp-desa-residents&action=add" class="wp-desa-btn wp-desa-btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 .83.18 2 2 0 0 0 .83-.18l8.58-3.9a1 1 0 0 0 0-1.831z"/><path d="M16 17h6"/><path d="M19 14v6"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 .825.178"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l2.116-.962"/></svg> Tambah Anggota
+                </a>
+            </div>
+        </div>
         <div style="overflow-x:auto">
             <table class="wp-desa-table">
                 <thead>
@@ -110,16 +120,18 @@ $kk_list = $wpdb->get_results($wpdb->prepare(
                                 <td class="wp-desa-mono"><?php echo esc_html($kk->no_kk); ?></td>
                                 <td><?php echo esc_html($kk->kepala_keluarga ?: '-'); ?></td>
                                 <td><?php echo esc_html($kk->alamat ?: '-'); ?></td>
-                                <td style="text-align: center;"><?php echo (int) $kk->jumlah_anggota; ?></td>
+                                <td style="text-align: center;"><span class="wp-desa-badge wp-desa-badge-default"><?php echo (int) $kk->jumlah_anggota; ?></span></td>
                                 <td style="text-align: right;">
-                                    <a href="<?php echo $base_url; ?>&action=detail&no_kk=<?php echo urlencode($kk->no_kk); ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Lihat Anggota</a>
+                                    <div class="wp-desa-inline-actions-end">
+                                        <a href="<?php echo $base_url; ?>&action=detail&no_kk=<?php echo urlencode($kk->no_kk); ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" title="Lihat Anggota"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></a>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
                             <td colspan="5" class="wp-desa-empty-state">
-                                <span class="dashicons dashicons-warning"></span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--graphite);margin-bottom:var(--sp-md);"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                                 <div class="wp-desa-mt-8">Belum ada data Kartu Keluarga.</div>
                             </td>
                         </tr>
@@ -135,11 +147,11 @@ $kk_list = $wpdb->get_results($wpdb->prepare(
                 </div>
                 <div class="wp-desa-pagination-controls">
                     <a class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm <?php echo $paged <= 1 ? 'wp-desa-btn-disabled' : ''; ?>" href="<?php echo $base_url; ?><?php echo $paged > 2 ? '&paged=' . ($paged - 1) : ''; ?>">
-                        <span class="dashicons dashicons-arrow-left-alt2"></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                     </a>
                     <span class="wp-desa-pagination-page">Halaman <?php echo $paged; ?> dari <?php echo $total_pages; ?></span>
                     <a class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm <?php echo $paged >= $total_pages ? 'wp-desa-btn-disabled' : ''; ?>" href="<?php echo $base_url; ?>&paged=<?php echo $paged + 1; ?>">
-                        <span class="dashicons dashicons-arrow-right-alt2"></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                     </a>
                 </div>
             </div>
