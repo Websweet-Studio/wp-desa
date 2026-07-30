@@ -462,7 +462,12 @@
       programs: [],
       activeProgramId: null,
       recipients: [],
+      style: $el.data("style") || "classic",
     };
+
+    var isClassic = state.style === "classic";
+    var isCompact = state.style === "compact";
+    var isMinimal = state.style === "minimal";
 
     // The grid div that holds program cards (immediately after the h2)
     var $grid = $el.children("div").first();
@@ -491,6 +496,17 @@
         return;
       }
 
+      if (isClassic) {
+        renderClassic();
+      } else if (isCompact) {
+        renderCompact();
+      } else if (isMinimal) {
+        renderMinimal();
+      }
+    }
+
+    // ---- classic style (full card) ----
+    function renderClassic() {
       $.each(state.programs, function (_, p) {
         var isActive = state.activeProgramId === p.id;
         var card =
@@ -540,29 +556,173 @@
           "</div>" +
           "</div>";
 
-        // Recipients panel
         if (isActive) {
-          card +=
-            '<div class="recipients-panel" style="border-top:1px solid var(--fog);background:var(--cloud);">' +
-            '<div style="padding:var(--sp-lg);">' +
-            '<h4 style="margin:0 0 var(--sp-sm) 0;font-family:var(--font-display);font-size:20px;font-weight:500;color:var(--ink);">Daftar Penerima Bantuan</h4>' +
-            '<div style="overflow-x:auto;background:var(--canvas);border-radius:var(--rounded-lg);border:1px solid var(--fog);">' +
-            '<table style="width:100%;border-collapse:collapse;font-size:14px;">' +
-            '<thead><tr style="background:var(--cloud);color:var(--graphite);text-transform:uppercase;font-size:12px;font-weight:600;letter-spacing:0.7px;">' +
-            '<th style="text-align:left;padding:12px 15px;">Nama</th>' +
-            '<th style="text-align:left;padding:12px 15px;">Alamat</th>' +
-            '<th style="text-align:center;padding:12px 15px;">Status</th>' +
-            "</tr></thead>" +
-            "<tbody>" +
-            renderRecipientRows() +
-            "</tbody>" +
-            "</table>" +
-            "</div></div></div>";
+          card += renderRecipientsPanelClassic();
         }
 
         card += "</div>";
         $grid.append(card);
       });
+    }
+
+    function renderRecipientsPanelClassic() {
+      return (
+        '<div class="recipients-panel" style="border-top:1px solid var(--fog);background:var(--cloud);">' +
+        '<div style="padding:var(--sp-lg);">' +
+        '<h4 style="margin:0 0 var(--sp-sm) 0;font-family:var(--font-display);font-size:20px;font-weight:500;color:var(--ink);">Daftar Penerima Bantuan</h4>' +
+        '<div style="overflow-x:auto;background:var(--canvas);border-radius:var(--rounded-lg);border:1px solid var(--fog);">' +
+        '<table style="width:100%;border-collapse:collapse;font-size:14px;">' +
+        '<thead><tr style="background:var(--cloud);color:var(--graphite);text-transform:uppercase;font-size:12px;font-weight:600;letter-spacing:0.7px;">' +
+        '<th style="text-align:left;padding:12px 15px;">Nama</th>' +
+        '<th style="text-align:left;padding:12px 15px;">Alamat</th>' +
+        '<th style="text-align:center;padding:12px 15px;">Status</th>' +
+        "</tr></thead>" +
+        "<tbody>" +
+        renderRecipientRows() +
+        "</tbody>" +
+        "</table>" +
+        "</div></div></div>"
+      );
+    }
+
+    // ---- compact style (condensed card) ----
+    function renderCompact() {
+      $.each(state.programs, function (_, p) {
+        var isActive = state.activeProgramId === p.id;
+        var card =
+          '<div class="wp-desa-stat-card" style="text-align:left;padding:var(--sp-md);overflow:hidden;border:1px solid var(--fog);margin-bottom:0;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--sp-md);">' +
+          '<div style="flex:1;min-width:0;">' +
+          '<h3 style="margin:0;font-size:16px;font-weight:500;color:var(--ink);">' +
+          escapeHtml(p.name) +
+          "</h3>" +
+          '<p style="margin:4px 0 0;font-size:13px;color:var(--graphite);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
+          escapeHtml(p.description || "") +
+          "</p>" +
+          "</div>" +
+          '<div style="text-align:right;flex-shrink:0;">' +
+          '<div style="font-weight:600;font-size:18px;color:var(--success);">' +
+          formatCurrency(p.amount_per_recipient) +
+          "</div>" +
+          '<div style="font-size:12px;color:var(--graphite);">Kuota: ' +
+          (p.quota || 0) +
+          "</div>" +
+          "</div>" +
+          "</div>" +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:var(--sp-sm);padding-top:var(--sp-sm);border-top:1px solid var(--fog);">' +
+          '<div style="display:flex;gap:var(--sp-xs);flex-wrap:wrap;">' +
+          '<span style="background:var(--primary-soft);color:var(--primary-deep);padding:2px 10px;border-radius:var(--rounded-pill);font-size:11px;font-weight:500;">' +
+          escapeHtml(p.origin) +
+          "</span>" +
+          '<span style="background:var(--cloud);color:var(--ink);padding:2px 10px;border-radius:var(--rounded-pill);font-size:11px;font-weight:500;">' +
+          escapeHtml(p.year) +
+          "</span>" +
+          "</div>" +
+          '<button class="wp-desa-btn ' +
+          (isActive ? "wp-desa-btn-secondary" : "wp-desa-btn-primary") +
+          ' btn-view-recipients" data-program-id="' +
+          p.id +
+          '" style="font-size:13px;padding:6px 14px;">' +
+          "<span>" +
+          (isActive ? "Tutup" : "Penerima") +
+          "</span>" +
+          "</button>" +
+          "</div>";
+
+        if (isActive) {
+          card += renderRecipientsPanelCompact();
+        }
+
+        card += "</div>";
+        $grid.append(card);
+      });
+    }
+
+    function renderRecipientsPanelCompact() {
+      return (
+        '<div class="recipients-panel" style="border-top:1px solid var(--fog);background:var(--cloud);">' +
+        '<div style="padding:var(--sp-md);">' +
+        '<div style="overflow-x:auto;background:var(--canvas);border-radius:var(--rounded-lg);border:1px solid var(--fog);">' +
+        '<table style="width:100%;border-collapse:collapse;font-size:13px;">' +
+        '<thead><tr style="background:var(--cloud);color:var(--graphite);text-transform:uppercase;font-size:11px;font-weight:600;letter-spacing:0.7px;">' +
+        '<th style="text-align:left;padding:8px 12px;">Nama</th>' +
+        '<th style="text-align:left;padding:8px 12px;">Alamat</th>' +
+        '<th style="text-align:center;padding:8px 12px;">Status</th>' +
+        "</tr></thead>" +
+        "<tbody>" +
+        renderRecipientRows() +
+        "</tbody>" +
+        "</table>" +
+        "</div></div></div>"
+      );
+    }
+
+    // ---- minimal style (list row) ----
+    function renderMinimal() {
+      $.each(state.programs, function (_, p) {
+        var isActive = state.activeProgramId === p.id;
+        var row =
+          '<div style="border-bottom:1px solid var(--fog);">' +
+          '<div style="display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-md) 0;">' +
+          '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#024ad8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>' +
+          '<div style="flex:1;min-width:0;">' +
+          '<div style="font-weight:500;font-size:15px;color:var(--ink);">' +
+          escapeHtml(p.name) +
+          "</div>" +
+          '<div style="font-size:12px;color:var(--graphite);margin-top:2px;">' +
+          escapeHtml(p.origin) +
+          " · " +
+          escapeHtml(p.year) +
+          "</div>" +
+          "</div>" +
+          '<div style="text-align:right;flex-shrink:0;">' +
+          '<div style="font-weight:600;font-size:16px;color:var(--success);">' +
+          formatCurrency(p.amount_per_recipient) +
+          "</div>" +
+          "</div>" +
+          '<button class="wp-desa-btn ' +
+          (isActive ? "wp-desa-btn-secondary" : "wp-desa-btn-primary") +
+          ' btn-view-recipients" data-program-id="' +
+          p.id +
+          '" style="font-size:12px;padding:4px 12px;flex-shrink:0;">' +
+          "<span>" +
+          (isActive ? "Tutup" : "Lihat") +
+          "</span>" +
+          "</button>" +
+          "</div>";
+
+        if (isActive) {
+          row += renderRecipientsPanelMinimal();
+        }
+
+        row += "</div>";
+        $grid.append(row);
+      });
+    }
+
+    function renderRecipientsPanelMinimal() {
+      if (!state.recipients.length) {
+        return (
+          '<div style="padding:var(--sp-sm) 0 var(--sp-md) 0;font-size:13px;color:var(--graphite);">' +
+          "Belum ada data penerima yang ditampilkan.</div>"
+        );
+      }
+      var html = '<div style="padding:0 0 var(--sp-md) 0;">';
+      $.each(state.recipients, function (_, r) {
+        html +=
+          '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid var(--fog);font-size:13px;">' +
+          '<span style="color:var(--ink);">' +
+          escapeHtml(r.nama_lengkap) +
+          "</span>" +
+          '<span class="status-badge status-' +
+          (r.status || "") +
+          '" style="font-size:11px;">' +
+          formatStatus(r.status) +
+          "</span>" +
+          "</div>";
+      });
+      html += "</div>";
+      return html;
     }
 
     function renderRecipientRows() {
@@ -609,7 +769,11 @@
       $.getJSON(
         restBase + "/aid-programs/" + program.id + "/recipients",
         function (data) {
-          state.recipients = Array.isArray(data) ? data : [];
+          state.recipients = Array.isArray(data && data.data)
+            ? data.data
+            : Array.isArray(data)
+              ? data
+              : [];
           renderPrograms();
         },
       );
@@ -627,7 +791,11 @@
     // ---- fetch ----
     function fetchPrograms() {
       $.getJSON(restBase + "/aid-programs", function (data) {
-        state.programs = Array.isArray(data) ? data : [];
+        state.programs = Array.isArray(data && data.data)
+          ? data.data
+          : Array.isArray(data)
+            ? data
+            : [];
         renderPrograms();
       });
     }
@@ -661,9 +829,8 @@
 
     // DOM refs — all relative to $el
     var $tabs = $el.find(".wp-desa-tab-btn, .wp-desa-tab-line");
-    var $content = $el.find(".wp-desa-content");
-    var $formPanel = $content.children(".wp-desa-tab-panel").eq(0); // tab === 'form'
-    var $trackPanel = $content.children(".wp-desa-tab-panel").eq(1); // tab === 'track'
+    var $formPanel = $el.find("[x-show=\"tab === 'form'\"]");
+    var $trackPanel = $el.find("[x-show=\"tab === 'track'\"]");
 
     // Form elements — use name attribute selectors (x-model is just a marker for the JS)
     var $form = $formPanel.find("form");
@@ -702,10 +869,35 @@
       $tabs.removeClass("active");
       $tabs.each(function () {
         var $btn = $(this);
+        var isActive = false;
         if (tab === "form" && $btn.text().indexOf("Buat") >= 0)
-          $btn.addClass("active");
+          isActive = true;
         if (tab === "track" && $btn.text().indexOf("Cek") >= 0)
+          isActive = true;
+
+        if (isActive) {
           $btn.addClass("active");
+          // Pill style
+          if ($btn.css("borderRadius") === "9999px") {
+            $btn.css({ background: "var(--ink)", color: "var(--on-ink)" });
+          } else {
+            // Line style
+            $btn.css({
+              borderBottom: "2px solid var(--ink)",
+              color: "var(--ink)",
+            });
+          }
+        } else {
+          // Inactive
+          if ($btn.css("borderRadius") === "9999px") {
+            $btn.css({ background: "transparent", color: "var(--ink)" });
+          } else {
+            $btn.css({
+              borderBottom: "2px solid transparent",
+              color: "var(--graphite)",
+            });
+          }
+        }
       });
 
       if (tab === "form") {
@@ -878,7 +1070,6 @@
         };
         var statusStyle = statusStyleMap[r.status] || "";
 
-        $trackResultDiv.find(".wp-desa-track-code-label").text(r.code || "");
         $trackResultDiv.find(".wp-desa-track-subject").text(r.subject || "");
         $trackResultDiv.find(".wp-desa-track-category").text(r.category || "");
         $trackResultDiv
@@ -887,11 +1078,7 @@
         $trackResultDiv
           .find(".wp-desa-track-status")
           .text(formatStatus(r.status))
-          .attr(
-            "style",
-            "padding:4px 12px;border-radius:20px;font-size:0.85em;font-weight:600;" +
-              statusStyle,
-          );
+          .attr("style", statusStyle);
 
         var $response = $trackResultDiv.find(".wp-desa-track-response");
         if (r.response) {
@@ -926,8 +1113,16 @@
     $trackPanel.find("form").on("submit", checkStatus);
 
     // ---- boot ----
-    $formPanel.hide();
-    $trackPanel.hide();
+    state.tab = $el.attr("data-active-tab") === "track" ? "track" : "form";
+
+    if (state.tab === "track") {
+      $formPanel.hide();
+      $trackPanel.show();
+    } else {
+      $formPanel.show();
+      $trackPanel.hide();
+    }
+
     $messageDiv.hide();
     $trackingCodeDiv.hide();
 
@@ -937,9 +1132,7 @@
     // Hide tracking result/error initially
     $trackResultDiv.hide();
     $trackErrorDiv.hide();
-
-    // Show form tab
-    switchTab("form");
+    $trackBtn.find("span").eq(1).hide(); // loading
   }
 
   // ==========================================================================
@@ -1004,10 +1197,35 @@
       $tabs.removeClass("active");
       $tabs.each(function () {
         var $btn = $(this);
-        if (tab === "request" && $btn.text().indexOf("Buat") >= 0)
-          $btn.addClass("active");
+        var isActive = false;
+        if (tab === "request" && $btn.text().indexOf("Formulir") >= 0)
+          isActive = true;
         if (tab === "tracking" && $btn.text().indexOf("Cek") >= 0)
+          isActive = true;
+
+        if (isActive) {
           $btn.addClass("active");
+          // Pill style
+          if ($btn.css("borderRadius") === "9999px") {
+            $btn.css({ background: "var(--ink)", color: "var(--on-ink)" });
+          } else {
+            // Line style
+            $btn.css({
+              borderBottom: "2px solid var(--ink)",
+              color: "var(--ink)",
+            });
+          }
+        } else {
+          // Inactive
+          if ($btn.css("borderRadius") === "9999px") {
+            $btn.css({ background: "transparent", color: "var(--ink)" });
+          } else {
+            $btn.css({
+              borderBottom: "2px solid transparent",
+              color: "var(--graphite)",
+            });
+          }
+        }
       });
 
       if (tab === "request") {
@@ -1205,7 +1423,7 @@
     // ---- events ----
     $tabs.on("click", function () {
       var text = $(this).text().trim();
-      if (text.indexOf("Buat") >= 0) switchTab("request");
+      if (text.indexOf("Formulir") >= 0) switchTab("request");
       else if (text.indexOf("Cek") >= 0) switchTab("tracking");
     });
 
@@ -1215,15 +1433,16 @@
     $trackBtn.on("click", checkStatus);
 
     // ---- boot ----
-    if ($tabs.filter('[data-tab="tracking"]').hasClass("active")) {
+    state.tab = $el.attr("data-active-tab") === "tracking" ? "tracking" : "request";
+
+    if (state.tab === "tracking") {
       $requestPanel.hide();
       $trackingPanel.show();
-      state.tab = "tracking";
     } else {
       $requestPanel.show();
       $trackingPanel.hide();
-      state.tab = "request";
     }
+
     $msgContent.hide();
     $trackingBox.hide();
     $trackResultDiv.hide();
@@ -1232,7 +1451,6 @@
     $trackBtn.find("span").eq(1).hide(); // loading
 
     fetchTypes();
-    switchTab("request");
   }
 
   // ==========================================================================
