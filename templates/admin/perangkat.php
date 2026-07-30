@@ -4,179 +4,215 @@
  *
  * @package WP_Desa
  */
+
+global $wpdb;
+$table_perangkat = $wpdb->prefix . 'desa_perangkat';
+$action = isset($_GET['action']) ? $_GET['action'] : 'list';
+$edit_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// ============================================================
+// Handle POST: save / update
+// ============================================================
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wp_desa_save_perangkat'])) {
+    check_admin_referer('wp_desa_perangkat_action', 'wp_desa_perangkat_nonce');
+
+    $id       = isset($_POST['id']) ? intval($_POST['id']) : 0;
+    $nama     = sanitize_text_field($_POST['nama']);
+    $jabatan  = sanitize_text_field($_POST['jabatan']);
+    $nip      = sanitize_text_field($_POST['nip']);
+    $foto     = esc_url_raw($_POST['foto']);
+    $parent_id = isset($_POST['parent_id']) ? intval($_POST['parent_id']) : 0;
+    $urutan   = isset($_POST['urutan']) ? intval($_POST['urutan']) : 0;
+
+    $data = [
+        'nama'      => $nama,
+        'jabatan'   => $jabatan,
+        'nip'       => $nip,
+        'foto'      => $foto,
+        'parent_id' => $parent_id,
+        'urutan'    => $urutan,
+    ];
+
+    if ($id > 0) {
+        $wpdb->update($table_perangkat, $data, ['id' => $id]);
+    } else {
+        $wpdb->insert($table_perangkat, $data);
+    }
+
+    wp_redirect(admin_url('admin.php?page=wp-desa-pemerintahan&tab=struktur&saved=1'));
+    exit;
+}
+
+// ============================================================
+// Handle delete via GET (simple approach)
+// ============================================================
+if (isset($_GET['delete']) && $edit_id > 0) {
+    check_admin_referer('wp_desa_delete_perangkat_' . $edit_id);
+    $wpdb->delete($table_perangkat, ['id' => $edit_id]);
+    wp_redirect(admin_url('admin.php?page=wp-desa-pemerintahan&tab=struktur&deleted=1'));
+    exit;
+}
+
+// ============================================================
+// Edit mode: fetch record
+// ============================================================
+$edit_item = null;
+if ($action === 'edit' && $edit_id > 0) {
+    $edit_item = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_perangkat WHERE id = %d", $edit_id));
+    if (!$edit_item) {
+        wp_redirect(admin_url('admin.php?page=wp-desa-pemerintahan&tab=struktur'));
+        exit;
+    }
+}
+
+// ============================================================
+// List mode: fetch all items
+// ============================================================
+$all_perangkat = $wpdb->get_results("SELECT * FROM $table_perangkat ORDER BY urutan ASC, id ASC");
+$success_msg = '';
+if (isset($_GET['saved'])) $success_msg = 'Data perangkat berhasil disimpan.';
+if (isset($_GET['deleted'])) $success_msg = 'Data perangkat berhasil dihapus.';
 ?>
 <div class="wp-desa-wrapper">
-    <div class="wp-desa-header-actions">
-        <h2 style="margin: 0;">Daftar Perangkat Desa</h2>
-        <button type="button" class="button button-primary" id="wp-desa-add-perangkat-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah Perangkat
-        </button>
-    </div>
 
-    <!-- Table -->
-    <div class="wp-desa-card" style="margin-top: 20px;">
-        <table class="wp-list-table widefat fixed striped" id="wp-desa-perangkat-table">
-            <thead>
-                <tr>
-                    <th style="width: 40px;">No</th>
-                    <th style="width: 60px;">Foto</th>
-                    <th>Nama</th>
-                    <th>Jabatan</th>
-                    <th>NIP</th>
-                    <th style="width: 120px;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td colspan="6" style="text-align: center; padding: 30px;">Memuat data...</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- Modal Form -->
-<div id="wp-desa-perangkat-modal" class="wp-desa-modal" style="display: none;">
-    <div class="wp-desa-modal-overlay"></div>
-    <div class="wp-desa-modal-content">
-        <div class="wp-desa-modal-header">
-            <h3 id="wp-desa-perangkat-modal-title">Tambah Perangkat</h3>
-            <button type="button" class="wp-desa-modal-close" id="wp-desa-perangkat-modal-close">&times;</button>
+    <?php if ($success_msg): ?>
+        <div class="wp-desa-card" style="padding:16px;margin-bottom:20px;background:#ecfdf5;border:1px solid #6ee7b7;border-radius:8px;color:#065f46;">
+            <?php echo esc_html($success_msg); ?>
         </div>
-        <form id="wp-desa-perangkat-form">
-            <input type="hidden" id="wp-desa-perangkat-id" name="id" value="">
-            <div class="wp-desa-form-group">
-                <label class="wp-desa-label">Nama Lengkap <span class="required">*</span></label>
-                <input type="text" id="wp-desa-perangkat-nama" name="nama" class="wp-desa-input" required>
-            </div>
-            <div class="wp-desa-form-group">
-                <label class="wp-desa-label">Jabatan <span class="required">*</span></label>
-                <select id="wp-desa-perangkat-jabatan" name="jabatan" class="wp-desa-select" required>
-                    <option value="">-- Pilih Jabatan --</option>
-                    <option value="Kepala Desa">Kepala Desa</option>
-                    <option value="Sekretaris Desa">Sekretaris Desa</option>
-                    <option value="Kasi Pemerintahan">Kasi Pemerintahan</option>
-                    <option value="Kasi Kesejahteraan">Kasi Kesejahteraan</option>
-                    <option value="Kasi Pelayanan">Kasi Pelayanan</option>
-                    <option value="Kaur Keuangan">Kaur Keuangan</option>
-                    <option value="Kaur Umum">Kaur Umum</option>
-                    <option value="Kaur Perencanaan">Kaur Perencanaan</option>
-                    <option value="Kadus">Kadus</option>
-                </select>
-            </div>
-            <div class="wp-desa-form-group">
-                <label class="wp-desa-label">NIP</label>
-                <input type="text" id="wp-desa-perangkat-nip" name="nip" class="wp-desa-input" placeholder="Opsional">
-            </div>
-            <div class="wp-desa-form-group">
-                <label class="wp-desa-label">Foto</label>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <input type="hidden" id="wp-desa-perangkat-foto" name="foto" value="">
-                    <img id="wp-desa-perangkat-foto-preview" src="" style="width: 80px; height: 80px; border-radius: 4px; object-fit: cover; background: #f0f0f0; display: none;">
-                    <button type="button" class="button" id="wp-desa-perangkat-foto-btn">Pilih Foto</button>
-                    <button type="button" class="button button-link-delete" id="wp-desa-perangkat-foto-remove" style="display: none;">Hapus</button>
+    <?php endif; ?>
+
+    <?php if (in_array($action, ['add', 'edit'])): ?>
+        <!-- ======== FORM VIEW ======== -->
+        <div class="wp-desa-card" style="padding:var(--sp-xl);">
+            <h3 style="margin:0 0 var(--sp-lg) 0;"><?php echo $edit_item ? 'Edit Perangkat' : 'Tambah Perangkat'; ?></h3>
+            <form method="post" id="wp-desa-perangkat-form">
+                <?php wp_nonce_field('wp_desa_perangkat_action', 'wp_desa_perangkat_nonce'); ?>
+                <input type="hidden" name="wp_desa_save_perangkat" value="1">
+                <input type="hidden" name="id" value="<?php echo $edit_item ? (int) $edit_item->id : 0; ?>">
+
+                <div class="wp-desa-form-grid">
+                    <div class="wp-desa-form-group">
+                        <label class="wp-desa-label">Nama Lengkap <span class="required">*</span></label>
+                        <input type="text" name="nama" class="wp-desa-input" required
+                            value="<?php echo $edit_item ? esc_attr($edit_item->nama) : ''; ?>">
+                    </div>
+                    <div class="wp-desa-form-group">
+                        <label class="wp-desa-label">Jabatan <span class="required">*</span></label>
+                        <select name="jabatan" class="wp-desa-select" required>
+                            <option value="">-- Pilih Jabatan --</option>
+                            <?php
+                            $jabatan_list = ['Kepala Desa', 'Sekretaris Desa', 'Kasi Pemerintahan', 'Kasi Kesejahteraan', 'Kasi Pelayanan', 'Kaur Keuangan', 'Kaur Umum', 'Kaur Perencanaan', 'Kadus'];
+                            foreach ($jabatan_list as $j) {
+                                $selected = ($edit_item && $edit_item->jabatan === $j) ? 'selected' : '';
+                                echo '<option value="' . esc_attr($j) . '" ' . $selected . '>' . esc_html($j) . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="wp-desa-form-group">
+                        <label class="wp-desa-label">NIP</label>
+                        <input type="text" name="nip" class="wp-desa-input" placeholder="Opsional"
+                            value="<?php echo $edit_item ? esc_attr($edit_item->nip) : ''; ?>">
+                    </div>
+                    <div class="wp-desa-form-group">
+                        <label class="wp-desa-label">Urutan Tampil</label>
+                        <input type="number" name="urutan" class="wp-desa-input" value="<?php echo $edit_item ? esc_attr($edit_item->urutan) : '0'; ?>" min="0">
+                    </div>
                 </div>
-            </div>
-            <div class="wp-desa-form-group">
-                <label class="wp-desa-label">Atasan Langsung</label>
-                <select id="wp-desa-perangkat-parent" name="parent_id" class="wp-desa-select">
-                    <option value="">-- Tidak ada (Jabatan Puncak) --</option>
-                </select>
-            </div>
-            <div class="wp-desa-form-group">
-                <label class="wp-desa-label">Urutan Tampil</label>
-                <input type="number" id="wp-desa-perangkat-urutan" name="urutan" class="wp-desa-input" value="0" min="0">
-            </div>
-            <div style="text-align: right; margin-top: 20px;">
-                <button type="button" class="button" id="wp-desa-perangkat-cancel">Batal</button>
-                <button type="submit" class="button button-primary">Simpan</button>
-            </div>
-        </form>
-    </div>
+
+                <div class="wp-desa-form-group">
+                    <label class="wp-desa-label">Foto</label>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <input type="hidden" name="foto" id="wp-desa-perangkat-foto" value="<?php echo $edit_item ? esc_attr($edit_item->foto) : ''; ?>">
+                        <img id="wp-desa-perangkat-foto-preview" src="<?php echo $edit_item && $edit_item->foto ? esc_attr($edit_item->foto) : ''; ?>"
+                            style="width:80px;height:80px;border-radius:4px;object-fit:cover;background:#f0f0f0;<?php echo $edit_item && $edit_item->foto ? '' : 'display:none;'; ?>">
+                        <button type="button" class="button" id="wp-desa-perangkat-foto-btn">Pilih Foto</button>
+                        <button type="button" class="button button-link-delete" id="wp-desa-perangkat-foto-remove" style="<?php echo $edit_item && $edit_item->foto ? '' : 'display:none;'; ?>">Hapus</button>
+                    </div>
+                </div>
+
+                <div class="wp-desa-form-group">
+                    <label class="wp-desa-label">Atasan Langsung</label>
+                    <select name="parent_id" class="wp-desa-select">
+                        <option value="">-- Tidak ada (Jabatan Puncak) --</option>
+                        <?php
+                        $except_id = $edit_item ? (int) $edit_item->id : 0;
+                        foreach ($all_perangkat as $p) {
+                            if ((int) $p->id === $except_id) continue;
+                            $selected = ($edit_item && (int) $edit_item->parent_id === (int) $p->id) ? 'selected' : '';
+                            echo '<option value="' . (int) $p->id . '" ' . $selected . '>' . esc_html($p->nama) . ' (' . esc_html($p->jabatan) . ')</option>';
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="wp-desa-form-actions" style="margin-top:var(--sp-lg);">
+                    <a href="?page=wp-desa-pemerintahan&tab=struktur" class="wp-desa-btn wp-desa-btn-secondary">Batal</a>
+                    <button type="submit" class="wp-desa-btn wp-desa-btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+
+    <?php else: ?>
+        <!-- ======== LIST VIEW ======== -->
+        <div class="wp-desa-header-actions">
+            <h2 style="margin:0;">Daftar Perangkat Desa</h2>
+            <a href="?page=wp-desa-pemerintahan&tab=struktur&action=add" class="wp-desa-btn wp-desa-btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Tambah Perangkat
+            </a>
+        </div>
+
+        <div class="wp-desa-card" style="margin-top:20px;">
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th style="width:40px;">No</th>
+                        <th style="width:60px;">Foto</th>
+                        <th>Nama</th>
+                        <th>Jabatan</th>
+                        <th>NIP</th>
+                        <th style="width:160px;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($all_perangkat)): ?>
+                        <?php $no = 1; ?>
+                        <?php foreach ($all_perangkat as $p): ?>
+                            <tr>
+                                <td><?php echo $no++; ?></td>
+                                <td>
+                                    <?php if ($p->foto): ?>
+                                        <img src="<?php echo esc_url($p->foto); ?>" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">
+                                    <?php else: ?>
+                                        <span class="dashicons dashicons-admin-users" style="font-size:40px;width:40px;height:40px;color:#ccc;"></span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><strong><?php echo esc_html($p->nama); ?></strong></td>
+                                <td><?php echo esc_html($p->jabatan); ?></td>
+                                <td><?php echo $p->nip ? esc_html($p->nip) : '-'; ?></td>
+                                <td>
+                                    <a href="?page=wp-desa-pemerintahan&tab=struktur&action=edit&id=<?php echo (int) $p->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Edit</a>
+                                    <a href="<?php echo wp_nonce_url(admin_url('admin.php?page=wp-desa-pemerintahan&tab=struktur&action=edit&delete=1&id=' . (int) $p->id), 'wp_desa_delete_perangkat_' . (int) $p->id); ?>" class="wp-desa-btn wp-desa-btn-danger-outline wp-desa-btn-sm" onclick="return confirm('Yakin hapus perangkat ini?')">Hapus</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6" style="text-align:center;padding:30px;">
+                                Belum ada data perangkat. <a href="?page=wp-desa-pemerintahan&tab=struktur&action=add">Tambah sekarang</a>.
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
 </div>
 
+<?php if (in_array($action, ['add', 'edit'])): ?>
 <script>
 jQuery(function($) {
-    var $table = $('#wp-desa-perangkat-table tbody');
-    var $modal = $('#wp-desa-perangkat-modal');
-    var $form = $('#wp-desa-perangkat-form');
-    var apiBase = wpDesaSettings.restBase + '/perangkat';
-    var nonce = wpDesaSettings.nonce;
     var mediaFrame;
-
-    function loadData() {
-        $table.html('<tr><td colspan="6" style="text-align:center;padding:30px;">Memuat data...</td></tr>');
-        $.ajax({
-            url: apiBase,
-            method: 'GET',
-            headers: { 'X-WP-Nonce': nonce },
-            success: function(res) {
-                var items = res || [];
-                if (!items.length) {
-                    $table.html('<tr><td colspan="6" style="text-align:center;padding:30px;">Belum ada data perangkat. Klik "Tambah Perangkat" untuk menambahkan.</td></tr>');
-                    return;
-                }
-                var rows = '';
-                $.each(items, function(i, item) {
-                    var foto = item.foto ? '<img src="' + escapeHtml(item.foto) + '" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">' : '<span class="dashicons dashicons-admin-users" style="font-size:40px;width:40px;height:40px;color:#ccc;"></span>';
-                    rows += '<tr>' +
-                        '<td>' + (i + 1) + '</td>' +
-                        '<td>' + foto + '</td>' +
-                        '<td><strong>' + escapeHtml(item.nama) + '</strong></td>' +
-                        '<td>' + escapeHtml(item.jabatan) + '</td>' +
-                        '<td>' + (item.nip || '-') + '</td>' +
-                        '<td>' +
-                            '<button type="button" class="button button-small wp-desa-edit-perangkat" data-id="' + item.id + '">Edit</button> ' +
-                            '<button type="button" class="button button-small button-link-delete wp-desa-del-perangkat" data-id="' + item.id + '">Hapus</button>' +
-                        '</td>' +
-                        '</tr>';
-                });
-                $table.html(rows);
-            },
-            error: function() {
-                $table.html('<tr><td colspan="6" style="text-align:center;padding:30px;color:red;">Gagal memuat data.</td></tr>');
-            }
-        });
-    }
-
-    function escapeHtml(text) {
-        if (!text) return '';
-        return $('<span>').text(text).html();
-    }
-
-    function loadParentOptions(exceptId) {
-        var $parent = $('#wp-desa-perangkat-parent');
-        $parent.html('<option value="">-- Tidak ada (Jabatan Puncak) --</option>');
-        $.get(apiBase, function(res) {
-            $.each(res || [], function(i, item) {
-                if (item.id == exceptId) return;
-                $parent.append('<option value="' + item.id + '">' + escapeHtml(item.nama) + ' (' + escapeHtml(item.jabatan) + ')</option>');
-            });
-        });
-    }
-
-    function resetForm() {
-        $form[0].reset();
-        $('#wp-desa-perangkat-id').val('');
-        $('#wp-desa-perangkat-foto').val('');
-        $('#wp-desa-perangkat-foto-preview').hide();
-        $('#wp-desa-perangkat-foto-remove').hide();
-        $('#wp-desa-perangkat-modal-title').text('Tambah Perangkat');
-        loadParentOptions();
-    }
-
-    // Add
-    $('#wp-desa-add-perangkat-btn').on('click', function() {
-        resetForm();
-        $modal.show();
-    });
-
-    // Close modal
-    $('#wp-desa-perangkat-modal-close, #wp-desa-perangkat-cancel, .wp-desa-modal-overlay').on('click', function() {
-        $modal.hide();
-    });
-
-    // Media uploader
     $('#wp-desa-perangkat-foto-btn').on('click', function(e) {
         e.preventDefault();
         if (mediaFrame) { mediaFrame.open(); return; }
@@ -189,95 +225,11 @@ jQuery(function($) {
         });
         mediaFrame.open();
     });
-
     $('#wp-desa-perangkat-foto-remove').on('click', function() {
         $('#wp-desa-perangkat-foto').val('');
         $('#wp-desa-perangkat-foto-preview').hide();
         $(this).hide();
     });
-
-    // Edit
-    $table.on('click', '.wp-desa-edit-perangkat', function() {
-        var id = $(this).data('id');
-        resetForm();
-        $('#wp-desa-perangkat-modal-title').text('Edit Perangkat');
-        $.get(apiBase, function(items) {
-            var item = $.grep(items, function(o) { return o.id == id; })[0];
-            if (!item) return;
-            $('#wp-desa-perangkat-id').val(item.id);
-            $('#wp-desa-perangkat-nama').val(item.nama);
-            $('#wp-desa-perangkat-jabatan').val(item.jabatan);
-            $('#wp-desa-perangkat-nip').val(item.nip);
-            if (item.foto) {
-                $('#wp-desa-perangkat-foto').val(item.foto);
-                $('#wp-desa-perangkat-foto-preview').attr('src', item.foto).show();
-                $('#wp-desa-perangkat-foto-remove').show();
-            }
-            loadParentOptions(id);
-            if (item.parent_id) $('#wp-desa-perangkat-parent').val(item.parent_id);
-            $('#wp-desa-perangkat-urutan').val(item.urutan || 0);
-            $modal.show();
-        });
-    });
-
-    // Delete
-    $table.on('click', '.wp-desa-del-perangkat', function() {
-        if (!confirm('Yakin hapus perangkat ini?')) return;
-        var id = $(this).data('id');
-        $.ajax({
-            url: apiBase + '/' + id,
-            method: 'DELETE',
-            headers: { 'X-WP-Nonce': nonce },
-            success: function() { loadData(); },
-            error: function() { alert('Gagal menghapus data.'); }
-        });
-    });
-
-    // Submit form
-    $form.on('submit', function(e) {
-        e.preventDefault();
-        var id = $('#wp-desa-perangkat-id').val();
-        var data = {
-            nama: $('#wp-desa-perangkat-nama').val(),
-            jabatan: $('#wp-desa-perangkat-jabatan').val(),
-            nip: $('#wp-desa-perangkat-nip').val(),
-            foto: $('#wp-desa-perangkat-foto').val(),
-            parent_id: $('#wp-desa-perangkat-parent').val() || 0,
-            urutan: $('#wp-desa-perangkat-urutan').val() || 0,
-        };
-
-        var method = id ? 'PUT' : 'POST';
-        var url = id ? (apiBase + '/' + id) : apiBase;
-
-        $.ajax({
-            url: url,
-            method: method,
-            headers: { 'X-WP-Nonce': nonce },
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function() {
-                $modal.hide();
-                loadData();
-            },
-            error: function(xhr) {
-                var msg = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Gagal menyimpan data.';
-                alert(msg);
-            }
-        });
-    });
-
-    // Initial load
-    loadData();
 });
 </script>
-
-<style>
-.wp-desa-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100000; }
-.wp-desa-modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
-.wp-desa-modal-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; padding: 24px; border-radius: 8px; width: 90%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-.wp-desa-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.wp-desa-modal-header h3 { margin: 0; }
-.wp-desa-modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #666; padding: 0; line-height: 1; }
-.wp-desa-modal-close:hover { color: #000; }
-.wp-desa-header-actions { display: flex; justify-content: space-between; align-items: center; }
-</style>
+<?php endif; ?>

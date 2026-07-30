@@ -111,6 +111,17 @@ function wp_desa_status_badge($status)
     <?php if ($action === 'list'): ?>
         <!-- ======== TABLE VIEW ======== -->
         <div class="wp-desa-card">
+            <!-- Action Bar -->
+            <div class="wp-desa-filter-bar" style="display:flex;align-items:center;justify-content:space-between;padding:var(--sp-md);border-bottom:1px solid var(--fog);">
+                <div style="display:flex;gap:var(--sp-sm);align-items:center;">
+                    <span class="wp-desa-pagination-info">Total: <?php echo (int) $total_items; ?> penduduk</span>
+                </div>
+                <div>
+                    <a href="?page=wp-desa-residents&action=add" class="wp-desa-btn wp-desa-btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 .83.18 2 2 0 0 0 .83-.18l8.58-3.9a1 1 0 0 0 0-1.831z"/><path d="M16 17h6"/><path d="M19 14v6"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 .825.178"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l2.116-.962"/></svg> Tambah Data
+                    </a>
+                </div>
+            </div>
             <div style="overflow-x:auto">
                 <table class="wp-desa-table">
                     <thead>
@@ -138,8 +149,8 @@ function wp_desa_status_badge($status)
                                     <td><?php echo esc_html($r->pekerjaan ?: '-'); ?></td>
                                     <td style="text-align:right;">
                                         <div class="wp-desa-inline-actions-end">
-                                            <a href="?page=wp-desa-residents&action=edit&id=<?php echo (int)$r->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Edit</a>
-                                            <button class="wp-desa-btn wp-desa-btn-danger-outline wp-desa-btn-sm btn-delete-resident" data-id="<?php echo (int)$r->id; ?>">Hapus</button>
+                                            <a href="?page=wp-desa-residents&action=edit&id=<?php echo (int)$r->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v2"/><path d="M21.34 15.664a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/><path d="M8 22H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></a>
+                                            <button class="wp-desa-btn wp-desa-btn-danger-outline wp-desa-btn-sm btn-delete-resident" data-id="<?php echo (int)$r->id; ?>" title="Hapus"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -176,6 +187,9 @@ function wp_desa_status_badge($status)
 
     <?php else: ?>
         <!-- ======== FORM VIEW (add / edit) ======== -->
+        <a href="?page=wp-desa-residents" style="display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--graphite);font-size:13px;margin-bottom:var(--sp-sm);">
+            <span class="dashicons dashicons-arrow-left-alt2" style="font-size:16px;width:16px;height:16px;"></span> Kembali
+        </a>
         <div class="wp-desa-card">
             <form method="post">
                 <input type="hidden" name="wp_desa_save_resident" value="1">

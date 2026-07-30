@@ -80,15 +80,11 @@ class Menu
             [$this, 'render_dokumentasi_page']
         );
 
-        // Submenu Peta Desa (GIS & Wisata)
-        add_submenu_page(
-            'wp-desa',
-            'Peta Desa',
-            'Peta Desa',
-            'manage_options',
-            'wp-desa-peta',
-            [$this, 'render_peta_page']
-        );
+        // Redirect old wp-desa-peta page to settings tab
+        if (isset($_GET['page']) && $_GET['page'] === 'wp-desa-peta') {
+            wp_redirect(admin_url('admin.php?page=wp-desa-settings&tab=peta'));
+            exit;
+        }
     }
 
     public function enqueue_scripts($hook)
@@ -102,7 +98,6 @@ class Menu
             'wp-desa_page_wp-desa-pemerintahan',
             'wp-desa_page_wp-desa-settings',
             'wp-desa_page_wp-desa-dokumentasi',
-            'wp-desa_page_wp-desa-peta'
         ];
 
         if (in_array($hook, $allowed_pages)) {
@@ -138,6 +133,9 @@ class Menu
                 .wp-desa-hero__head { display:none !important; }
                 .wp-desa-wrapper > h2:first-child { display:none !important; }
                 .wp-desa-wrapper > h2:first-child + p { display:none !important; }
+                #adminmenuwrap { z-index:1001 !important; }
+                .wp-desa__globalnav { z-index:1000 !important; }
+                #wpadminbar { z-index:1002 !important; }
             </style>';
         }
     }
@@ -304,10 +302,19 @@ class Menu
             ['tab' => 'media', 'label' => 'Logo & Media'],
             ['tab' => 'pejabat', 'label' => 'Kepala Desa'],
             ['tab' => 'sistem', 'label' => 'Pengaturan Sistem'],
+            ['tab' => 'peta', 'label' => 'Peta Desa'],
         ];
 
+        $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
+
         AdminLayout::open('Pengaturan', 'wp-desa-settings', $subnav);
-        require_once WP_DESA_PATH . 'templates/admin/settings.php';
+
+        if ($current_tab === 'peta') {
+            require_once WP_DESA_PATH . 'templates/admin/peta.php';
+        } else {
+            require_once WP_DESA_PATH . 'templates/admin/settings.php';
+        }
+
         AdminLayout::close();
     }
 

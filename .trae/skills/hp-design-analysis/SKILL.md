@@ -1,368 +1,380 @@
 ---
 name: "hp-design-analysis"
-description: "HP design system with colors, typography, components, layout, spacing, and responsive rules. Invoke when building UI matching HP's enterprise-consumer aesthetic — white paper canvas, HP Electric Blue (#024ad8) as lone signal CTA, near-black ink headlines, Forma DJR Micro sans, and angular blue-chevron decorations."
+description: "WP-Desa admin design system — white-paper enterprise UI anchored by HP Electric Blue (#024ad8) primary CTA, near-black ink (#1a1a1a) text, 4px/16px two-tier radius, 8px spacing grid, and inline SVG Lucide icons. Use when building admin UI matching WP-Desa's residents/finances/settings page patterns."
 ---
 
-# HP Design Analysis
+# WP-Desa Admin Design System
 
-An inspired interpretation of HP's design language — a white-paper enterprise-consumer system anchored by HP Electric Blue (`#024ad8`) as the lone signal CTA, near-black ink (`#1a1a1a`) for headlines, geometric Forma-DJR sans throughout, and angular blue-chevron decorations that nod to the HP wordmark's slashes. Cards round at 8–16px, photos sit in soft 16px frames, and dark navy slabs anchor the customer-story and "how can we help" closing bands.
+Based on the wp-desa-residents page (list + form views), wp-desa-keuangan, wp-desa-pemerintahan, and other admin pages. A white-paper admin UI with a single blue CTA, sharp 4px interactive elements, soft 16px cards, and consistent 8px-base spacing.
 
 ## Colors
 
 ### Brand & Accent
 
-- **HP Electric Blue** (`{colors.primary}` — `#024ad8`): the system's lone signal — primary CTA fill, link color, chevron-decoration fill, active sub-nav indicator. Reserved.
-- **Bright Blue** (`{colors.primary-bright}` — `#296ef9`): a slightly lighter variant used inside dark slabs (testimonial-card buttons, dark-band CTA links) where the deeper blue would muddy.
-- **Deep Navy** (`{colors.primary-deep}` — `#0e3191`): pressed state for the primary CTA and the visited-link color.
-- **Soft Blue** (`{colors.primary-soft}` — `#c9e0fc`): pale-blue surface used inside customer-story cards and selection chips.
+- **Primary Blue** (`--primary` — `#024ad8`): the lone signal — primary button fill, link color, active nav indicator, stat card icon backgrounds. Used sparingly.
+- **Primary Bright** (`--primary-bright` — `#296ef9`): hover/lighter variant for interactive states.
+- **Primary Deep** (`--primary-deep` — `#0e3191`): pressed state for primary CTA.
+- **Primary Soft** (`--primary-soft` — `#c9e0fc`): pale blue used for stat card icon containers.
 
 ### Surface
 
-- **Canvas** (`#ffffff`): the universal page background. White, full opacity.
-- **Paper** (`#ffffff`): card surfaces — same white as canvas, with hairline borders or shadows providing the lift.
-- **Cloud** (`#f7f7f7`): the lightest gray section band, used for alternating-row backgrounds and product-feature card groups.
-- **Fog** (`#e8e8e8`): a slightly darker gray surface band, used for FAQ outer panels and the "Trending laptops" header strip.
-- **Steel** (`#c2c2c2`): hairline border used on outlined elements with stronger emphasis (focus states, active filter).
-- **Bloom Coral / Bloom Rose** (`#ff5050`, `#f9d4d2`): the "Get 25% off" sale-tag chip + soft pink lifestyle accent on the sale hero.
-- **Storm Mist / Sea / Deep** (`#8ebdce`, `#7fadbe`, `#356373`): the teal-storm tones reserved for the printer-plan illustration backdrop and supporting infographic accents.
+- **Canvas** (`--canvas` — `#ffffff`): universal page and card background. White, full opacity.
+- **Cloud** (`--cloud` — `#f7f7f7`): alternate row background, pagination bar background, modal footer, form actions footer, stat card value backgrounds.
+- **Fog** (`--fog` — `#e8e8e8`): hairline borders for cards, table cells, input borders, subnav separators, pagination top border.
+- **Steel** (`--steel` — `#c2c2c2`): default input border color, disabled state fills.
 
 ### Text
 
-- **Ink** (`#1a1a1a`): the universal text color on white surfaces — headlines, body, button labels, navigation.
-- **Ink Deep** (`#000000`): pure black used for the wordmark and 1px hairline strokes around badge outlines.
-- **Ink Soft** (`#292929`): an alternate near-black used inside dark-navy slabs as a subtle textural shift.
-- **On Ink** (`#ffffff`): pure white used for headline and body text on every dark-navy slab.
-- **Charcoal** (`#3d3d3d`): muted body color on white surfaces — secondary descriptions, fine-print disclaimers.
-- **Graphite** (`#636363`): smaller-print color, used for legal lines and timestamp metadata.
+- **Ink** (`--ink` — `#1a1a1a`): universal text — headlines, body, table content, button labels, nav links.
+- **Charcoal** (`--charcoal` — `#3d3d3d`): muted body text, helper text, secondary descriptions.
+- **Graphite** (`--graphite` — `#636363`): small print, table header labels (uppercase), placeholder text, pagination info, empty state text.
+- **On Ink** (`--on-ink` — `#ffffff`): white text on dark backgrounds (hero band, primary button, dark subnav tab).
 
 ### Semantic
 
-- **Bloom Deep** (`#b3262b`) + **Bloom Wine** (`#5a1313`): error and discount-emphasis colors. The deep brick reads as "sale" or "destructive" depending on placement.
-- **Storm Deep** (`#356373`): used as a neutral status accent (e.g., printer-plan tier "Versatile" tier color).
+- **Error** (`--error` — `#b3262b`): error messages, danger badges, required field asterisk (`wp-desa-req`), danger outline button text/border.
+- **Success** (`--success` — `#1f6b3c`): success badges (completed, resolved, income), income bar fill, green text utility.
+- **Warning** (`--warning` — `#9a5b1e`): warning badges (in_progress, processed).
+
+### Special
+
+- **Bloom Rose** (`--bloom-rose` — `#f9d4d2`): danger outline button background, danger button background.
+- **Bloom Deep** (`--bloom-deep` — `#b3262b`): danger text, same as error.
+- **Bloom Coral** (`--bloom-coral` — `#ff5050`): pending list dot indicator.
 
 ## Typography
 
 ### Font Family
 
-The voice is **single-family**: Forma DJR Micro (HP's bespoke geometric grotesque, fallback Arial) across every surface — display, body, button, caption. Forma DJR Micro is a wide, slightly rounded grotesque designed at small optical sizes to stay legible at UI-chrome scale. HP runs it at weight 400 for body, 500 for display headlines, 600/700 for emphasis and button labels.
+Single family across all surfaces: **Forma DJR Micro** (HP's bespoke geometric grotesque), with fallback stack: Manrope, Inter, Arial, ui-sans-serif, sans-serif.
 
-The 16/14/12-px caption tier carries the catalog metadata — model numbers, spec rows, fine print — at weight 400 with a 1.4–1.5 line-height. Button labels lift to weight 600/700 with positive 0.5–1.1px letter-spacing and uppercase transform — the only place the system tracks letters.
+Applied via two CSS variables:
+
+- `--font-display` — for section titles, stat values, hero titles, modal titles, page titles (weight 500)
+- `--font-body` — for everything else: body text, table content, inputs, buttons, labels
 
 ### Hierarchy
 
-| Token           | Size   | Weight | Line Height | Letter Spacing | Use                                         |
-| --------------- | ------ | ------ | ----------- | -------------- | ------------------------------------------- |
-| `display-xxl`   | 72px   | 500    | 1.0         | 0              | Hero headline (homepage, laptop hub)        |
-| `display-xl`    | 56px   | 500    | 1.0         | 0              | Section headlines on landing pages          |
-| `display-lg`    | 44px   | 500    | 1.0         | 0              | Sub-section headlines on shop pages         |
-| `display-md`    | 32px   | 500    | 1.0         | 0              | Promo strip headlines, FAQ section headers  |
-| `display-sm`    | 24px   | 500    | 1.17        | 0              | Card titles, pricing-tier names             |
-| `display-xs`    | 20px   | 500    | 1.0         | 0              | Inline list headers, accordion labels       |
-| `body-lg`       | 18px   | 400    | 1.33        | 0              | Lead paragraphs                             |
-| `body-md`       | 16px   | 400    | 1.38        | 0              | Default body                                |
-| `body-emphasis` | 16px   | 500    | 1.38        | 0              | Bolded run-in copy                          |
-| `caption-md`    | 14px   | 400    | 1.5         | 0              | Specs, metadata, captions                   |
-| `caption-bold`  | 14px   | 700    | 1.3         | 0              | Sale tags, in-card highlights               |
-| `caption-sm`    | 12px   | 400    | 1.33        | 0              | Footnotes, legal lines                      |
-| `link-md`       | 16px   | 500    | 1.38        | 0              | Inline link emphasis                        |
-| `button-md`     | 14px   | 600    | 1.4         | 0.7px          | Primary/secondary button labels (uppercase) |
-| `button-sm`     | 12.6px | 700    | 1.0         | 0.126px        | Compact button labels in tight cells        |
-| `price-md`      | 24px   | 500    | 1.17        | 0              | Tier and product price stamps               |
+| Token             | Size   | Weight | Line Height | Letter Spacing | Use                                                |
+| ----------------- | ------ | ------ | ----------- | -------------- | -------------------------------------------------- |
+| `hero-title`      | 44px   | 500    | 1.0         | 0              | Dashboard hero headline                            |
+| `hero-value`      | 32px   | 500    | 1.0         | 0              | Stat metric values                                 |
+| `page-title`      | 32px   | 500    | 1.0         | 0              | Page heading (`wp-desa-title`)                     |
+| `section-title`   | 20px   | 500    | 1.0         | 0              | Card titles, modal titles, section headings        |
+| `body-default`    | 16px   | 400    | 1.38        | 0              | Form inputs, body text                             |
+| `body-emphasis`   | 16px   | 500    | 1.38        | 0              | Bold body runs                                     |
+| `body-small`      | 14px   | 400    | 1.5         | 0              | Helper text, info details, table cells             |
+| `label-bold`      | 14px   | 500    | 1.0         | 0              | Form labels (`wp-desa-label`), sidebar titles      |
+| `uppercase-label` | 12px   | 600    | 1.0         | 0.7px          | Table header labels, stat card titles, info labels |
+| `button-label`    | 14px   | 600    | 1.4         | 0.7px          | Button labels (uppercase)                          |
+| `button-sm`       | 12.6px | 700    | 1.0         | 0.126px        | Small button labels (uppercase)                    |
+| `badge-text`      | 12px   | 500    | 1.33        | 0              | Badge / pill labels                                |
+| `caption-sm`      | 12px   | 400    | 1.33        | 0              | Fine print                                         |
 
 ### Principles
 
-The typographic decision worth flagging: HP runs **weight 500 for every display size**, including the largest 72px hero headline. Most editorial systems jump to 600/700 at hero scale; HP doesn't. The result feels open and approachable rather than commanding — appropriate for a brand that sells across consumer, SMB, and enterprise audiences in the same catalog.
+- Section titles at 20px weight 500 — never heavier.
+- The only uppercase + tracked text is: **button labels** (14px, 600, 0.7px), **table headers** (12px, 600, 0.7px), **stat card titles** (12px, 600, 0.7px), and **info labels** (12px, 600, 0.7px).
+- Helptext and empty states use `--graphite` (#636363).
+- Table header text uses uppercase with 0.7px tracking, styled differently from body.
 
-Forma DJR Micro's rounded-grotesque shapes do most of the warmth. There's no italic in the system except inside legal disclaimers; emphasis is carried by weight (500 → body-emphasis, 700 → caption-bold) instead.
-
-### Note on Font Substitutes
-
-Forma DJR Micro is proprietary (Commercial Type / Mark Caneso). Closest open-source substitutes:
-
-- **Inter** at weights 400 / 500 / 600 / 700 — slightly narrower than Forma DJR Micro; bump font-size by ~3% to compensate
-- **Manrope** at weights 400 / 500 / 600 / 700 — closer in proportion, gentler curves; use directly with no metric adjustment
-- **Roboto** at weights 400 / 500 / 700 — flatter character; use as last-resort fallback
-
-When swapping, set body line-height to 1.4 and display line-height to 1.0 explicitly — the Forma DJR Micro line-height numbers are tight, and most substitutes default looser.
-
-## Layout
+## Layout & Spacing
 
 ### Spacing System
 
-- **Base unit**: 8px. Smaller half-step at 4px. The scale is gentle — most card padding lands at 16px or 24px; section gap at 80px.
-- **Tokens**: `xxs` 4px · `xs` 8px · `sm` 12px · `md` 16px · `lg` 20px · `xl` 24px · `xxl` 32px · `section` 80px
-- **Section padding**: `section` (80px) vertical between major bands on desktop; collapses to ~48px on mobile.
-- **Card internal padding**: `xl` (24px) for product cards; `xxl` (32px) for promo strips and feature cards; `md` (16px) for compact article tiles.
-- **Gutter**: `xl` (24px) between grid columns at desktop; `md` (16px) on tablet/mobile.
+- **Base unit**: 8px. Scale: `xxs` 4px · `xs` 8px · `sm` 12px · `md` 16px · `lg` 20px · `xl` 24px · `xxl` 32px · `section` 80px
+- **Card internal padding**: defaults to `xl` (24px) via `wp-desa-card-pad` or inline `var(--sp-xl)`
+- **Card bottom margin**: `xxl` (32px)
+- **Form grid padding**: 20px per `wp-desa-form-grid`
+- **Filter bar padding**: `sm` 12px vertical, `xl` 24px horizontal
+- **Table cell padding**: `sm` 12px vertical, `xl` 24px horizontal (th: 14px vertical)
 
-The 80px section gap is the universal rhythm constant — it appears between every major homepage band, between the hero and the comparison table on the printer-plan page, and between feature rows on the laptop-shop page.
+### Container Structure (AdminLayout)
 
-### Grid & Container
+The page layout follows a three-layer structure:
 
-- **Desktop max-width**: 1366px content container with full-bleed-on-canvas section backgrounds.
-- **Hero**: a single full-width photo card (homepage and laptop-hub hero) with the headline overlay positioned upper-left or upper-right.
-- **Product family grid**: 4 columns at >1200px, 3 at 1024–1199px, 2 at 768–1023px, 1 below 768px.
-- **Pricing tiers**: 4 columns at >1024px, 2x2 grid at 768–1023px, single-column accordion below 768px.
-- **Footer**: 5-column link grid at >1024px, collapsing to 2-column then accordion on mobile.
+1. **`wp-desa__globalnav`** — top navigation bar:
+   - White (`--canvas`), 64px height, sticky top at 32px (below WP admin bar)
+   - Bottom border: 1px solid `--fog`
+   - Contains: brand logo left, nav link list right
+   - Nav links: 16px body, `--ink` color, active state gets `--primary` underline
 
-### Whitespace Philosophy
+2. **`wp-desa__subnav`** — secondary tab navigation:
+   - White, below globalnav, bottom border 1px `--fog`
+   - Title (uppercase, 14px, 600, `--graphite`) + pill-shaped tab list
+   - Tab pills: default white, active `--ink` with `--on-ink` text, `--rounded-pill` radius
+   - Tabs link to `?page=X&tab=Y`
 
-Whitespace is **commercial-clean** — generous around hero photography, tight around catalog spec rows. Product cards leave breathing room above and below the photo (≥32px) so the laptop or printer reads as a hero shot rather than a thumbnail. The fine-print disclaimer regions (legal, footnote rows) tighten line-height to 1.3 and shrink type to 11–12px so the bulk of fine print stays compact.
+3. **`wp-desa__content`** — main content area:
+   - Top padding: `xxl` (32px)
+   - Contains the page template output
+
+### Page Sections
+
+- **Page header** (optional): `wp-desa-header` with `wp-desa-title` + `wp-desa-actions`
+- **Hero band** (dashboard only): `wp-desa-hero` — dark ink slab (`--ink` background, `--on-ink` text), rounded `xl`, 48px padding, metric row below
+- **Cards**: `wp-desa-card` — white, `--rounded-xl` (16px), 1px `--fog` border, `overflow: hidden`
+- **Filter bar**: `wp-desa-filter-bar` — flex row with padding, border-bottom inside a card
+- **Form actions**: `wp-desa-form-actions` — `--cloud` background, border-top, right-aligned buttons
 
 ## Elevation & Depth
 
-| Level              | Treatment                              | Use                                                            |
-| ------------------ | -------------------------------------- | -------------------------------------------------------------- |
-| 0 — Flat           | No border, no shadow.                  | Section bands (white, cloud, fog), full-bleed photo heroes     |
-| 1 — Hairline       | 1px solid `#e8e8e8` border, no shadow. | Outlined buttons, comparison-table cells, FAQ accordion outers |
-| 2 — Soft Lift      | `0 2px 8px rgba(26, 26, 26, 0.08)`.    | Product cards, pricing-tier columns, customer-story tiles      |
-| 3 — Floating Modal | `0 8px 24px rgba(26, 26, 26, 0.12)`.   | Add-to-cart drawer, mobile-nav sheet, image zoom modal         |
+| Level         | Treatment                           | Use                                     |
+| ------------- | ----------------------------------- | --------------------------------------- |
+| 0 — Flat      | No border, no shadow                | Section bands, page backgrounds         |
+| 1 — Hairline  | 1px solid `--fog` border, no shadow | Cards, table cells, inputs, filter bars |
+| 2 — Soft Lift | `0 2px 8px rgba(26,26,26,0.08)`     | Stat cards (`wp-desa-stat-card`)        |
+| 3 — Modal     | `0 8px 24px rgba(26,26,26,0.12)`    | Modal overlay content                   |
 
-The system is mostly flat — depth is communicated by **color contrast** (cloud-band vs. white card on the same band) rather than shadow elevation. The Soft Lift level is the workhorse for the catalog — every product tile and pricing column gets it; nothing else does. Modal-floating is rare and reserved for transient overlays.
+The system is mostly flat — depth comes from **hairline borders** (`--fog`) on white cards, not shadows. Only stat cards get a soft lift shadow. Modals use the modal shadow.
 
-### Decorative Depth
+## Shapes & Border Radius
 
-The system's most distinctive depth gesture is the **HP blue chevron pair** — two angular `#024ad8` slashes (no radius, no shadow) that sit on the left and right of the homepage hero card and the laptop-shop hero. They're not decorative noise; they're a literal echo of the HP wordmark's two parallel slashes, scaled up to architectural size. Treat them as a brand artifact, not a generic geometric flourish.
+### Two-tier Radius Philosophy
 
-Photography on the homepage and laptop-shop pages frames product imagery inside `xl` (16px) containers with a soft 1px hairline. Lifestyle photography (testimonials, "How HP works for X") sits full-bleed inside dark-navy slabs without rounding.
+- **Interactive elements** (buttons, inputs, selects, textareas): `--rounded-md` = **4px** — sharp, rectilinear
+- **Containers** (cards, modals, stat cards, hero): `--rounded-xl` = **16px** — soft, enveloping
+- **Pills** (badges, tabs, subnav tabs): `--rounded-pill` = **9999px**
+- **Icons/stat icons**: `--rounded-lg` = **8px**
 
-## Shapes
-
-### Border Radius Scale
-
-| Token           | Value  | Use                                                               |
-| --------------- | ------ | ----------------------------------------------------------------- |
-| `none`          | 0px    | Hero chevron decorations, full-bleed photo heroes, marquee strips |
-| `xs`            | 2px    | Secondary chip backgrounds, sale-tag pills                        |
-| `sm`            | 3px    | Default secondary CTA radius (small touch zones)                  |
-| `md`            | 4px    | Primary buttons, secondary buttons, text inputs                   |
-| `lg`            | 8px    | Badge pills, category-icon cards, FAQ row containers              |
-| `xl`            | 16px   | Product cards, pricing tiers, customer-story tiles, photo frames  |
-| `pill` / `full` | 9999px | Category sub-nav tabs, search-pill input, filter chips            |
-
-The system maintains a clear two-tier philosophy: **buttons stay sharp** (4px, almost rectilinear) while **cards and photo frames stay soft** (16px). This split is the visual signature — sharp interactive elements against softer container surfaces.
-
-### Photography Geometry
-
-Hero photography sits in `xl` (16px) frames with no border. Product family thumbnails inside the laptop-grid are 1:1 (square) on a `canvas` background, padded so the laptop is shown at ~70% of the frame. Customer-story photography uses 16:9 inside the same `xl` frame. There are no full-bleed circular avatars; testimonial avatars are 4px-rounded squares.
+| Token            | Value  | Use                                                                    |
+| ---------------- | ------ | ---------------------------------------------------------------------- |
+| `--rounded-none` | 0px    | Hero band, full-width bands                                            |
+| `--rounded-xs`   | 2px    | Minor decorative elements                                              |
+| `--rounded-sm`   | 3px    | (not commonly used)                                                    |
+| `--rounded-md`   | 4px    | Buttons, inputs, selects, textareas, form actions, pagination controls |
+| `--rounded-lg`   | 8px    | Stat icon containers, cards with softer corners                        |
+| `--rounded-xl`   | 16px   | Cards, modals, stat cards, hero, image previews                        |
+| `--rounded-pill` | 9999px | Badges, subnav tabs, status pills, toggle slider                       |
 
 ## Components
 
-> **No hover states documented.** Every component spec documents only Default and Active/Pressed states.
-
 ### Buttons
 
-**`button-primary`** — the lone HP Electric Blue CTA
+Base class `wp-desa-btn` — inline-flex centered, 44px height, uppercase label (14px, 600, 0.7px tracking), `--rounded-md` (4px), 1px border, gap `xs` between icon and text.
 
-- Background `#024ad8`, text `#ffffff`, type `button-md` (uppercase, 0.7px tracking), padding 12px 24px, height 44px, rounded `md` (4px)
-- Pressed state: background `#0e3191`, same text
-- Disabled state: background `#c2c2c2`, white text
-- Used for: "Buy now", "Shop now", "Get a printer", primary form submit
+**`wp-desa-btn-primary`** — the lone blue CTA
 
-**`button-ink`** — black filled CTA
+- Background `--primary` (`#024ad8`), text `--on-ink`, border `--primary`
+- Hover: `--primary-deep` (`#0e3191`)
+- Used for: "Simpan", "Tambah Data", primary form submit
 
-- Background `#1a1a1a`, text `#ffffff`, padding 12px 24px, height 44px, rounded `md`
-- Used for: "Buy now" on dark photo overlays, secondary primary actions where the blue would clash with imagery
+**`wp-desa-btn-secondary`** — white outlined CTA
 
-**`button-outline`** — blue-text outlined CTA
+- Background `--canvas`, text `--ink`, border `--fog`
+- Hover: `--cloud` background, `--steel` border
+- Used for: "Batal", "Edit", secondary actions
 
-- Background `#ffffff`, text `#024ad8`, 1px `#024ad8` border, padding 12px 24px, height 44px, rounded `md`
-- Used for: "Compare", "Customize", "Learn more" — secondary actions on white surfaces
+**`wp-desa-btn-danger-outline`** — danger outlined CTA
 
-**`button-outline-ink`** — black-text outlined CTA
+- Background `--canvas`, text `--bloom-deep`, border `--bloom-rose`
+- Hover: `--bloom-rose` background
+- Used for: "Hapus" actions in table rows
 
-- Background `#ffffff`, text `#1a1a1a`, 1px `#1a1a1a` border, padding 12px 24px, height 44px, rounded `md`
-- Used for: "View" buttons inside product family card grids — neutral against the blue primary
+**`wp-desa-btn-sm`** — compact variant
 
-**`button-text-link`** — inline blue link with underline
+- Padding 6px 14px, 12.6px font, 700 weight, 0.126px tracking
+- Used for: inline action buttons in table rows (Edit, Hapus)
 
-- Background `#ffffff`, text `#024ad8`, type `link-md`, padding 4px 0
-- Used for: "See details", "Read more" inside cards and disclaimer rows
+**`wp-desa-btn-danger`** — filled danger CTA
+
+- Background `--bloom-rose`, text `--bloom-deep`, border `--bloom-rose`
+- Used sparingly for destructive confirmations
+
+Icons inside buttons use inline Lucide SVGs at 16-18px, with `vertical-align:middle` or flex alignment.
 
 ### Cards & Containers
 
-**`card-product`** — the workhorse product tile
+**`wp-desa-card`** — the universal content container
 
-- Background `#ffffff`, rounded `xl` (16px), padding `xl` (24px), Soft Lift shadow
-- Layout: hero photo (1:1 ratio) on top, title in `display-xs`, spec rows in `caption-md`, price in `price-md`, CTA pinned to bottom
-- Used for: laptop catalog cards, desktop catalog cards
+- Background `--canvas`, `--rounded-xl` (16px), 1px `--fog` border, `overflow: hidden`, margin-bottom `--xxl` (32px)
+- Internal content uses its own padding via child elements
+- Inner variants:
+  - `wp-desa-filter-bar`: flex row, padding `sm`/`xl`, border-bottom, flex-wrap
+  - `wp-desa-form-grid`: block layout with 20px padding, `xl` gap between children
+  - `wp-desa-form-actions`: footer bar, `--cloud` background, border-top, right-aligned
+  - Pagination: `wp-desa-pagination` — flex row, `--cloud` background, border-top, padding `sm`/`xl`
 
-**`card-product-feature`** — full-row feature card with photo + copy
+**`wp-desa-card-pad`** — card with internal padding
 
-- Background `#f7f7f7`, rounded `xl`, padding `xxl` (32px)
-- Layout: photo on the left (50% width), copy on the right with section eyebrow + title + body + CTA pair
-- Used for: "Trending laptops" feature rows, "Shop these must haves"
+- Adds `--sp-xl` (24px) padding to `wp-desa-card`
 
-**`card-pricing-tier`** + **`card-pricing-tier-featured`**
+**`wp-desa-stat-card`** — dashboard stat card
 
-- Background `#ffffff`, rounded `xl`, padding `xl`, Soft Lift shadow
-- Tier name in `display-sm`, monthly price in `display-md` with `caption-md` cadence, page count caption, full feature list, primary CTA
-- Featured tier carries `#024ad8` text accent on the price-stamp + a `#024ad8` thin top border instead of a colored card background — never inverted to dark
+- Same as card + `--shadow-soft-lift` shadow
+- Contains: `wp-desa-stat-title` (uppercase, 12px, 600, 0.7px), `wp-desa-stat-value` (32px, 500), `wp-desa-stat-desc` (14px)
 
-**`card-customer-story`** — the three-up testimonial tile
+**`wp-desa-hero`** — dark band for dashboard
 
-- Background `#ffffff`, rounded `xl`, padding `md` (16px), Soft Lift shadow
-- 16:9 photo at top in `xl` frame, quote excerpt in `body-md`, attribution row at the bottom
-- Used in the "See what our customers say" homepage section
+- Background `--ink`, text `--on-ink`, `--rounded-xl`, padding 48px `--xxl`
+- Contains `wp-desa-hero__head` (eyebrow + title + sub) and `wp-desa-hero__metrics` (metric row)
 
-**`card-article-tile`** — the four-up "Latest from HP" tile
+### Tables
 
-- Background `#ffffff`, rounded `xl`, padding `md`, Soft Lift shadow
-- 16:9 thumbnail at top, date eyebrow in `caption-sm`, title in `body-emphasis`, "Read more" link
+**`wp-desa-table`** — data table
 
-**`card-category-icon`** — the small icon-and-label card in the homepage "Our Products" row
+- Full width, collapsed borders, left-aligned
+- `thead th`: uppercase 12px 600, 0.7px tracking, `--graphite` color, 14px vertical padding `--xl` horizontal, bottom border `--fog`
+- `tbody td`: 14px, `--ink` color, `sm` vertical padding `--xl` horizontal, bottom border `--fog`
+- `tr:last-child td`: no bottom border
+- `tbody tr:hover td`: `--cloud` background highlight
+- Inside `wp-desa-card` with overflow-x:auto wrapper for scroll
 
-- Background `#ffffff`, rounded `lg` (8px), padding `md`
-- 48px icon at top, label in `body-emphasis` below
-- Used for: Laptops, Desktops, Printers, Computer Tools, Accessories, Enterprise Solutions
+**`wp-list-table`** (WordPress native) — used in perangkat and peta pages
 
-**`hero-promo-card`** — the homepage hero card with chevron decorations
+- Same visual style, uses WordPress's widefat class with wp-desa card wrapper
 
-- Background `#ffffff`, rounded `xl`, padding `xxl` (32px)
-- Photography occupies left half; copy block (eyebrow + headline + price stamp + CTA pair) occupies right half
-- Flanked by `chevron-decoration` blue slashes outside the card's bounding box on left and right edges
+**Empty state** (`wp-desa-empty-state`):
 
-**`promo-strip-dark`** — the inline dark navy promo block
+- Centered text, `--graphite` color, padding `--section` (80px), icon + message
 
-- Background `#1a1a1a`, text `#ffffff`, rounded `xl`, padding 48px
-- Used for: "When did work start getting in the way of work?" mid-page promo, the SMB testimonial slab
+### Form Elements
 
-### Inputs & Forms
+**`wp-desa-input`**, **`wp-desa-select`**, **`wp-desa-textarea`** — form controls
 
-**`text-input`** + **`text-input-focused`**
+- Width 100%, padding `sm`/`md`, `--rounded-md` (4px), 1px `--steel` border
+- Font: 16px 400, `--ink` color, `--font-body`
+- Height: 44px (inputs and selects)
+- Focus: no outline, border color changes to `--ink`
+- Placeholder: `--graphite`
 
-- Background `#ffffff`, text `#1a1a1a`, rounded `md`, padding 12px 16px, height 44px
-- 1px `#c2c2c2` border in default; gains 1px `#1a1a1a` border on focus (no halo)
+**Select dropdown**: custom chevron arrow via SVG background-image (pointing down)
 
-**`text-input-search`** — pill search in the top nav
+**`wp-desa-label`** — form label
 
-- Background `#ffffff`, rounded `md`, padding 12px 16px, height 40px, 1px `#c2c2c2` border, magnifying-glass icon at right
+- Block, 14px 500, `--ink`, margin-bottom `--xs` (8px)
 
-**`badge-pill-ink`** — filled tag pill
+**Required indicator**: `wp-desa-req` — red asterisk, color `--error`
 
-- Background `#1a1a1a`, text `#ffffff`, rounded `lg`, padding 6px 12px, type `body-md`
-- Used inline next to product titles to mark "New" or featured indicators
+### Badges / Pills
 
-**`badge-pill-outline`** — outlined tag pill
+**`wp-desa-badge`** — status pill
 
-- Background `#ffffff`, text `#1a1a1a`, 1px `#1a1a1a` border, rounded `lg`, padding 6px 12px
+- Inline-block, padding 4px 12px, `--rounded-pill`, 12px 500
+- `wp-desa-badge-default`/`wp-desa-badge-pending`: `--cloud` bg, `--ink` text
+- `wp-desa-badge-success`/`completed`/`resolved`: `#e6f4ea` bg, `--success` text
+- `wp-desa-badge-warning`/`in_progress`: `#fef3e4` bg, `--warning` text
+- `wp-desa-badge-danger`/`rejected`: `#fce8e6` bg, `--error` text
 
-**`badge-sale-coral`** — the sale price-stamp
+### Modal
 
-- Background `#ff5050`, text `#ffffff`, rounded `sm`, padding 4px 8px, type `caption-bold`
-- Used for: "Save $200", "25% off" overlay tags on hero promo cards
+**`wp-desa-modal-overlay`** — fixed full-screen backdrop
+
+- `rgba(26, 26, 26, 0.55)`, z-index 10000, flex center, hidden by default
+- `.is-open` class toggles `visibility: visible; opacity: 1; transition 0.2s`
+
+**`wp-desa-modal-content`**: white, `--rounded-xl`, `--shadow-modal`, max-width 600px, max-height 90vh, slide-in animation
+
+**`wp-desa-modal-header`**: flex row, padding `xl`/`xxl`, border-bottom `--fog`
+**`wp-desa-modal-title`**: 20px 500, `--font-display`
+**`wp-desa-modal-body`**: padding `--xxl` (32px)
+**`wp-desa-modal-footer`**: `--cloud` bg, border-top, flex-end with gap
 
 ### Navigation
 
-**`utility-strip`** — the top-of-page utility bar
+**Top nav** (`wp-desa__globalnav`): sticky at top:32px, white, 64px, bottom border, flex layout
 
-- Background `#1a1a1a`, text `#ffffff`, height 36px, padding 0 24px, type `caption-md`
-- Holds: country/locale picker, "For Business / For Home" toggle, "Sign in" link, cart link
+- Brand (`wp-desa__brand`): icon + text, weight 500, 16px
+- Nav links (`wp-desa__navlink`): 16px, padding `xs`/`md`, inline height, 2px transparent bottom border
+- Active nav link: `--primary` color + `--primary` bottom border, weight 500
 
-**`nav-bar-top`** — desktop top nav (sits below utility strip)
+**Subnav** (`wp-desa__subnav`): below globalnav, white, bottom border 1px `--fog`
 
-- Background `#ffffff`, height 64px, padding 0 32px
-- Layout: HP wordmark logo flush left → middle category list (Laptops / Desktops / Printers / Accessories / Solutions / Support) → right slot with Search field, Sign-in link, Cart icon
-- 1px `#e8e8e8` bottom border separates nav from page
+- Title: uppercase 14px 600, `--graphite`
+- Tabs (`wp-desa__subnav-tab`): pill-shaped, 14px 500, padding 6px 14px
+- Active tab: `--ink` bg, `--on-ink` text
 
-**`nav-link`**
+### Icons
 
-- Background `#ffffff`, text `#1a1a1a`, type `body-md`, padding 8px 16px
-- Active page draws a 2px `#024ad8` underline below the text baseline
+All icons should be **inline Lucide SVG** elements at 16-18px:
 
-**Top Nav (Mobile)**
+- `width="16" height="16"` for table action buttons
+- `width="18" height="18"` for primary CTA buttons
+- `vertical-align: middle` for inline button icons
 
-- Same height, hamburger icon replaces the middle category list, Search and Cart stay visible
-- Drawer expands as a full-canvas sheet with `body-lg` link list and a sticky Sign-in CTA at bottom
+Common icon mappings:
 
-**`category-tab`** + **`category-tab-active`** — the pill sub-nav
+- Tambah/Add: `layers-plus`
+- Edit: `clipboard-pen`
+- Hapus/Delete: `trash-2`
+- Simpan/Save: `file-plus` or checkmark
+- Kembali/Back: `arrow-left` (WordPress dashicons `dashicons-arrow-left-alt2` is accepted)
 
-- Default: background `#ffffff`, text `#1a1a1a`, type `body-emphasis`, rounded `pill`, padding 8px 20px
-- Active: background `#1a1a1a`, text `#ffffff`, same rounding
-- Used on the laptop-shop page for "All / Trending / On Sale" filtering, and on the homepage "How can we help?" closing band
+### Inline Actions
 
-### Signature Components
+**`wp-desa-inline-actions-end`**: flex row, `justify-content: flex-end`, gap `xs`, used in table cells for action button groups.
+**`wp-desa-inline-actions`**: flex row, gap 6px.
 
-**`chevron-decoration`** — the geometric blue slash motif
+## Page View Patterns
 
-- Background `#024ad8`, rounded `none`, no shadow
-- Renders as a sharp parallelogram cut at ~60° angle, sized to the height of the hero card it flanks
-- Reserved for hero bands and full-page banners — never decorative noise inside cards
+### List+Form Pattern (residents, perangkat, keuangan)
 
-**`faq-row`** — the accordion row on the printer-plan FAQ
+Pages follow a two-view pattern using `?action=URL` parameter:
 
-- Background `#ffffff`, rounded `lg`, padding 20px 24px, type `body-emphasis`
-- 1px `#e8e8e8` divider between rows; chevron-down icon on the right collapsed, chevron-up when expanded
-- Body answer renders inside the same row container in `body-md` after expansion
+1. **List view** (`action=list`, default):
+   - `wp-desa-card` containing:
+     - `wp-desa-filter-bar` with total count + "Tambah Data" primary CTA
+     - `wp-desa-table` with data rows
+     - `wp-desa-pagination` (if multi-page)
+   - Each row has inline action buttons (Edit + Hapus)
 
-**`help-band-dark`** — the closing "How can we help?" prelude band
+2. **Form view** (`action=add` or `action=edit&id=X`):
+   - "Kembali" link at top (arrow + text)
+   - `wp-desa-card` with:
+     - Section title (h3)
+     - `<form method="post">` with:
+       - hidden nonce, save flag, and id fields
+       - `wp-desa-form-grid` containing `wp-desa-form-group` items
+       - `wp-desa-form-actions` with "Batal" (secondary) + "Simpan" (primary)
 
-- Background `#1a1a1a`, text `#ffffff`, padding 64px 24px
-- Layout: large lifestyle photograph as the band background (low-opacity) with chip-style category tabs centered: Browse Topics / Live Chat / Contact / Diagnose / Order Status
+### Tab Pattern (settings, pemerintahan, dokumentasi, finances)
 
-**`footer-dark`**
+Subnav tabs via `wp-desa__subnav-tabs` with `?page=X&tab=Y` URL routing.
+Each tab renders a different template or section of the page.
 
-- Background `#1a1a1a`, text `#ffffff`, type `body-md`, padding 64px 24px
-- 5-column link grid (Company / Shop / Support / Resources / Connect) with `body-emphasis` headers and `caption-md` link rows
-- Bottom strip carries social icons, language picker, and legal lines in `caption-sm` muted to `#c2c2c2`
+## Responsive
+
+### Breakpoints
+
+| Width   | Key Changes                                                                                               |
+| ------- | --------------------------------------------------------------------------------------------------------- |
+| < 782px | Globalnav stacks vertically, form grid collapses to 1 column, stat grid to 1 column, hero padding reduces |
+| Desktop | Default layout with side-by-side form grids (2 columns)                                                   |
+
+### Touch Targets
+
+Buttons at 44px height meet touch target requirements. Action buttons in table rows use `wp-desa-btn-sm` which collapses below 44px — acceptable for mouse users, use sparingly.
 
 ## Do's and Don'ts
 
 ### Do
 
-- Reserve `#024ad8` for the primary CTA, link color, and `chevron-decoration` motif — at most twice per viewport
-- Set every headline in Forma DJR Micro at weight 500 with line-height 1.0 — resist the urge to bump weight at hero scale
-- Use `xl` (16px) for cards and photo frames; `md` (4px) for buttons and inputs — keep the two-tier split sharp
-- Pair white body bands with `#f7f7f7` alternating bands; let the gray do the breathing
-- Close every page rhythm with a dark-navy `#1a1a1a` slab — the "How can we help?" prelude + footer
-- Set button labels in uppercase with `button-md` (0.7px tracking) — the only place the system tracks letters
-- Use Soft Lift shadow exclusively for product cards and pricing tiers — leave section bands flat
-- Frame product photography inside `xl` containers; never use full-bleed circular masks
+- Reserve `#024ad8` (`--primary`) for the primary CTA — at most one per view
+- Wrap data tables in `wp-desa-card` with `overflow-x:auto` for scroll safety
+- Use `wp-desa-btn-sm` + Lucide SVG icons for table row actions (Edit, Hapus)
+- Set button labels in uppercase with 0.7px tracking — the only tracked text besides table headers
+- Use `--fog` hairline borders to separate card sections (filter-bar, pagination, form-actions)
+- Use `--cloud` background for footer bars (pagination, form actions, modal footer)
+- Keep form inputs at 44px height with 4px border radius
+- Use `wp-desa-label` at 14px 500 for form fields
+- Use inline Lucide SVGs for all icons, sized 16-18px
 
 ### Don't
 
-- Don't introduce secondary saturated colors outside `#024ad8` family + the `bloom-coral` sale-tag and `storm` printer-plan accents
-- Don't apply heavy material shadows — depth is via color contrast (cloud vs. white) and Soft Lift only
-- Don't round buttons above `md` (4px); a soft 8px+ button reads as a different brand
-- Don't run Forma DJR Micro below 12px — small caption at 11px is the floor
-- Don't use the chevron decoration as inline noise; it is a hero-only architectural element tied to the wordmark
-- Don't drop ink text opacity to create hierarchy — switch surface or shift to `charcoal` / `graphite` instead
-- Don't replace the HP wordmark with a generic sans lockup; the wordmark is a custom mark with its own ratio
-
-## Responsive Behavior
-
-### Breakpoints
-
-| Name          | Width       | Key Changes                                                                                    |
-| ------------- | ----------- | ---------------------------------------------------------------------------------------------- |
-| Mobile        | < 480px     | Single-column stack; hamburger nav; section padding drops to ~48px; hero serif scales to ~36px |
-| Mobile-Large  | 480–767px   | Same column count; hero scales to ~44px; pricing tiers stack vertically                        |
-| Tablet        | 768–1023px  | 2-column product grid; pricing 2x2; nav still full text labels                                 |
-| Desktop       | 1024–1279px | 3-column product grid; 4-column pricing; full nav                                              |
-| Desktop-Large | ≥ 1280px    | 4-column product grid; 1366px content max-width with full-bleed bands                          |
-
-### Touch Targets
-
-Every interactive element clears 44×44px on mobile. `button-primary` at 44px height + 24px horizontal padding meets WCAG-AAA touch target. `category-tab` at 8px 20px padding bumps to 12px 24px on touch screens. Nav-link tap areas extend invisibly beyond the text run to the full 44px row height. Sticky cart/sign-in icons in the top nav use 44×44 invisible hit boxes around their visible 24×24 glyph.
-
-### Collapsing Strategy
-
-- **Utility strip**: stays visible on every breakpoint; dropdowns collapse into a single "Account" icon below 768px
-- **Top nav**: middle category list collapses into a hamburger drawer below 1024px; the right-side Search + Sign-in + Cart stay visible
-- **Hero**: stays single-column at every breakpoint; chevron decorations shrink to ~60% size on tablet and disappear entirely on mobile
-- **Product family grid**: 4 → 3 → 2 → 1 column as breakpoints shrink; cards keep `xl` corners at every size
-- **Pricing comparison table**: 4-column grid on desktop collapses to 2x2 on tablet, then stacks into individual accordion-style cards on mobile
-- **Footer**: 5-column link grid → 2-column tablet → single-column accordion on mobile; HP wordmark stays flush left
-
-### Image Behavior
-
-Hero photography uses `xl` containers at every breakpoint. The chevron decorations vanish on mobile; the underlying photo card centers in the viewport. Lifestyle photography in the testimonial and "how-can-we-help" bands maintains 16:9 ratio with horizontal cropping rather than letterboxing on mobile. There are no art-direction crop swaps between desktop and mobile — the same image is used at every size.
+- Don't add secondary saturated colors outside the blue family + semantic (red/green/amber) palette
+- Don't use heavy shadows — depth is via hairline borders and `--shadow-soft-lift` only on stat cards
+- Don't round buttons above 4px; a soft 8px+ button breaks the two-tier radius system
+- Don't use lowercase for button labels — uppercase + tracking is the system convention
+- Don't put interactive actions outside `wp-desa-filter-bar` or `wp-desa-inline-actions-end`
+- Don't use modal popups for add/edit forms — use the List+Form URL-driven pattern instead
+- Don't use `display:grid` on `wp-desa-form-grid` until the form has multi-column layout; otherwise use block with vertical spacing
 
 ## Iteration Guide
 
-1. Focus on ONE component at a time; resist refactoring an entire section in one pass
-2. Reference component names and tokens directly (`#024ad8`, `display-xxl`, `xl`, `card-product`) — do not paraphrase to hex/px in prose
-3. Add new variants as separate component entries (`-pressed`, `-disabled`, `-focused`); never bury state inside prose
-4. Default body to `body-md`; reach for `body-emphasis` for run-in bolds; keep display sizes for true heading roles
-5. Keep `#024ad8` scarce — at most two flame elements per viewport (one CTA + one chevron decoration). Three flame items in one viewport is over-saturation
-6. When introducing a new section band, choose from `#ffffff` / `#f7f7f7` / `#e8e8e8` / `#1a1a1a` — four pre-defined surface modes is the entire surface vocabulary
+1. Match the existing component vocabulary — don't introduce new class names when `wp-desa-card`, `wp-desa-btn`, `wp-desa-table`, `wp-desa-input` etc. already cover the use case
+2. Use the List+Form URL-driven pattern (not modals) for CRUD pages — refer to residents.php or perangkat.php as the template
+3. Keep `#024ad8` usage minimal — one primary CTA per view, no decorative blue
+4. Wrap card content sections (filter-bar, table, pagination, form-actions) as direct children of `wp-desa-card` using border separators
+5. Always include nonce fields and hidden ID inputs in forms following the `wp_desa_save_*` / `check_admin_referer` pattern
+6. Redirect after POST to the list view URL to avoid re-submission
+7. For Lucide icons, inline the full SVG element; never reference external icon libraries
