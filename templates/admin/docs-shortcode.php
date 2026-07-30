@@ -145,9 +145,11 @@
             ],
         ],
         [
-            'code' => '[temadesa_jam_kerja]',
-            'desc' => 'Menampilkan jadwal jam kerja kantor desa sesuai pengaturan di Pengaturan > Jam Kerja.',
-            'params' => [],
+            'code' => '[wp_desa_jam_kerja style="classic"]',
+            'desc' => 'Menampilkan jadwal jam kerja kantor desa sesuai pengaturan di Pengaturan > Jam Kerja. Mendukung `temadesa_jam_kerja` sebagai alias backward-compatible.',
+            'params' => [
+                ['style', 'classic', 'Tampilan: classic (tabel standar), compact (flex/grid tanpa tabel), minimal (tabel polos tanpa border)'],
+            ],
         ],
     ];
 

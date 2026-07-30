@@ -35,6 +35,8 @@ class Shortcode
     add_shortcode('wp_desa_peta', [$this, 'render_peta']);
     add_shortcode('wp_desa_wisata', [$this, 'render_wisata']);
     add_shortcode('temadesa_jam_kerja', [$this, 'render_jam_kerja']);
+    add_shortcode('wp_desa_jam_kerja', [$this, 'render_jam_kerja']);
+    add_shortcode('wp_desa_ringkasan', [$this, 'render_ringkasan']);
     add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
   }
 
@@ -2524,6 +2526,15 @@ class Shortcode
 
         public function render_jam_kerja($atts = [])
         {
+          $atts = shortcode_atts([
+            'style' => 'classic',
+          ], $atts);
+
+          $style = $atts['style'];
+          if (!in_array($style, ['classic', 'compact', 'minimal'])) {
+            $style = 'classic';
+          }
+
           $jam_kerja = get_option('temadesa_jam_kerja', []);
           $hari_label = [
             'senin'  => 'Senin',
@@ -2535,11 +2546,6 @@ class Shortcode
             'minggu' => 'Minggu',
           ];
 
-          $atts = shortcode_atts([
-            'class' => '',
-          ], $atts);
-
-          $rows = '';
           $hari_ini = strtolower(date('l'));
           $hari_map = [
             'monday'    => 'senin',
@@ -2552,32 +2558,200 @@ class Shortcode
           ];
           $today_key = $hari_map[$hari_ini] ?? '';
 
-          foreach ($hari_label as $key => $label) {
-            $val   = isset($jam_kerja[$key]) ? $jam_kerja[$key] : ['buka' => '08:00', 'tutup' => '16:00', 'libur' => false];
-            $today_class = ($key === $today_key) ? 'desa-jam-today' : '';
-            $libur = !empty($val['libur']);
+          ob_start();
 
-            if ($libur) {
-              $jam = '<span class="desa-jam-libur">Libur</span>';
-            } else {
-              $buka  = esc_html($val['buka'] ?? '');
-              $tutup = esc_html($val['tutup'] ?? '');
-              $jam   = $buka && $tutup ? "<span class=\"desa-jam-waktu\">{$buka} — {$tutup}</span>" : '<span class="desa-jam-libur">—</span>';
+          if ($style === 'compact') {
+            echo '<div class="desa-jam-container desa-jam-compact">';
+            foreach ($hari_label as $key => $label) {
+              $val   = isset($jam_kerja[$key]) ? $jam_kerja[$key] : ['buka' => '08:00', 'tutup' => '16:00', 'libur' => false];
+              $today_class = ($key === $today_key) ? ' desa-jam-today' : '';
+              $libur = !empty($val['libur']);
+
+              echo '<div class="desa-jam-row' . $today_class . '">';
+              echo '  <span class="desa-jam-hari">' . esc_html($label) . '</span>';
+              if ($libur) {
+                echo '  <span class="desa-jam-libur-badge">Libur</span>';
+              } else {
+                $buka  = esc_html($val['buka'] ?? '');
+                $tutup = esc_html($val['tutup'] ?? '');
+                echo '  <span class="desa-jam-waktu">' . ($buka && $tutup ? $buka . ' — ' . $tutup : '—') . '</span>';
+              }
+              echo '</div>';
             }
+            echo '</div>';
+          } elseif ($style === 'minimal') {
+            echo '<div class="desa-jam-container desa-jam-minimal"><table><tbody>';
+            foreach ($hari_label as $key => $label) {
+              $val   = isset($jam_kerja[$key]) ? $jam_kerja[$key] : ['buka' => '08:00', 'tutup' => '16:00', 'libur' => false];
+              $today_class = ($key === $today_key) ? ' desa-jam-today' : '';
+              $libur = !empty($val['libur']);
 
-            $rows .= sprintf(
-              '<tr class="%s"><td class="desa-jam-hari">%s</td><td class="desa-jam-jam">%s</td></tr>',
-              esc_attr($today_class),
-              esc_html($label),
-              $jam
+              echo '<tr class="' . esc_attr($today_class) . '">';
+              echo '  <td class="desa-jam-hari">' . esc_html($label) . '</td>';
+              echo '  <td class="desa-jam-jam">';
+              if ($libur) {
+                echo '    <span class="desa-jam-libur">Libur</span>';
+              } else {
+                $buka  = esc_html($val['buka'] ?? '');
+                $tutup = esc_html($val['tutup'] ?? '');
+                echo '    <span class="desa-jam-waktu">' . ($buka && $tutup ? $buka . ' — ' . $tutup : '—') . '</span>';
+              }
+              echo '  </td>';
+              echo '</tr>';
+            }
+            echo '</tbody></table></div>';
+          } else {
+            // classic (default) — original table layout
+            echo '<div class="desa-jam-container desa-jam-classic"><table class="desa-jam-table"><tbody>';
+            foreach ($hari_label as $key => $label) {
+              $val   = isset($jam_kerja[$key]) ? $jam_kerja[$key] : ['buka' => '08:00', 'tutup' => '16:00', 'libur' => false];
+              $today_class = ($key === $today_key) ? ' desa-jam-today' : '';
+              $libur = !empty($val['libur']);
+
+              if ($libur) {
+                $jam = '<span class="desa-jam-libur">Libur</span>';
+              } else {
+                $buka  = esc_html($val['buka'] ?? '');
+                $tutup = esc_html($val['tutup'] ?? '');
+                $jam   = $buka && $tutup ? "<span class=\"desa-jam-waktu\">{$buka} — {$tutup}</span>" : '<span class="desa-jam-libur">—</span>';
+              }
+
+              echo '<tr class="' . esc_attr($today_class) . '">';
+              echo '  <td class="desa-jam-hari">' . esc_html($label) . '</td>';
+              echo '  <td class="desa-jam-jam">' . $jam . '</td>';
+              echo '</tr>';
+            }
+            echo '</tbody></table></div>';
+          }
+
+          return ob_get_clean();
+        }
+
+        public function render_ringkasan($atts = [])
+        {
+          ob_start();
+          global $wpdb;
+
+          $jam_kerja = get_option('temadesa_jam_kerja', []);
+          $hari_label = [
+            'senin'=>'Senin','selasa'=>'Selasa','rabu'=>'Rabu','kamis'=>'Kamis',
+            'jumat'=>'Jumat','sabtu'=>'Sabtu','minggu'=>'Minggu',
+          ];
+          $hari_urut = ['senin','selasa','rabu','kamis','jumat','sabtu','minggu'];
+          $hari_ini = strtolower(date('l'));
+          $hari_map = [
+            'monday'=>'senin','tuesday'=>'selasa','wednesday'=>'rabu',
+            'thursday'=>'kamis','friday'=>'jumat','saturday'=>'sabtu','sunday'=>'minggu',
+          ];
+          $today_key = $hari_map[$hari_ini] ?? '';
+
+          ob_clean();
+          $jam_rows = '';
+          foreach ($hari_urut as $key) {
+            $val = isset($jam_kerja[$key]) ? $jam_kerja[$key] : ['buka'=>'08:00','tutup'=>'16:00','libur'=>false];
+            $tc = ($key === $today_key) ? ' class="ringkasan-today"' : '';
+            $jam_rows .= sprintf(
+              '<tr%s><td>%s</td><td>%s</td></tr>',
+              $tc,
+              esc_html($hari_label[$key]),
+              !empty($val['libur']) ? '<em>Libur</em>' : esc_html(($val['buka']??'').' — '.($val['tutup']??''))
             );
           }
 
-          $class = $atts['class'] ? ' class="' . esc_attr($atts['class']) . '"' : '';
-          return sprintf(
-            '<div%s><table class="desa-jam-table"><tbody>%s</tbody></table></div>',
-            $class,
-            $rows
-          );
+          $table_r = $wpdb->prefix.'desa_residents';
+          $total = 0; $kk = 0; $male = 0; $female = 0;
+          if ($wpdb->get_var("SHOW TABLES LIKE '$table_r'") === $table_r) {
+            $total  = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table_r");
+            $male   = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table_r WHERE jenis_kelamin = 'Laki-laki'");
+            $female = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table_r WHERE jenis_kelamin = 'Perempuan'");
+            $has_kk = $wpdb->get_results("SHOW COLUMNS FROM $table_r LIKE 'no_kk'");
+            if (!empty($has_kk)) {
+              $kk = (int) $wpdb->get_var("SELECT COUNT(DISTINCT no_kk) FROM $table_r WHERE no_kk != ''");
+            }
+          }
+
+          $table_f = $wpdb->prefix.'desa_finances';
+          $income = 0; $expense = 0; $silpa = 0; $tahun = '';
+          if ($wpdb->get_var("SHOW TABLES LIKE '$table_f'") === $table_f) {
+            $tahun = $wpdb->get_var("SELECT MAX(year) FROM $table_f");
+            if ($tahun) {
+              $totals = $wpdb->get_results($wpdb->prepare(
+                "SELECT type, SUM(realization_amount) as total FROM $table_f WHERE year = %d GROUP BY type", $tahun
+              ));
+              foreach ($totals as $t) {
+                if ($t->type === 'income')  $income  = (float) $t->total;
+                if ($t->type === 'expense') $expense = (float) $t->total;
+              }
+              $silpa = $income - $expense;
+            }
+          }
+
+          $rp = function($n) { return 'Rp '.number_format($n,0,',','.'); };
+  ?>
+    <div class="wp-desa-ringkasan-grid">
+      <div class="wp-desa-ringkasan-card">
+        <div class="wp-desa-ringkasan-card-header">
+          <span class="wp-desa-ringkasan-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </span>
+          <h3>Jam Kerja</h3>
+        </div>
+        <table class="wp-desa-ringkasan-jam"><tbody><?php echo $jam_rows; ?></tbody></table>
+      </div>
+
+      <div class="wp-desa-ringkasan-card">
+        <div class="wp-desa-ringkasan-card-header">
+          <span class="wp-desa-ringkasan-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </span>
+          <h3>Statistik Penduduk</h3>
+        </div>
+        <div class="wp-desa-ringkasan-stats">
+          <div class="wp-desa-ringkasan-stat-item">
+            <span class="wp-desa-ringkasan-stat-number"><?php echo number_format_i18n($total); ?></span>
+            <span class="wp-desa-ringkasan-stat-label">Total Penduduk</span>
+          </div>
+          <div class="wp-desa-ringkasan-stat-item">
+            <span class="wp-desa-ringkasan-stat-number"><?php echo number_format_i18n($male); ?></span>
+            <span class="wp-desa-ringkasan-stat-label">Laki-laki</span>
+          </div>
+          <div class="wp-desa-ringkasan-stat-item">
+            <span class="wp-desa-ringkasan-stat-number"><?php echo number_format_i18n($female); ?></span>
+            <span class="wp-desa-ringkasan-stat-label">Perempuan</span>
+          </div>
+          <div class="wp-desa-ringkasan-stat-item">
+            <span class="wp-desa-ringkasan-stat-number"><?php echo number_format_i18n($kk); ?></span>
+            <span class="wp-desa-ringkasan-stat-label">Kepala Keluarga</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="wp-desa-ringkasan-card">
+        <div class="wp-desa-ringkasan-card-header">
+          <span class="wp-desa-ringkasan-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </span>
+          <h3>Laporan Keuangan</h3>
+        </div>
+        <?php if ($tahun) : ?><p class="wp-desa-ringkasan-tahun">Tahun Anggaran <?php echo esc_html($tahun); ?></p><?php endif; ?>
+        <div class="wp-desa-ringkasan-stats">
+          <div class="wp-desa-ringkasan-stat-item">
+            <span class="wp-desa-ringkasan-stat-number wp-desa-ringkasan-income"><?php echo $rp($income); ?></span>
+            <span class="wp-desa-ringkasan-stat-label">Pendapatan</span>
+          </div>
+          <div class="wp-desa-ringkasan-stat-item">
+            <span class="wp-desa-ringkasan-stat-number wp-desa-ringkasan-expense"><?php echo $rp($expense); ?></span>
+            <span class="wp-desa-ringkasan-stat-label">Belanja</span>
+          </div>
+          <div class="wp-desa-ringkasan-stat-item">
+            <span class="wp-desa-ringkasan-stat-number <?php echo $silpa>=0?'wp-desa-ringkasan-income':'wp-desa-ringkasan-expense'; ?>"><?php echo $rp($silpa); ?></span>
+            <span class="wp-desa-ringkasan-stat-label">SiLPA</span>
+          </div>
+        </div>
+        <div class="wp-desa-ringkasan-footer">APBDes — Realisasi</div>
+      </div>
+    </div>
+  <?php
+          return ob_get_clean();
         }
       }
