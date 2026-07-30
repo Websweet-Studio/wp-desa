@@ -34,6 +34,7 @@ class Shortcode
     add_shortcode('wp_desa_galeri', [$this, 'render_galeri']);
     add_shortcode('wp_desa_peta', [$this, 'render_peta']);
     add_shortcode('wp_desa_wisata', [$this, 'render_wisata']);
+    add_shortcode('temadesa_jam_kerja', [$this, 'render_jam_kerja']);
     add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
   }
 
@@ -2519,5 +2520,64 @@ class Shortcode
           endif;
           wp_reset_postdata();
           return ob_get_clean();
+        }
+
+        public function render_jam_kerja($atts = [])
+        {
+          $jam_kerja = get_option('temadesa_jam_kerja', []);
+          $hari_label = [
+            'senin'  => 'Senin',
+            'selasa' => 'Selasa',
+            'rabu'   => 'Rabu',
+            'kamis'  => 'Kamis',
+            'jumat'  => 'Jumat',
+            'sabtu'  => 'Sabtu',
+            'minggu' => 'Minggu',
+          ];
+
+          $atts = shortcode_atts([
+            'class' => '',
+          ], $atts);
+
+          $rows = '';
+          $hari_ini = strtolower(date('l'));
+          $hari_map = [
+            'monday'    => 'senin',
+            'tuesday'   => 'selasa',
+            'wednesday' => 'rabu',
+            'thursday'  => 'kamis',
+            'friday'    => 'jumat',
+            'saturday'  => 'sabtu',
+            'sunday'    => 'minggu',
+          ];
+          $today_key = $hari_map[$hari_ini] ?? '';
+
+          foreach ($hari_label as $key => $label) {
+            $val   = isset($jam_kerja[$key]) ? $jam_kerja[$key] : ['buka' => '08:00', 'tutup' => '16:00', 'libur' => false];
+            $today_class = ($key === $today_key) ? 'desa-jam-today' : '';
+            $libur = !empty($val['libur']);
+
+            if ($libur) {
+              $jam = '<span class="desa-jam-libur">Libur</span>';
+            } else {
+              $buka  = esc_html($val['buka'] ?? '');
+              $tutup = esc_html($val['tutup'] ?? '');
+              $jam   = $buka && $tutup ? "<span class=\"desa-jam-waktu\">{$buka} — {$tutup}</span>" : '<span class="desa-jam-libur">—</span>';
+            }
+
+            $rows .= sprintf(
+              '<tr class="%s"><td class="desa-jam-hari">%s</td><td class="desa-jam-jam">%s</td></tr>',
+              esc_attr($today_class),
+              esc_html($label),
+              $jam
+            );
+          }
+
+          $class = $atts['class'] ? ' class="' . esc_attr($atts['class']) . '"' : '';
+          return sprintf(
+            '<div%s><table class="desa-jam-table"><tbody>%s</tbody></table></div>',
+            $class,
+            $rows
+          );
         }
       }

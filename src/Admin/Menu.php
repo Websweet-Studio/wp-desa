@@ -282,6 +282,22 @@ class Menu
 
         update_option('wp_desa_settings', $data);
 
+        // Save jam kerja if tab is jam-kerja
+        if (isset($_POST['_current_tab']) && $_POST['_current_tab'] === 'jam-kerja') {
+            $jam_raw = isset($_POST['temadesa_jam_kerja']) ? $_POST['temadesa_jam_kerja'] : [];
+            $jam_sanitized = [];
+            $hari = ['senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu'];
+            foreach ($hari as $h) {
+                $item = isset($jam_raw[$h]) ? $jam_raw[$h] : [];
+                $jam_sanitized[$h] = [
+                    'buka'  => sanitize_text_field($item['buka'] ?? ''),
+                    'tutup' => sanitize_text_field($item['tutup'] ?? ''),
+                    'libur' => !empty($item['libur']),
+                ];
+            }
+            update_option('temadesa_jam_kerja', $jam_sanitized);
+        }
+
         $redirect_args = [
             'page' => 'wp-desa-settings',
             'settings-updated' => 'true',
@@ -303,6 +319,7 @@ class Menu
             ['tab' => 'identitas', 'label' => 'Identitas & Kontak'],
             ['tab' => 'media', 'label' => 'Logo & Media'],
             ['tab' => 'pejabat', 'label' => 'Kepala Desa'],
+            ['tab' => 'jam-kerja', 'label' => 'Jam Kerja'],
             ['tab' => 'sistem', 'label' => 'Pengaturan Sistem'],
             ['tab' => 'peta', 'label' => 'Peta Desa'],
         ];

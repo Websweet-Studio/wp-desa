@@ -123,6 +123,62 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
                 </div>
             </div>
 
+            <!-- Tab: Jam Kerja -->
+            <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'jam-kerja' ? 'display:none;' : ''; ?>">
+                <?php $jam_kerja = get_option('temadesa_jam_kerja', []); ?>
+                <p class="wp-desa-helper" style="margin-bottom:var(--sp-xl);">
+                    Atur jam kerja kantor desa. Centang <strong>Libur</strong> untuk hari yang libur.
+                    Gunakan shortcode <code>[temadesa_jam_kerja]</code> untuk menampilkan jam kerja di halaman depan.
+                </p>
+                <?php
+                $hari_label = [
+                    'senin'  => 'Senin', 'selasa' => 'Selasa', 'rabu' => 'Rabu',
+                    'kamis'  => 'Kamis', 'jumat' => 'Jumat', 'sabtu' => 'Sabtu', 'minggu' => 'Minggu',
+                ];
+                $default = ['buka' => '08:00', 'tutup' => '16:00', 'libur' => false];
+                ?>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-md);">
+                    <?php foreach ($hari_label as $key => $label) :
+                        $val = isset($jam_kerja[$key]) ? $jam_kerja[$key] : $default;
+                    ?>
+                    <div class="temadesa-jam-box" style="background:#f0f0f1;padding:16px;border-radius:8px;border:1px solid #dcdcde;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                            <strong style="font-size:15px;"><?php echo esc_html($label); ?></strong>
+                            <label style="font-size:13px;display:flex;align-items:center;gap:6px;cursor:pointer;">
+                                <input type="checkbox" name="temadesa_jam_kerja[<?php echo esc_attr($key); ?>][libur]" value="1" <?php checked(!empty($val['libur'])); ?>>
+                                Libur
+                            </label>
+                        </div>
+                        <div style="display:flex;gap:12px;align-items:center;<?php echo !empty($val['libur']) ? 'opacity:0.4;pointer-events:none;' : ''; ?>">
+                            <div style="flex:1;">
+                                <label style="font-size:12px;color:#636363;display:block;margin-bottom:4px;">Jam Buka</label>
+                                <input type="time" class="wp-desa-input" name="temadesa_jam_kerja[<?php echo esc_attr($key); ?>][buka]"
+                                       value="<?php echo esc_attr($val['buka'] ?? '08:00'); ?>">
+                            </div>
+                            <div style="flex:1;">
+                                <label style="font-size:12px;color:#636363;display:block;margin-bottom:4px;">Jam Tutup</label>
+                                <input type="time" class="wp-desa-input" name="temadesa_jam_kerja[<?php echo esc_attr($key); ?>][tutup]"
+                                       value="<?php echo esc_attr($val['tutup'] ?? '16:00'); ?>">
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <script>
+                jQuery(function($){
+                    $('.temadesa-jam-box input[type="checkbox"]').on('change', function(){
+                        var box = $(this).closest('.temadesa-jam-box');
+                        var fields = box.find('input[type="time"]').closest('div[style*="display:flex"]');
+                        if ($(this).is(':checked')) {
+                            fields.css({opacity:0.4, pointerEvents:'none'});
+                        } else {
+                            fields.css({opacity:1, pointerEvents:''});
+                        }
+                    });
+                });
+                </script>
+            </div>
+
             <!-- Tab: Pengaturan Sistem -->
             <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'sistem' ? 'display:none;' : ''; ?>">
                 <!-- Seed / Clear Data -->
