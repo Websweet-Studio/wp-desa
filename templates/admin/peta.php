@@ -14,21 +14,66 @@ $markers = isset($map_data['markers']) ? $map_data['markers'] : [];
 $polygon = isset($map_data['polygon']) ? $map_data['polygon'] : '';
 ?>
 <div class="wp-desa-wrapper">
-    <h2>Peta Wilayah Desa</h2>
-    <p style="color: #64748b; margin-bottom: 20px;">
-        Atur peta interaktif desa. Tambahkan marker untuk lokasi penting (kantor desa, sekolah, masjid, puskesmas, dll).
-    </p>
-
-    <!-- Map Canvas -->
-    <div id="wp-desa-peta-map" style="width: 100%; height: 500px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #e2e8f0;"></div>
-
-    <!-- Marker List -->
-    <div class="wp-desa-card" style="margin-top: 20px;">
-        <div class="wp-desa-header-actions" style="margin-bottom: 16px;">
-            <h3 style="margin: 0;">Daftar Marker</h3>
-            <button type="button" class="button button-primary" id="wp-desa-peta-add-marker">Tambah Marker</button>
+    <div style="display:flex; gap:var(--sp-xl); align-items:flex-start;">
+        <!-- Sidebar: Marker Form -->
+        <div style="width:340px; flex-shrink:0; background:var(--canvas); border:1px solid var(--fog); border-radius:var(--rounded-xl); padding:var(--sp-xl);">
+            <h3 class="wp-desa-section-title" id="wp-desa-peta-marker-title" style="margin-bottom:var(--sp-lg);">Tambah Marker</h3>
+            <input type="hidden" id="wp-desa-peta-marker-index" value="">
+            <div class="wp-desa-form-group">
+                <label class="wp-desa-label">Nama Lokasi</label>
+                <input type="text" id="wp-desa-peta-marker-name" class="wp-desa-input" style="width:100%;" placeholder="Contoh: Kantor Desa Sukamaju">
+            </div>
+            <div class="wp-desa-form-group">
+                <label class="wp-desa-label">Jenis</label>
+                <select id="wp-desa-peta-marker-type" class="wp-desa-select" style="width:100%;">
+                    <option value="kantor-desa">Kantor Desa</option>
+                    <option value="sekolah">Sekolah</option>
+                    <option value="masjid">Masjid</option>
+                    <option value="puskesmas">Puskesmas / Klinik</option>
+                    <option value="pasar">Pasar</option>
+                    <option value="wisata">Wisata</option>
+                    <option value="lainnya">Lainnya</option>
+                </select>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:var(--sp-sm);">
+                <div class="wp-desa-form-group" style="margin:0;">
+                    <label class="wp-desa-label">Latitude</label>
+                    <input type="text" id="wp-desa-peta-marker-lat" class="wp-desa-input" style="width:100%;">
+                </div>
+                <div class="wp-desa-form-group" style="margin:0;">
+                    <label class="wp-desa-label">Longitude</label>
+                    <input type="text" id="wp-desa-peta-marker-lng" class="wp-desa-input" style="width:100%;">
+                </div>
+            </div>
+            <div class="wp-desa-form-group">
+                <label class="wp-desa-label">Deskripsi</label>
+                <textarea id="wp-desa-peta-marker-desc" class="wp-desa-textarea" style="width:100%;" rows="2" placeholder="Keterangan singkat..."></textarea>
+            </div>
+            <div style="display:flex; gap:var(--sp-sm);">
+                <button type="button" class="wp-desa-btn wp-desa-btn-primary" id="wp-desa-peta-marker-save" style="flex:1;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Simpan Marker
+                </button>
+                <button type="button" class="wp-desa-btn wp-desa-btn-secondary" id="wp-desa-peta-marker-cancel">Batal</button>
+            </div>
         </div>
 
+        <!-- Map Area -->
+        <div style="flex:1; min-width:0;">
+            <div id="wp-desa-peta-map" style="width:100%; height:520px; border-radius:var(--rounded-xl); border:1px solid var(--fog);"></div>
+            <p style="font-size:13px; color:var(--graphite); margin-top:var(--sp-xs); display:flex; align-items:center; gap:6px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/></svg>
+                Klik peta untuk menempatkan marker baru, lalu isi detail di samping.
+            </p>
+        </div>
+    </div>
+
+    <!-- Marker List -->
+    <div class="wp-desa-card" style="margin-top:var(--sp-xl); padding:var(--sp-xl);">
+        <div class="wp-desa-header-actions" style="margin-bottom:16px;">
+            <h3 style="margin:0;">Daftar Marker</h3>
+            <button type="button" class="button button-primary" id="wp-desa-peta-add-marker">Tambah Marker</button>
+        </div>
         <table class="wp-list-table widefat fixed striped" id="wp-desa-peta-markers-table">
             <thead>
                 <tr>
@@ -36,7 +81,7 @@ $polygon = isset($map_data['polygon']) ? $map_data['polygon'] : '';
                     <th>Nama Lokasi</th>
                     <th>Jenis</th>
                     <th>Koordinat</th>
-                    <th style="width: 100px;">Aksi</th>
+                    <th style="width:100px;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,50 +90,12 @@ $polygon = isset($map_data['polygon']) ? $map_data['polygon'] : '';
     </div>
 
     <!-- Save Button -->
-    <div style="margin-top: 20px;">
-        <button type="button" class="button button-primary button-large" id="wp-desa-peta-save">Simpan Peta</button>
-        <span id="wp-desa-peta-save-status" style="margin-left: 10px; display: none;"></span>
-    </div>
-</div>
-
-<!-- Light Marker Form Modal -->
-<div id="wp-desa-peta-marker-modal" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;z-index:100000;">
-    <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);" onclick="jQuery('#wp-desa-peta-marker-modal').hide()"></div>
-    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:24px;border-radius:8px;width:90%;max-width:450px;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-        <h3 id="wp-desa-peta-marker-title" style="margin-top:0;">Tambah Marker</h3>
-        <input type="hidden" id="wp-desa-peta-marker-index" value="">
-        <div style="margin-bottom:12px;">
-            <label>Nama Lokasi</label>
-            <input type="text" id="wp-desa-peta-marker-name" class="wp-desa-input" style="width:100%;">
-        </div>
-        <div style="margin-bottom:12px;">
-            <label>Jenis</label>
-            <select id="wp-desa-peta-marker-type" class="wp-desa-select" style="width:100%;">
-                <option value="kantor-desa">Kantor Desa</option>
-                <option value="sekolah">Sekolah</option>
-                <option value="masjid">Masjid</option>
-                <option value="puskesmas">Puskesmas / Klinik</option>
-                <option value="pasar">Pasar</option>
-                <option value="wisata">Wisata</option>
-                <option value="lainnya">Lainnya</option>
-            </select>
-        </div>
-        <div style="margin-bottom:12px;">
-            <label>Latitude</label>
-            <input type="text" id="wp-desa-peta-marker-lat" class="wp-desa-input" style="width:100%;">
-        </div>
-        <div style="margin-bottom:12px;">
-            <label>Longitude</label>
-            <input type="text" id="wp-desa-peta-marker-lng" class="wp-desa-input" style="width:100%;">
-        </div>
-        <div style="margin-bottom:12px;">
-            <label>Deskripsi</label>
-            <textarea id="wp-desa-peta-marker-desc" class="wp-desa-textarea" style="width:100%;" rows="2"></textarea>
-        </div>
-        <div style="text-align:right;">
-            <button type="button" class="button" onclick="jQuery('#wp-desa-peta-marker-modal').hide()">Batal</button>
-            <button type="button" class="button button-primary" id="wp-desa-peta-marker-save">Simpan</button>
-        </div>
+    <div style="margin-top:var(--sp-lg); display:flex; align-items:center; gap:var(--sp-md);">
+        <button type="button" class="wp-desa-btn wp-desa-btn-primary" id="wp-desa-peta-save">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Simpan Peta
+        </button>
+        <span id="wp-desa-peta-save-status" style="display:none; font-size:14px;"></span>
     </div>
 </div>
 
@@ -106,6 +113,16 @@ jQuery(function($) {
     var DEFAULT_ZOOM = parseInt('<?php echo esc_js($zoom); ?>');
     var editingIndex = -1;
 
+    function resetForm() {
+        $('#wp-desa-peta-marker-index').val('');
+        $('#wp-desa-peta-marker-name').val('');
+        $('#wp-desa-peta-marker-type').val('kantor-desa');
+        $('#wp-desa-peta-marker-lat').val('');
+        $('#wp-desa-peta-marker-lng').val('');
+        $('#wp-desa-peta-marker-desc').val('');
+        $('#wp-desa-peta-marker-title').text('Tambah Marker');
+    }
+
     // Init map
     function initMap() {
         map = L.map('wp-desa-peta-map').setView([DEFAULT_LAT, DEFAULT_LNG], DEFAULT_ZOOM);
@@ -115,16 +132,13 @@ jQuery(function($) {
 
         renderAllMarkers();
 
-        // Click to add marker
+        // Click on map to place marker
         map.on('click', function(e) {
-            $('#wp-desa-peta-marker-name').val('');
-            $('#wp-desa-peta-marker-type').val('kantor-desa');
+            resetForm();
             $('#wp-desa-peta-marker-lat').val(e.latlng.lat.toFixed(6));
             $('#wp-desa-peta-marker-lng').val(e.latlng.lng.toFixed(6));
-            $('#wp-desa-peta-marker-desc').val('');
-            $('#wp-desa-peta-marker-index').val('');
-            $('#wp-desa-peta-marker-title').text('Tambah Marker');
-            $('#wp-desa-peta-marker-modal').show();
+            // Scroll sidebar into view on mobile
+            $('.wp-desa-wrapper > div:first-child').get(0).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
     }
 
@@ -186,14 +200,10 @@ jQuery(function($) {
     // Add marker button
     $('#wp-desa-peta-add-marker').on('click', function() {
         var center = map.getCenter();
-        $('#wp-desa-peta-marker-name').val('');
-        $('#wp-desa-peta-marker-type').val('kantor-desa');
+        resetForm();
         $('#wp-desa-peta-marker-lat').val(center.lat.toFixed(6));
         $('#wp-desa-peta-marker-lng').val(center.lng.toFixed(6));
-        $('#wp-desa-peta-marker-desc').val('');
-        $('#wp-desa-peta-marker-index').val('');
-        $('#wp-desa-peta-marker-title').text('Tambah Marker');
-        $('#wp-desa-peta-marker-modal').show();
+        $('.wp-desa-wrapper > div:first-child').get(0).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 
     // Save marker form
@@ -206,7 +216,7 @@ jQuery(function($) {
             lng: $('#wp-desa-peta-marker-lng').val(),
             desc: $('#wp-desa-peta-marker-desc').val(),
         };
-        if (!data.lat || !data.lng) { alert('Latitude dan Longitude wajib diisi.'); return; }
+        if (!data.lat || !data.lng) { alert('Latitude dan Longitude wajib diisi. Klik peta untuk menentukan lokasi.'); return; }
         if (index === '') {
             markers.push(data);
         } else {
@@ -214,7 +224,12 @@ jQuery(function($) {
         }
         renderAllMarkers();
         renderMarkerTable();
-        $('#wp-desa-peta-marker-modal').hide();
+        resetForm();
+    });
+
+    // Cancel
+    $('#wp-desa-peta-marker-cancel').on('click', function() {
+        resetForm();
     });
 
     // Edit / Delete from table
@@ -237,7 +252,7 @@ jQuery(function($) {
         $('#wp-desa-peta-marker-lng').val(m.lng);
         $('#wp-desa-peta-marker-desc').val(m.desc || '');
         $('#wp-desa-peta-marker-title').text('Edit Marker');
-        $('#wp-desa-peta-marker-modal').show();
+        $('.wp-desa-wrapper > div:first-child').get(0).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     // Save all

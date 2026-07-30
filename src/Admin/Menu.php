@@ -132,8 +132,12 @@ class Menu
         $screen = get_current_screen();
         if ($screen && strpos($screen->id, 'wp-desa') !== false) {
             echo '<style>
-                .wp-desa-dashboard .notice:not(.notice-error):not(.notice-warning),
-                .wp-desa-wrapper .notice:not(.notice-error):not(.notice-warning) { display:none !important; }
+                .notice { display:none !important; }
+                .wp-desa-header-actions > h2,
+                .wp-desa-header-actions > h3 { display:none !important; }
+                .wp-desa-hero__head { display:none !important; }
+                .wp-desa-wrapper > h2:first-child { display:none !important; }
+                .wp-desa-wrapper > h2:first-child + p { display:none !important; }
             </style>';
         }
     }
