@@ -1610,19 +1610,15 @@
   font-size: 11px;
 }
 
-/* --- Pill Tabs (classic layanan) --- */
-[data-wp-desa="layanan"] .wp-desa-tab-pill {
-  transition: background 0.2s, color 0.2s;
+/* --- Pill / Line Tabs (layanan) --- */
+[data-wp-desa="layanan"] .wp-desa-tab-line {
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
-[data-wp-desa="layanan"] .wp-desa-tab-pill:hover {
-  background: var(--cloud) !important;
-  color: var(--ink) !important;
-}
-
-[data-wp-desa="layanan"] .wp-desa-tab-pill.active:hover {
-  background: var(--ink) !important;
-  color: var(--on-ink) !important;
+[data-wp-desa="layanan"] .wp-desa-tab-line.active {
+  background:var(--ink) !important;
+  color:var(--on-ink) !important;
+  border-color:var(--ink) !important;
 }
 
 /* --- Layanan Shortcode Extra --- */

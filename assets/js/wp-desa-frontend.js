@@ -660,7 +660,7 @@
     };
 
     // DOM refs — all relative to $el
-    var $tabs = $el.find(".wp-desa-tab-btn, .wp-desa-tab-pill");
+    var $tabs = $el.find(".wp-desa-tab-btn, .wp-desa-tab-line");
     var $content = $el.find(".wp-desa-content");
     var $formPanel = $content.children(".wp-desa-tab-panel").eq(0); // tab === 'form'
     var $trackPanel = $content.children(".wp-desa-tab-panel").eq(1); // tab === 'track'
@@ -960,7 +960,7 @@
     };
 
     // DOM refs — all relative to $el
-    var $tabs = $el.find(".wp-desa-tab-btn");
+    var $tabs = $el.find(".wp-desa-tab-btn, .wp-desa-tab-line");
     var $requestPanel = $el.find("[x-show=\"tab === 'request'\"]");
     var $trackingPanel = $el.find("[x-show=\"tab === 'tracking'\"]");
 
@@ -1215,8 +1215,15 @@
     $trackBtn.on("click", checkStatus);
 
     // ---- boot ----
-    $requestPanel.hide();
-    $trackingPanel.hide();
+    if ($tabs.filter('[data-tab="tracking"]').hasClass("active")) {
+      $requestPanel.hide();
+      $trackingPanel.show();
+      state.tab = "tracking";
+    } else {
+      $requestPanel.show();
+      $trackingPanel.hide();
+      state.tab = "request";
+    }
     $msgContent.hide();
     $trackingBox.hide();
     $trackResultDiv.hide();

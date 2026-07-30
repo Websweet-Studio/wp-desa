@@ -1149,10 +1149,11 @@ class Shortcode
 
     $style      = $atts['style'];
     $view       = $atts['view'] === 'tracking' ? 'tracking' : 'request';
+    $active_tab = $view; // 'request' or 'tracking'
     $is_classic = $style === 'classic';
     $is_compact = $style === 'compact';
     $is_minimal = $style === 'minimal';
-    $is_simple  = !$is_classic;
+    $is_simple  = $is_minimal;
 
     $uid = $this->instance_id('wp-desa-layanan');
     ob_start();
@@ -1161,18 +1162,18 @@ class Shortcode
     $form_style   = '';
     $card_open    = '';
     $card_close   = '';
-    $pill_tabs    = false;
+    $tab_style    = false; // false | 'pill' | 'line'
     $btn_class    = 'wp-desa-btn wp-desa-btn-primary';
     $btn_width    = '';
 
     if ($is_classic) {
       $card_open  = '<div class="wp-desa-card" style="overflow:visible;">';
       $card_close = '</div>';
-      $pill_tabs  = true;
+      $tab_style  = 'pill';
       $btn_width  = 'width:100%;';
     } elseif ($is_compact) {
-      // flat form, no wrapper
-      $btn_class = 'wp-desa-btn wp-desa-btn-primary';
+      $tab_style  = 'line';
+      $btn_class  = 'wp-desa-btn wp-desa-btn-primary';
     } elseif ($is_minimal) {
       // underline fields
       $btn_class = 'wp-desa-btn wp-desa-btn-primary';
@@ -1183,18 +1184,32 @@ class Shortcode
     $input_style = $is_minimal ? 'border:none; border-bottom:1px solid var(--fog); border-radius:0; padding:var(--sp-xs) 0; background:transparent;' : '';
     $gap_class   = $is_simple ? 'wp-desa-form-grid--tight' : '';
   ?>
-    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper wp-desa-layanan--<?php echo esc_attr($style); ?>" data-wp-desa="layanan">
+    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper wp-desa-layanan--<?php echo esc_attr($style); ?>" data-wp-desa="layanan" x-ignore>
 
       <?php echo $card_open; ?>
 
-      <?php if ($pill_tabs): ?>
+      <?php if ($tab_style === 'pill'): ?>
       <!-- Pill Tabs (classic) -->
       <div style="display:flex;align-items:center;gap:var(--sp-xs);padding:var(--sp-md) var(--sp-xl);border-bottom:1px solid var(--fog);">
         <h3 style="margin:0;font-size:20px;font-weight:500;color:var(--ink);margin-right:auto;">Permohonan Surat</h3>
-        <button class="wp-desa-tab-pill active" data-tab="request" style="padding:6px 14px;border:none;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;background:var(--ink);color:var(--on-ink);">
+        <button class="wp-desa-tab-line<?php echo $active_tab === 'request' ? ' active' : ''; ?>" data-tab="request" style="padding:6px 14px;border:none;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:var(--ink);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M14 19h6"/><path d="M17 16v6"/></svg>
           Buat
         </button>
-        <button class="wp-desa-tab-pill" data-tab="tracking" style="padding:6px 14px;border:none;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:var(--ink);">
+        <button class="wp-desa-tab-line<?php echo $active_tab === 'tracking' ? ' active' : ''; ?>" data-tab="tracking" style="padding:6px 14px;border:none;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:var(--ink);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M14 19h6"/><path d="M17 16v6"/></svg>
+          Cek Status
+        </button>
+      </div>
+      <?php elseif ($tab_style === 'line'): ?>
+      <!-- Line Tabs (compact) -->
+      <div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid var(--fog);margin-bottom:var(--sp-lg);">
+        <button class="wp-desa-tab-line<?php echo $active_tab === 'request' ? ' active' : ''; ?>" data-tab="request" style="padding:8px 16px;border:none;border-bottom:2px solid <?php echo $active_tab === 'request' ? 'var(--ink)' : 'transparent'; ?>;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:<?php echo $active_tab === 'request' ? 'var(--ink)' : 'var(--graphite)'; ?>;margin-bottom:-1px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><path d="M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M14 19h6"/><path d="M17 16v6"/></svg>
+          Buat
+        </button>
+        <button class="wp-desa-tab-line<?php echo $active_tab === 'tracking' ? ' active' : ''; ?>" data-tab="tracking" style="padding:8px 16px;border:none;border-bottom:2px solid <?php echo $active_tab === 'tracking' ? 'var(--ink)' : 'transparent'; ?>;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:<?php echo $active_tab === 'tracking' ? 'var(--ink)' : 'var(--graphite)'; ?>;margin-bottom:-1px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><path d="M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M14 19h6"/><path d="M17 16v6"/></svg>
           Cek Status
         </button>
       </div>
@@ -1207,9 +1222,16 @@ class Shortcode
       <?php endif; ?>
 
       <?php
-      $req_hide   = ($is_simple && $view !== 'request') ? 'display:none;' : '';
-      $track_hide = ($is_simple && $view !== 'tracking') ? 'display:none;' : '';
-      if ($is_classic) { $req_hide = ''; $track_hide = ''; }
+      // Panel initial visibility
+      if ($is_simple) {
+        $req_hide   = $view !== 'request'   ? 'display:none;' : '';
+        $track_hide = $view !== 'tracking'  ? 'display:none;' : '';
+      } elseif ($tab_style) {
+        $req_hide   = $active_tab !== 'request'  ? 'display:none;' : '';
+        $track_hide = $active_tab !== 'tracking' ? 'display:none;' : '';
+      } else {
+        $req_hide = $track_hide = '';
+      }
       ?>
 
       <!-- Request Form -->
@@ -1222,7 +1244,8 @@ class Shortcode
           <div class="wp-desa-tracking-note">Simpan kode ini untuk mengecek status permohonan.</div>
         </div>
 
-        <form style="<?php echo $form_style; ?>padding:<?php echo $is_classic ? 'var(--sp-xl)' : '0'; ?>;">
+        <form style="<?php echo $form_style; ?>">
+          <div style="padding:<?php echo $is_classic ? 'var(--sp-xl)' : '0'; ?>;">
           <div class="wp-desa-form-group <?php echo $gap_class; ?>" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
             <label class="wp-desa-label" style="<?php echo $label_style; ?>">NIK</label>
             <input type="text" x-model="form.nik" name="nik" class="wp-desa-input" required maxlength="16" placeholder="16 digit NIK" style="<?php echo $input_style; ?>">
@@ -1251,32 +1274,31 @@ class Shortcode
             <textarea x-model="form.details" name="details" class="wp-desa-textarea" rows="3" placeholder="Jelaskan keperluan surat..." style="<?php echo $input_style; ?>"></textarea>
           </div>
 
-          <?php if ($is_classic): ?>
-          <div class="wp-desa-form-actions" style="background:var(--cloud);border-top:1px solid var(--fog);padding:var(--sp-md) var(--sp-xl);display:flex;justify-content:flex-end;margin:0 calc(-1 * var(--sp-xl)) calc(-1 * var(--sp-xl));">
-          <?php endif; ?>
+          <div style="margin-top:<?php echo $is_classic ? 'var(--sp-lg)' : '0'; ?>;">
           <button type="submit" class="<?php echo $btn_class; ?>" style="<?php echo $btn_width; ?>font-size:14px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;">
             <span>Kirim Permohonan</span>
             <span style="display: none;">Mengirim...</span>
           </button>
-          <?php if ($is_classic): ?>
           </div>
-          <?php endif; ?>
-
+          </div>
         </form>
       </div>
 
       <!-- Tracking Form -->
       <div class="wp-desa-tab-panel" x-show="tab === 'tracking'" style="<?php echo $track_hide; ?>">
-        <form style="<?php echo $form_style; ?>padding:<?php echo $is_classic ? 'var(--sp-xl)' : '0'; ?>;">
+        <form style="<?php echo $form_style; ?>">
+          <div style="padding:<?php echo $is_classic ? 'var(--sp-xl)' : '0'; ?>;">
           <div class="wp-desa-form-group">
             <label class="wp-desa-label">Masukkan Kode Tracking</label>
             <div class="wp-desa-tracking-input-group" style="display:flex;gap:var(--sp-xs);">
               <input type="text" x-model="trackCode" class="wp-desa-input" placeholder="Contoh: REQ-..." style="flex:1;">
               <button type="button" class="<?php echo $btn_class; ?>" style="font-size:14px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
                 <span>Cek</span>
                 <span style="display: none;">...</span>
               </button>
             </div>
+          </div>
           </div>
         </form>
 
