@@ -144,6 +144,11 @@
                 ['category', '', 'Filter berdasarkan slug kategori wisata'],
             ],
         ],
+        [
+            'code' => '[temadesa_jam_kerja]',
+            'desc' => 'Menampilkan jadwal jam kerja kantor desa sesuai pengaturan di Pengaturan > Jam Kerja.',
+            'params' => [],
+        ],
     ];
 
     foreach ($shortcodes as $sc):

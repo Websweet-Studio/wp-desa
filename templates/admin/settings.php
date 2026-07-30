@@ -5,9 +5,13 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
 <div class="wrap wp-desa-wrapper">
 
     <?php if (isset($_GET['seed_done'])): ?>
-        <div class="notice notice-success is-dismissible"><p>Data dummy berhasil dibuat.</p></div>
+        <div class="notice notice-success is-dismissible">
+            <p>Data dummy berhasil dibuat.</p>
+        </div>
     <?php elseif (isset($_GET['clear_done'])): ?>
-        <div class="notice notice-success is-dismissible"><p>Semua data berhasil dihapus.</p></div>
+        <div class="notice notice-success is-dismissible">
+            <p>Semua data berhasil dihapus.</p>
+        </div>
     <?php endif; ?>
 
     <form method="post" action="">
@@ -16,219 +20,242 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
 
         <div style="display:flex;gap:var(--sp-lg);align-items:flex-start;">
 
-        <div class="wp-desa-card" style="flex:1;">
+            <div class="wp-desa-card" style="flex:1;">
 
-            <!-- Tab: Identitas & Kontak -->
-            <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'identitas' ? 'display:none;' : ''; ?>">
-                <div class="wp-desa-form-grid">
-                    <div>
-                        <label class="wp-desa-label" for="nama_desa">Nama Desa</label>
-                        <input name="nama_desa" type="text" id="nama_desa" value="<?php echo esc_attr($settings['nama_desa'] ?? ''); ?>" class="wp-desa-input" placeholder="Contoh: Sukamaju">
-                    </div>
-
-                    <div class="wp-desa-grid-2">
+                <!-- Tab: Identitas & Kontak -->
+                <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'identitas' ? 'display:none;' : ''; ?>">
+                    <div class="wp-desa-form-grid">
                         <div>
-                            <label class="wp-desa-label" for="nama_kecamatan">Kecamatan</label>
-                            <input name="nama_kecamatan" type="text" id="nama_kecamatan" value="<?php echo esc_attr($settings['nama_kecamatan'] ?? ''); ?>" class="wp-desa-input">
+                            <label class="wp-desa-label" for="nama_desa">Nama Desa</label>
+                            <input name="nama_desa" type="text" id="nama_desa" value="<?php echo esc_attr($settings['nama_desa'] ?? ''); ?>" class="wp-desa-input" placeholder="Contoh: Sukamaju">
                         </div>
-                        <div>
-                            <label class="wp-desa-label" for="nama_kabupaten">Kabupaten/Kota</label>
-                            <input name="nama_kabupaten" type="text" id="nama_kabupaten" value="<?php echo esc_attr($settings['nama_kabupaten'] ?? ''); ?>" class="wp-desa-input">
-                        </div>
-                    </div>
 
-                    <div>
-                        <label class="wp-desa-label" for="alamat_kantor">Alamat Kantor</label>
-                        <textarea name="alamat_kantor" id="alamat_kantor" class="wp-desa-textarea" rows="3"><?php echo esc_textarea($settings['alamat_kantor'] ?? ''); ?></textarea>
-                        <p class="wp-desa-helper">Alamat lengkap kantor desa untuk kop surat.</p>
-                    </div>
-
-                    <div class="wp-desa-grid-2">
-                        <div>
-                            <label class="wp-desa-label" for="email_desa">Email Desa</label>
-                            <input name="email_desa" type="email" id="email_desa" value="<?php echo esc_attr($settings['email_desa'] ?? ''); ?>" class="wp-desa-input">
+                        <div class="wp-desa-grid-2">
+                            <div>
+                                <label class="wp-desa-label" for="nama_kecamatan">Kecamatan</label>
+                                <input name="nama_kecamatan" type="text" id="nama_kecamatan" value="<?php echo esc_attr($settings['nama_kecamatan'] ?? ''); ?>" class="wp-desa-input">
+                            </div>
+                            <div>
+                                <label class="wp-desa-label" for="nama_kabupaten">Kabupaten/Kota</label>
+                                <input name="nama_kabupaten" type="text" id="nama_kabupaten" value="<?php echo esc_attr($settings['nama_kabupaten'] ?? ''); ?>" class="wp-desa-input">
+                            </div>
                         </div>
+
                         <div>
-                            <label class="wp-desa-label" for="telepon_desa">Telepon/WA</label>
-                            <input name="telepon_desa" type="text" id="telepon_desa" value="<?php echo esc_attr($settings['telepon_desa'] ?? ''); ?>" class="wp-desa-input">
+                            <label class="wp-desa-label" for="alamat_kantor">Alamat Kantor</label>
+                            <textarea name="alamat_kantor" id="alamat_kantor" class="wp-desa-textarea" rows="3"><?php echo esc_textarea($settings['alamat_kantor'] ?? ''); ?></textarea>
+                            <p class="wp-desa-helper">Alamat lengkap kantor desa untuk kop surat.</p>
+                        </div>
+
+                        <div class="wp-desa-grid-2">
+                            <div>
+                                <label class="wp-desa-label" for="email_desa">Email Desa</label>
+                                <input name="email_desa" type="email" id="email_desa" value="<?php echo esc_attr($settings['email_desa'] ?? ''); ?>" class="wp-desa-input">
+                            </div>
+                            <div>
+                                <label class="wp-desa-label" for="telepon_desa">Telepon/WA</label>
+                                <input name="telepon_desa" type="text" id="telepon_desa" value="<?php echo esc_attr($settings['telepon_desa'] ?? ''); ?>" class="wp-desa-input">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Tab: Logo & Media -->
-            <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'media' ? 'display:none;' : ''; ?>">
-                <div class="wp-desa-form-grid">
-                    <div>
-                        <label class="wp-desa-label">Logo Kabupaten</label>
-                        <p class="wp-desa-helper wp-desa-mb-12">Digunakan pada kop surat resmi.</p>
+                <!-- Tab: Logo & Media -->
+                <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'media' ? 'display:none;' : ''; ?>">
+                    <div class="wp-desa-form-grid">
+                        <div>
+                            <label class="wp-desa-label">Logo Kabupaten</label>
 
-                        <input type="hidden" name="logo_kabupaten" id="logo_kabupaten" value="<?php echo esc_attr($settings['logo_kabupaten'] ?? ''); ?>">
+                            <input type="hidden" name="logo_kabupaten" id="logo_kabupaten" value="<?php echo esc_attr($settings['logo_kabupaten'] ?? ''); ?>">
 
-                        <div id="logo-preview-wrapper" class="wp-desa-image-preview">
-                            <?php if (!empty($settings['logo_kabupaten'])): ?>
-                                <img src="<?php echo esc_url($settings['logo_kabupaten']); ?>">
-                            <?php else: ?>
-                                <span class="dashicons dashicons-format-image wp-desa-placeholder-icon"></span>
-                            <?php endif; ?>
-                        </div>
+                            <div id="logo-preview-wrapper" class="wp-desa-image-preview">
+                                <?php if (!empty($settings['logo_kabupaten'])): ?>
+                                    <img src="<?php echo esc_url($settings['logo_kabupaten']); ?>">
+                                <?php else: ?>
+                                    <span class="dashicons dashicons-format-image wp-desa-placeholder-icon"></span>
+                                <?php endif; ?>
+                            </div>
 
-                        <div class="wp-desa-flex-gap-8">
-                            <button type="button" class="wp-desa-btn wp-desa-btn-secondary" id="upload-logo-btn">
-                                <span class="dashicons dashicons-upload"></span> Pilih Logo
-                            </button>
-                            <button type="button" class="wp-desa-btn wp-desa-btn-danger <?php echo empty($settings['logo_kabupaten']) ? 'wp-desa-hidden' : ''; ?>" id="remove-logo-btn">
-                                Hapus
-                            </button>
+                            <div class="wp-desa-flex-gap-8">
+                                <button type="button" class="wp-desa-btn wp-desa-btn-secondary" id="upload-logo-btn">
+                                    <span class="dashicons dashicons-upload"></span> Pilih Logo
+                                </button>
+                                <button type="button" class="wp-desa-btn wp-desa-btn-danger <?php echo empty($settings['logo_kabupaten']) ? 'wp-desa-hidden' : ''; ?>" id="remove-logo-btn">
+                                    Hapus
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Tab: Kepala Desa -->
-            <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'pejabat' ? 'display:none;' : ''; ?>">
-                <div class="wp-desa-form-grid">
-                    <div class="wp-desa-grid-2">
+                <!-- Tab: Kepala Desa -->
+                <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'pejabat' ? 'display:none;' : ''; ?>">
+                    <div class="wp-desa-form-grid">
+                        <div class="wp-desa-grid-2">
+                            <div>
+                                <label class="wp-desa-label" for="kepala_desa">Nama Kepala Desa</label>
+                                <input name="kepala_desa" type="text" id="kepala_desa" value="<?php echo esc_attr($settings['kepala_desa'] ?? ''); ?>" class="wp-desa-input">
+                            </div>
+                            <div>
+                                <label class="wp-desa-label" for="nip_kepala_desa">NIP Kepala Desa</label>
+                                <input name="nip_kepala_desa" type="text" id="nip_kepala_desa" value="<?php echo esc_attr($settings['nip_kepala_desa'] ?? ''); ?>" class="wp-desa-input">
+                            </div>
+                        </div>
+
                         <div>
-                            <label class="wp-desa-label" for="kepala_desa">Nama Kepala Desa</label>
-                            <input name="kepala_desa" type="text" id="kepala_desa" value="<?php echo esc_attr($settings['kepala_desa'] ?? ''); ?>" class="wp-desa-input">
-                        </div>
-                        <div>
-                            <label class="wp-desa-label" for="nip_kepala_desa">NIP Kepala Desa</label>
-                            <input name="nip_kepala_desa" type="text" id="nip_kepala_desa" value="<?php echo esc_attr($settings['nip_kepala_desa'] ?? ''); ?>" class="wp-desa-input">
-                        </div>
-                    </div>
+                            <label class="wp-desa-label">Foto Kepala Desa</label>
+                            <input type="hidden" name="foto_kepala_desa" id="foto_kepala_desa" value="<?php echo esc_attr($settings['foto_kepala_desa'] ?? ''); ?>">
 
-                    <div>
-                        <label class="wp-desa-label">Foto Kepala Desa</label>
-                        <input type="hidden" name="foto_kepala_desa" id="foto_kepala_desa" value="<?php echo esc_attr($settings['foto_kepala_desa'] ?? ''); ?>">
+                            <div id="foto-kades-preview-wrapper" class="wp-desa-image-preview">
+                                <?php if (!empty($settings['foto_kepala_desa'])): ?>
+                                    <img src="<?php echo esc_url($settings['foto_kepala_desa']); ?>">
+                                <?php else: ?>
+                                    <span class="dashicons dashicons-format-image wp-desa-placeholder-icon"></span>
+                                <?php endif; ?>
+                            </div>
 
-                        <div id="foto-kades-preview-wrapper" class="wp-desa-image-preview">
-                            <?php if (!empty($settings['foto_kepala_desa'])): ?>
-                                <img src="<?php echo esc_url($settings['foto_kepala_desa']); ?>">
-                            <?php else: ?>
-                                <span class="dashicons dashicons-format-image wp-desa-placeholder-icon"></span>
-                            <?php endif; ?>
-                        </div>
-
-                        <div class="wp-desa-flex-gap-8">
-                            <button type="button" class="wp-desa-btn wp-desa-btn-secondary" id="upload-foto-kades-btn">
-                                <span class="dashicons dashicons-upload"></span> Pilih Foto
-                            </button>
-                            <button type="button" class="wp-desa-btn wp-desa-btn-danger <?php echo empty($settings['foto_kepala_desa']) ? 'wp-desa-hidden' : ''; ?>" id="remove-foto-kades-btn">
-                                Hapus
-                            </button>
+                            <div class="wp-desa-flex-gap-8">
+                                <button type="button" class="wp-desa-btn wp-desa-btn-secondary" id="upload-foto-kades-btn">
+                                    <span class="dashicons dashicons-upload"></span> Pilih Foto
+                                </button>
+                                <button type="button" class="wp-desa-btn wp-desa-btn-danger <?php echo empty($settings['foto_kepala_desa']) ? 'wp-desa-hidden' : ''; ?>" id="remove-foto-kades-btn">
+                                    Hapus
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Tab: Jam Kerja -->
-            <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'jam-kerja' ? 'display:none;' : ''; ?>">
-                <?php $jam_kerja = get_option('temadesa_jam_kerja', []); ?>
-                <p class="wp-desa-helper" style="margin-bottom:var(--sp-xl);">
-                    Atur jam kerja kantor desa. Centang <strong>Libur</strong> untuk hari yang libur.
-                    Gunakan shortcode <code>[temadesa_jam_kerja]</code> untuk menampilkan jam kerja di halaman depan.
-                </p>
-                <?php
-                $hari_label = [
-                    'senin'  => 'Senin', 'selasa' => 'Selasa', 'rabu' => 'Rabu',
-                    'kamis'  => 'Kamis', 'jumat' => 'Jumat', 'sabtu' => 'Sabtu', 'minggu' => 'Minggu',
-                ];
-                $default = ['buka' => '08:00', 'tutup' => '16:00', 'libur' => false];
-                ?>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-md);">
-                    <?php foreach ($hari_label as $key => $label) :
-                        $val = isset($jam_kerja[$key]) ? $jam_kerja[$key] : $default;
+                <!-- Tab: Jam Kerja -->
+                <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'jam-kerja' ? 'display:none;' : ''; ?>">
+                    <?php $jam_kerja = get_option('temadesa_jam_kerja', []); ?>
+                    <?php
+                    $hari_label = [
+                        'senin'  => 'Senin',
+                        'selasa' => 'Selasa',
+                        'rabu' => 'Rabu',
+                        'kamis'  => 'Kamis',
+                        'jumat' => 'Jumat',
+                        'sabtu' => 'Sabtu',
+                        'minggu' => 'Minggu',
+                    ];
+                    $default = ['buka' => '08:00', 'tutup' => '16:00', 'libur' => false];
+                    $disabled_hari = [];
                     ?>
-                    <div class="temadesa-jam-box" style="background:#f0f0f1;padding:16px;border-radius:8px;border:1px solid #dcdcde;">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                            <strong style="font-size:15px;"><?php echo esc_html($label); ?></strong>
-                            <label style="font-size:13px;display:flex;align-items:center;gap:6px;cursor:pointer;">
-                                <input type="checkbox" name="temadesa_jam_kerja[<?php echo esc_attr($key); ?>][libur]" value="1" <?php checked(!empty($val['libur'])); ?>>
-                                Libur
-                            </label>
-                        </div>
-                        <div style="display:flex;gap:12px;align-items:center;<?php echo !empty($val['libur']) ? 'opacity:0.4;pointer-events:none;' : ''; ?>">
-                            <div style="flex:1;">
-                                <label style="font-size:12px;color:#636363;display:block;margin-bottom:4px;">Jam Buka</label>
-                                <input type="time" class="wp-desa-input" name="temadesa_jam_kerja[<?php echo esc_attr($key); ?>][buka]"
-                                       value="<?php echo esc_attr($val['buka'] ?? '08:00'); ?>">
-                            </div>
-                            <div style="flex:1;">
-                                <label style="font-size:12px;color:#636363;display:block;margin-bottom:4px;">Jam Tutup</label>
-                                <input type="time" class="wp-desa-input" name="temadesa_jam_kerja[<?php echo esc_attr($key); ?>][tutup]"
-                                       value="<?php echo esc_attr($val['tutup'] ?? '16:00'); ?>">
-                            </div>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-                <script>
-                jQuery(function($){
-                    $('.temadesa-jam-box input[type="checkbox"]').on('change', function(){
-                        var box = $(this).closest('.temadesa-jam-box');
-                        var fields = box.find('input[type="time"]').closest('div[style*="display:flex"]');
-                        if ($(this).is(':checked')) {
-                            fields.css({opacity:0.4, pointerEvents:'none'});
-                        } else {
-                            fields.css({opacity:1, pointerEvents:''});
-                        }
-                    });
-                });
-                </script>
-            </div>
-
-            <!-- Tab: Pengaturan Sistem -->
-            <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'sistem' ? 'display:none;' : ''; ?>">
-                <!-- Seed / Clear Data -->
-                <div class="wp-desa-form-grid">
-                    <div class="wp-desa-box-gray">
-                        <div class="wp-desa-flex-between-center" style="margin-bottom:16px;">
-                            <div>
-                                <label class="wp-desa-label wp-desa-label-lg">Generate Data Dummy</label>
-                                <p class="wp-desa-helper wp-desa-m-0">Buat data contoh untuk semua fitur (penduduk, surat, aduan, keuangan, bantuan).</p>
-                            </div>
-                            <form method="post" style="margin:0;" onsubmit="return confirm('Buat data dummy untuk SEMUA fitur?')">
-                                <?php wp_nonce_field('wp_desa_seed_action', 'wp_desa_seed_nonce'); ?>
-                                <input type="hidden" name="wp_desa_seed_data" value="1">
-                                <button type="submit" class="wp-desa-btn wp-desa-btn-primary">
-                                    <span class="dashicons dashicons-database"></span> Generate Dummy
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div class="wp-desa-box-gray">
-                        <div class="wp-desa-flex-between-center">
-                            <div>
-                                <label class="wp-desa-label wp-desa-label-lg">Hapus Semua Data</label>
-                                <p class="wp-desa-helper wp-desa-m-0">Kosongkan semua data dari tabel fitur plugin. Data pengaturan tidak dihapus.</p>
-                            </div>
-                            <form method="post" style="margin:0;" onsubmit="return confirm('Yakin hapus SEMUA data? Tindakan ini tidak bisa dibatalkan.')">
-                                <?php wp_nonce_field('wp_desa_clear_action', 'wp_desa_clear_nonce'); ?>
-                                <input type="hidden" name="wp_desa_clear_data" value="1">
-                                <button type="submit" class="wp-desa-btn wp-desa-btn-danger">
-                                    <span class="dashicons dashicons-trash"></span> Hapus Semua Data
-                                </button>
-                            </form>
-                        </div>
+                    <div class="wp-desa-card">
+                        <table class="wp-desa-table" style="margin:0;">
+                            <thead>
+                                <tr>
+                                    <th style="width:120px;">Hari</th>
+                                    <th style="width:160px;">Jam Buka</th>
+                                    <th style="width:160px;">Jam Tutup</th>
+                                    <th style="width:80px;text-align:center;">Libur</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($hari_label as $key => $label) :
+                                    $val = isset($jam_kerja[$key]) ? $jam_kerja[$key] : $default;
+                                    if (!empty($val['libur'])) $disabled_hari[] = $key;
+                                ?>
+                                    <tr class="jam-kerja-row" data-hari="<?php echo esc_attr($key); ?>">
+                                        <td style="font-weight:600;"><?php echo esc_html($label); ?></td>
+                                        <td>
+                                            <input type="time" class="wp-desa-input wp-desa-input--time" name="temadesa_jam_kerja[<?php echo esc_attr($key); ?>][buka]"
+                                                value="<?php echo esc_attr($val['buka'] ?? '08:00'); ?>" style="max-width:140px;">
+                                        </td>
+                                        <td>
+                                            <input type="time" class="wp-desa-input wp-desa-input--time" name="temadesa_jam_kerja[<?php echo esc_attr($key); ?>][tutup]"
+                                                value="<?php echo esc_attr($val['tutup'] ?? '16:00'); ?>" style="max-width:140px;">
+                                        </td>
+                                        <td style="text-align:center;">
+                                            <input type="checkbox" name="temadesa_jam_kerja[<?php echo esc_attr($key); ?>][libur]" value="1"
+                                                class="jam-kerja-libur" <?php checked(!empty($val['libur'])); ?>>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                        <script>
+                            jQuery(function($) {
+                                function toggleLibur(row) {
+                                    var inputs = row.find('.wp-desa-input--time');
+                                    if (row.find('.jam-kerja-libur').is(':checked')) {
+                                        inputs.css({
+                                            opacity: 0.35,
+                                            pointerEvents: 'none'
+                                        });
+                                    } else {
+                                        inputs.css({
+                                            opacity: 1,
+                                            pointerEvents: ''
+                                        });
+                                    }
+                                }
+                                $('.jam-kerja-libur').on('change', function() {
+                                    toggleLibur($(this).closest('tr'));
+                                });
+                                $('.jam-kerja-row').each(function() {
+                                    toggleLibur($(this));
+                                });
+                            });
+                        </script>
                     </div>
                 </div>
-            </div>
 
-        </div><!-- /left card -->
+                <!-- Tab: Pengaturan Sistem -->
+                <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'sistem' ? 'display:none;' : ''; ?>">
+                    <!-- Seed / Clear Data -->
+                    <div class="wp-desa-form-grid">
+                        <div class="wp-desa-box-gray">
+                            <div class="wp-desa-flex-between-center" style="margin-bottom:16px;">
+                                <div>
+                                    <label class="wp-desa-label wp-desa-label-lg">Generate Data Dummy</label>
+                                    <p class="wp-desa-helper wp-desa-m-0">Buat data contoh untuk semua fitur (penduduk, surat, aduan, keuangan, bantuan).</p>
+                                </div>
+                                <form method="post" style="margin:0;" onsubmit="return confirm('Buat data dummy untuk SEMUA fitur?')">
+                                    <?php wp_nonce_field('wp_desa_seed_action', 'wp_desa_seed_nonce'); ?>
+                                    <input type="hidden" name="wp_desa_seed_data" value="1">
+                                    <button type="submit" class="wp-desa-btn wp-desa-btn-primary">
+                                        <span class="dashicons dashicons-database"></span> Generate Dummy
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
 
-        <!-- Right: Save card -->
-        <div class="wp-desa-card" style="width:260px;flex-shrink:0;">
-            <div style="padding:var(--sp-md);">
-                <h3 style="margin:0 0 var(--sp-xs);font-size:14px;font-weight:600;">Publikasikan</h3>
-                <p style="color:var(--graphite);font-size:12px;margin:0 0 var(--sp-md);">Simpan perubahan pengaturan desa.</p>
-                <button type="submit" name="wp_desa_settings_submit" id="submit" class="wp-desa-btn wp-desa-btn-primary" style="width:100%;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg> Simpan Pengaturan
-                </button>
+                        <div class="wp-desa-box-gray">
+                            <div class="wp-desa-flex-between-center">
+                                <div>
+                                    <label class="wp-desa-label wp-desa-label-lg">Hapus Semua Data</label>
+                                    <p class="wp-desa-helper wp-desa-m-0">Kosongkan semua data dari tabel fitur plugin. Data pengaturan tidak dihapus.</p>
+                                </div>
+                                <form method="post" style="margin:0;" onsubmit="return confirm('Yakin hapus SEMUA data? Tindakan ini tidak bisa dibatalkan.')">
+                                    <?php wp_nonce_field('wp_desa_clear_action', 'wp_desa_clear_nonce'); ?>
+                                    <input type="hidden" name="wp_desa_clear_data" value="1">
+                                    <button type="submit" class="wp-desa-btn wp-desa-btn-danger">
+                                        <span class="dashicons dashicons-trash"></span> Hapus Semua Data
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /left card -->
+
+            <!-- Right: Save card -->
+            <div class="wp-desa-card" style="width:260px;flex-shrink:0;">
+                <div style="padding:var(--sp-md);">
+                    <h3 style="margin:0 0 var(--sp-xs);font-size:14px;font-weight:600;">Publikasikan</h3>
+                    <p style="color:var(--graphite);font-size:12px;margin:0 0 var(--sp-md);">Simpan perubahan pengaturan desa.</p>
+                    <button type="submit" name="wp_desa_settings_submit" id="submit" class="wp-desa-btn wp-desa-btn-primary" style="width:100%;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;">
+                            <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+                            <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
+                            <path d="M7 3v4a1 1 0 0 0 1 1h7" />
+                        </svg> Simpan Pengaturan
+                    </button>
+                </div>
             </div>
-        </div>
 
         </div><!-- /flex row -->
     </form>
