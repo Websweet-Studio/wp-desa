@@ -1610,18 +1610,46 @@
   font-size: 11px;
 }
 
+/* --- Pill Tabs (classic layanan) --- */
+[data-wp-desa="layanan"] .wp-desa-tab-pill {
+  transition: background 0.2s, color 0.2s;
+}
+
+[data-wp-desa="layanan"] .wp-desa-tab-pill:hover {
+  background: var(--cloud) !important;
+  color: var(--ink) !important;
+}
+
+[data-wp-desa="layanan"] .wp-desa-tab-pill.active:hover {
+  background: var(--ink) !important;
+  color: var(--on-ink) !important;
+}
+
 /* --- Layanan Shortcode Extra --- */
 [data-wp-desa="layanan"] .wp-desa-message {
-  padding: 15px;
+  padding: var(--sp-md);
   border-radius: var(--rounded-md);
-  border: 1px solid;
+  border: 1px solid var(--fog);
   margin-bottom: var(--sp-lg);
+  font-size: 14px;
+}
+
+[data-wp-desa="layanan"] .wp-desa-message.wp-desa-message-success {
+  background: #ecfdf5;
+  border-color: #6ee7b7;
+  color: #065f46;
+}
+
+[data-wp-desa="layanan"] .wp-desa-message.wp-desa-message-error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
 }
 
 [data-wp-desa="layanan"] .wp-desa-tracking-box {
   background: var(--primary-soft);
-  border: 1px solid var(--primary);
-  padding: var(--sp-lg);
+  border: 1px solid #bfdbfe;
+  padding: var(--sp-xl);
   border-radius: var(--rounded-md);
   text-align: center;
   margin-bottom: var(--sp-lg);
@@ -1631,20 +1659,21 @@
   color: var(--primary);
   font-weight: 500;
   margin-bottom: 10px;
+  font-size: 14px;
 }
 
 [data-wp-desa="layanan"] .wp-desa-tracking-number {
   font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 500;
-  color: var(--primary);
-  letter-spacing: 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 2px;
 }
 
 [data-wp-desa="layanan"] .wp-desa-tracking-note {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--graphite);
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 [data-wp-desa="layanan"] .wp-desa-tracking-input-group {
@@ -1727,8 +1756,8 @@
   font-size: 14px;
 }
 
-[data-wp-desa="layanan"] .wp-desa-form-group {
-  margin-bottom: var(--sp-xl);
+[data-wp-desa="layanan"] .wp-desa-form-grid--tight {
+  margin-bottom: 12px;
 }
 
 [data-wp-desa="layanan"] .wp-desa-btn {

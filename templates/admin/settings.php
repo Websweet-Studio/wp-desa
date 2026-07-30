@@ -3,11 +3,20 @@ $settings = get_option('wp_desa_settings', []);
 $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
 ?>
 <div class="wrap wp-desa-wrapper">
-    <div class="wp-desa-card wp-desa-card-settings">
 
-        <form method="post" action="">
-            <?php wp_nonce_field('wp_desa_settings_action', 'wp_desa_settings_nonce'); ?>
-            <input type="hidden" name="_current_tab" value="<?php echo esc_attr($current_tab); ?>">
+    <?php if (isset($_GET['seed_done'])): ?>
+        <div class="notice notice-success is-dismissible"><p>Data dummy berhasil dibuat.</p></div>
+    <?php elseif (isset($_GET['clear_done'])): ?>
+        <div class="notice notice-success is-dismissible"><p>Semua data berhasil dihapus.</p></div>
+    <?php endif; ?>
+
+    <form method="post" action="">
+        <?php wp_nonce_field('wp_desa_settings_action', 'wp_desa_settings_nonce'); ?>
+        <input type="hidden" name="_current_tab" value="<?php echo esc_attr($current_tab); ?>">
+
+        <div style="display:flex;gap:var(--sp-lg);align-items:flex-start;">
+
+        <div class="wp-desa-card" style="flex:1;">
 
             <!-- Tab: Identitas & Kontak -->
             <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'identitas' ? 'display:none;' : ''; ?>">
@@ -150,25 +159,23 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
                         </div>
                     </div>
                 </div>
-
-                <?php if (isset($_GET['seed_done'])): ?>
-                    <div class="notice notice-success is-dismissible">
-                        <p>Data dummy berhasil dibuat.</p>
-                    </div>
-                <?php elseif (isset($_GET['clear_done'])): ?>
-                    <div class="notice notice-success is-dismissible">
-                        <p>Semua data berhasil dihapus.</p>
-                    </div>
-                <?php endif; ?>
             </div>
 
-            <div class="wp-desa-form-actions">
-                <button type="submit" name="wp_desa_settings_submit" id="submit" class="wp-desa-btn wp-desa-btn-primary">
-                    <span class="dashicons dashicons-saved"></span> Simpan Pengaturan
+        </div><!-- /left card -->
+
+        <!-- Right: Save card -->
+        <div class="wp-desa-card" style="width:260px;flex-shrink:0;">
+            <div style="padding:var(--sp-md);">
+                <h3 style="margin:0 0 var(--sp-xs);font-size:14px;font-weight:600;">Publikasikan</h3>
+                <p style="color:var(--graphite);font-size:12px;margin:0 0 var(--sp-md);">Simpan perubahan pengaturan desa.</p>
+                <button type="submit" name="wp_desa_settings_submit" id="submit" class="wp-desa-btn wp-desa-btn-primary" style="width:100%;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg> Simpan Pengaturan
                 </button>
             </div>
-        </form>
-    </div>
+        </div>
+
+        </div><!-- /flex row -->
+    </form>
 
     <!-- Notification Toast -->
     <div class="wp-desa-toast" style="display:none;">

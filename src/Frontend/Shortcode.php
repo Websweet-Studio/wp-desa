@@ -1140,94 +1140,165 @@ class Shortcode
     }
   }
 
-  public function render_layanan()
+  public function render_layanan($atts = [])
   {
+    $atts = shortcode_atts([
+      'style' => 'classic',
+      'view'  => 'request',
+    ], $atts);
+
+    $style      = $atts['style'];
+    $view       = $atts['view'] === 'tracking' ? 'tracking' : 'request';
+    $is_classic = $style === 'classic';
+    $is_compact = $style === 'compact';
+    $is_minimal = $style === 'minimal';
+    $is_simple  = !$is_classic;
+
     $uid = $this->instance_id('wp-desa-layanan');
     ob_start();
-  ?>
-    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper" data-wp-desa="layanan">
-      <!-- CSS moved to assets/css/frontend/style.css -->
 
-      <div class="wp-desa-tabs" style="display: flex; border-bottom: 1px solid #e8e8e8; margin-bottom: 30px;">
-        <button class="wp-desa-tab-btn active" data-tab="request">
-          <?php echo \WpDesa\Frontend\Icons::svg('edit', 'width: 18px; height: 18px;'); ?> Buat Permohonan
+    // classic: full card with pills, hairline border, no shadow
+    $form_style   = '';
+    $card_open    = '';
+    $card_close   = '';
+    $pill_tabs    = false;
+    $btn_class    = 'wp-desa-btn wp-desa-btn-primary';
+    $btn_width    = '';
+
+    if ($is_classic) {
+      $card_open  = '<div class="wp-desa-card" style="overflow:visible;">';
+      $card_close = '</div>';
+      $pill_tabs  = true;
+      $btn_width  = 'width:100%;';
+    } elseif ($is_compact) {
+      // flat form, no wrapper
+      $btn_class = 'wp-desa-btn wp-desa-btn-primary';
+    } elseif ($is_minimal) {
+      // underline fields
+      $btn_class = 'wp-desa-btn wp-desa-btn-primary';
+    }
+
+    // minimal: border-bottom input style
+    $label_style = $is_minimal ? 'font-size:13px;' : '';
+    $input_style = $is_minimal ? 'border:none; border-bottom:1px solid var(--fog); border-radius:0; padding:var(--sp-xs) 0; background:transparent;' : '';
+    $gap_class   = $is_simple ? 'wp-desa-form-grid--tight' : '';
+  ?>
+    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper wp-desa-layanan--<?php echo esc_attr($style); ?>" data-wp-desa="layanan">
+
+      <?php echo $card_open; ?>
+
+      <?php if ($pill_tabs): ?>
+      <!-- Pill Tabs (classic) -->
+      <div style="display:flex;align-items:center;gap:var(--sp-xs);padding:var(--sp-md) var(--sp-xl);border-bottom:1px solid var(--fog);">
+        <h3 style="margin:0;font-size:20px;font-weight:500;color:var(--ink);margin-right:auto;">Permohonan Surat</h3>
+        <button class="wp-desa-tab-pill active" data-tab="request" style="padding:6px 14px;border:none;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;background:var(--ink);color:var(--on-ink);">
+          Buat
         </button>
-        <button class="wp-desa-tab-btn" data-tab="tracking">
-          <?php echo \WpDesa\Frontend\Icons::svg('search', 'width: 18px; height: 18px;'); ?> Cek Status
+        <button class="wp-desa-tab-pill" data-tab="tracking" style="padding:6px 14px;border:none;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:var(--ink);">
+          Cek Status
         </button>
       </div>
+      <?php elseif ($is_simple): ?>
+        <?php if ($view === 'request'): ?>
+          <h3 style="margin:0 0 var(--sp-md);font-size:18px;font-weight:500;color:var(--ink);">Permohonan Surat</h3>
+        <?php else: ?>
+          <h3 style="margin:0 0 var(--sp-md);font-size:18px;font-weight:500;color:var(--ink);">Cek Status Permohonan</h3>
+        <?php endif; ?>
+      <?php endif; ?>
+
+      <?php
+      $req_hide   = ($is_simple && $view !== 'request') ? 'display:none;' : '';
+      $track_hide = ($is_simple && $view !== 'tracking') ? 'display:none;' : '';
+      if ($is_classic) { $req_hide = ''; $track_hide = ''; }
+      ?>
 
       <!-- Request Form -->
-      <div class="wp-desa-tab-panel" x-show="tab === 'request'">
-        <div x-show="message.content" style="padding: 15px; border-radius: 8px; border: 1px solid; margin-bottom: 20px; display: none;"></div>
+      <div class="wp-desa-tab-panel" x-show="tab === 'request'"<?php echo $req_hide ? ' style="' . $req_hide . '"' : ''; ?>>
+        <div x-show="message.content" class="wp-desa-message" style="display: none;"></div>
 
-        <div x-show="trackingCode" style="background: #c9e0fc; border: 1px solid #bfdbfe; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; display: none;">
-          <div style="color: #1e40af; font-weight: 500; margin-bottom: 10px;">Kode Tracking Anda:</div>
-          <div class="wp-desa-layanan-code-label" style="font-size: 1.5em; font-weight: 700; color: #1e3a8a; letter-spacing: 2px;" x-text="trackingCode"></div>
-          <div style="font-size: 0.9em; color: #60a5fa; margin-top: 10px;">Simpan kode ini untuk mengecek status permohonan.</div>
+        <div x-show="trackingCode" class="wp-desa-tracking-box" style="display: none;">
+          <div class="wp-desa-tracking-label">Kode Tracking Anda:</div>
+          <div class="wp-desa-tracking-number" x-text="trackingCode"></div>
+          <div class="wp-desa-tracking-note">Simpan kode ini untuk mengecek status permohonan.</div>
         </div>
 
-        <form>
-          <div class="wp-desa-form-group">
-            <label class="wp-desa-label">NIK</label>
-            <input type="text" x-model="form.nik" name="nik" class="wp-desa-input" required maxlength="16">
+        <form style="<?php echo $form_style; ?>padding:<?php echo $is_classic ? 'var(--sp-xl)' : '0'; ?>;">
+          <div class="wp-desa-form-group <?php echo $gap_class; ?>" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
+            <label class="wp-desa-label" style="<?php echo $label_style; ?>">NIK</label>
+            <input type="text" x-model="form.nik" name="nik" class="wp-desa-input" required maxlength="16" placeholder="16 digit NIK" style="<?php echo $input_style; ?>">
           </div>
 
-          <div class="wp-desa-form-group">
-            <label class="wp-desa-label">Nama Lengkap</label>
-            <input type="text" x-model="form.name" name="name" class="wp-desa-input" required>
+          <div class="wp-desa-form-group <?php echo $gap_class; ?>" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
+            <label class="wp-desa-label" style="<?php echo $label_style; ?>">Nama Lengkap</label>
+            <input type="text" x-model="form.name" name="name" class="wp-desa-input" required placeholder="Sesuai KTP" style="<?php echo $input_style; ?>">
           </div>
 
-          <div class="wp-desa-form-group">
-            <label class="wp-desa-label">Nomor WhatsApp</label>
-            <input type="text" x-model="form.phone" name="phone" class="wp-desa-input" required placeholder="08...">
+          <div class="wp-desa-form-group <?php echo $gap_class; ?>" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
+            <label class="wp-desa-label" style="<?php echo $label_style; ?>">Nomor WhatsApp</label>
+            <input type="text" x-model="form.phone" name="phone" class="wp-desa-input" required placeholder="08..." maxlength="15" style="<?php echo $input_style; ?>">
           </div>
 
-          <div class="wp-desa-form-group">
-            <label class="wp-desa-label">Jenis Surat</label>
-            <select x-model="form.letter_type_id" name="letter_type_id" class="wp-desa-select" required>
+          <div class="wp-desa-form-group <?php echo $gap_class; ?>" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
+            <label class="wp-desa-label" style="<?php echo $label_style; ?>">Jenis Surat</label>
+            <select x-model="form.letter_type_id" name="letter_type_id" class="wp-desa-select" required style="<?php echo $input_style; ?>">
               <option value="">Pilih Jenis Surat</option>
             </select>
             <small class="wp-desa-helper wp-desa-layanan-type-desc"></small>
           </div>
 
-          <div class="wp-desa-form-group">
-            <label class="wp-desa-label">Keterangan / Keperluan</label>
-            <textarea x-model="form.details" name="details" class="wp-desa-textarea" rows="3"></textarea>
+          <div class="wp-desa-form-group <?php echo $gap_class; ?>" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
+            <label class="wp-desa-label" style="<?php echo $label_style; ?>">Keterangan / Keperluan</label>
+            <textarea x-model="form.details" name="details" class="wp-desa-textarea" rows="3" placeholder="Jelaskan keperluan surat..." style="<?php echo $input_style; ?>"></textarea>
           </div>
 
-          <button type="submit" class="wp-desa-btn wp-desa-btn-primary">
+          <?php if ($is_classic): ?>
+          <div class="wp-desa-form-actions" style="background:var(--cloud);border-top:1px solid var(--fog);padding:var(--sp-md) var(--sp-xl);display:flex;justify-content:flex-end;margin:0 calc(-1 * var(--sp-xl)) calc(-1 * var(--sp-xl));">
+          <?php endif; ?>
+          <button type="submit" class="<?php echo $btn_class; ?>" style="<?php echo $btn_width; ?>font-size:14px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;">
             <span>Kirim Permohonan</span>
             <span style="display: none;">Mengirim...</span>
           </button>
+          <?php if ($is_classic): ?>
+          </div>
+          <?php endif; ?>
+
         </form>
       </div>
 
       <!-- Tracking Form -->
-      <div class="wp-desa-tab-panel" x-show="tab === 'tracking'" style="display: none;">
-        <div class="wp-desa-form-group">
-          <label class="wp-desa-label">Masukkan Kode Tracking</label>
-          <div style="display: flex; gap: 10px;">
-            <input type="text" x-model="trackCode" class="wp-desa-input" placeholder="Contoh: REQ-...">
-            <button type="button" class="wp-desa-btn wp-desa-btn-primary">
-              <span>Cek</span>
-              <span style="display: none;">...</span>
-            </button>
+      <div class="wp-desa-tab-panel" x-show="tab === 'tracking'" style="<?php echo $track_hide; ?>">
+        <form style="<?php echo $form_style; ?>padding:<?php echo $is_classic ? 'var(--sp-xl)' : '0'; ?>;">
+          <div class="wp-desa-form-group">
+            <label class="wp-desa-label">Masukkan Kode Tracking</label>
+            <div class="wp-desa-tracking-input-group" style="display:flex;gap:var(--sp-xs);">
+              <input type="text" x-model="trackCode" class="wp-desa-input" placeholder="Contoh: REQ-..." style="flex:1;">
+              <button type="button" class="<?php echo $btn_class; ?>" style="font-size:14px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;">
+                <span>Cek</span>
+                <span style="display: none;">...</span>
+              </button>
+            </div>
           </div>
-        </div>
+        </form>
 
-        <div x-show="trackResult" class="wp-desa-result-card" style="display: none;">
+        <div x-show="trackResult" class="wp-desa-result-card" style="display: none; margin-top: var(--sp-lg);">
           <div class="wp-desa-card-row">
             <span class="wp-desa-card-label">Nama Pengaju</span>
             <span class="wp-desa-card-value wp-desa-layanan-track-name"></span>
           </div>
-          <div class="wp-desa-card-row"><span class="wp-desa-card-label">Tanggal</span><span class="wp-desa-card-value wp-desa-layanan-track-date"></span></div>
-          <div class="wp-desa-card-row"><span class="wp-desa-card-label">Status</span>
-            <span class="wp-desa-layanan-track-status" style="padding: 4px 12px; border-radius: 20px; font-size: 0.85em; font-weight: 600; background: #e8e8e8; color: #3d3d3d;"></span>
+          <div class="wp-desa-card-row">
+            <span class="wp-desa-card-label">Tanggal</span>
+            <span class="wp-desa-card-value wp-desa-layanan-track-date"></span>
+          </div>
+          <div class="wp-desa-card-row">
+            <span class="wp-desa-card-label">Status</span>
+            <span class="wp-desa-layanan-track-status wp-desa-status-badge"></span>
           </div>
         </div>
-        <div x-show="trackError" style="padding: 15px; background: #fce8e6; color: #b3262b; border: 1px solid #fecaca; border-radius: 8px; margin-top: 15px; display: none;"></div>
+        <div x-show="trackError" class="wp-desa-error-box" style="display: none;"></div>
       </div>
+
+      <?php echo $card_close; ?>
+
     </div><?php
           return ob_get_clean();
         }

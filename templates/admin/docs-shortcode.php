@@ -10,8 +10,12 @@
     <?php
     $shortcodes = [
         [
-            'code' => '[wp_desa_layanan]',
+            'code' => '[wp_desa_layanan style="classic"]',
             'desc' => 'Menampilkan form permohonan surat untuk warga. Warga dapat memilih jenis surat, mengisi data diri, dan mendapatkan kode tracking.',
+            'params' => [
+                ['style', 'classic', 'Tampilan: classic (card+tab+tracking), compact (form polos), minimal (input underline)'],
+                ['view', 'request', 'Untuk compact/minimal: request (form permohonan), tracking (cek status). Classic abaikan.'],
+            ],
         ],
         [
             'code' => '[wp_desa_aduan]',

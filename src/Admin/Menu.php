@@ -127,7 +127,8 @@ class Menu
         $screen = get_current_screen();
         if ($screen && strpos($screen->id, 'wp-desa') !== false) {
             echo '<style>
-                .notice { display:none !important; }
+                .wp-desa-card .wp-desa-tab-content { padding:0; }
+                .notice:not(.wp-desa-wrapper .notice) { display:none !important; }
                 .wp-desa-header-actions > h2,
                 .wp-desa-header-actions > h3 { display:none !important; }
                 .wp-desa-hero__head { display:none !important; }
@@ -224,6 +225,7 @@ class Menu
 
             require_once WP_DESA_PATH . 'src/Database/Seeder.php';
             \WpDesa\Database\Seeder::run(100);
+            delete_transient('wp_desa_quick_stats');
 
             wp_redirect(admin_url('admin.php?page=wp-desa-settings&tab=sistem&seed_done=1'));
             exit;

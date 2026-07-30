@@ -660,7 +660,7 @@
     };
 
     // DOM refs — all relative to $el
-    var $tabs = $el.find(".wp-desa-tab-btn");
+    var $tabs = $el.find(".wp-desa-tab-btn, .wp-desa-tab-pill");
     var $content = $el.find(".wp-desa-content");
     var $formPanel = $content.children(".wp-desa-tab-panel").eq(0); // tab === 'form'
     var $trackPanel = $content.children(".wp-desa-tab-panel").eq(1); // tab === 'track'
@@ -1082,15 +1082,13 @@
       // Message
       if (state.message.content) {
         var isSuccess = state.message.type === "success";
-        var bg = isSuccess ? "#e6f4ea" : "#fce8e6";
-        var color = isSuccess ? "#1f6b3c" : "#b3262b";
-        var borderColor = isSuccess ? "#c3e6cb" : "#fecaca";
         $msgContent
           .text(state.message.content)
-          .css({ background: bg, color: color, borderColor: borderColor })
+          .removeClass("wp-desa-message-success wp-desa-message-error")
+          .addClass(isSuccess ? "wp-desa-message-success" : "wp-desa-message-error")
           .show();
       } else {
-        $msgContent.hide().text("");
+        $msgContent.hide().text("").removeClass("wp-desa-message-success wp-desa-message-error");
       }
 
       // Tracking code box
@@ -1176,11 +1174,7 @@
         $trackResultDiv
           .find(".wp-desa-layanan-track-status")
           .text(formatStatus(r.status))
-          .attr(
-            "style",
-            "padding:4px 12px;border-radius:20px;font-size:0.85em;font-weight:600;" +
-              statusStyle,
-          );
+          .attr("style", statusStyle);
 
         $trackResultDiv.show();
         $trackErrorDiv.hide().empty();

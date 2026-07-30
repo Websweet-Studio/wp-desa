@@ -52,6 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wp_desa_save_resident
             $wpdb->insert($table_name, $data);
         }
 
+        delete_transient('wp_desa_quick_stats');
+
         wp_redirect(admin_url('admin.php?page=wp-desa-residents&saved=1'));
         exit;
     }
