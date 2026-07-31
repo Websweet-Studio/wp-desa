@@ -276,7 +276,7 @@ jQuery(function($) {
             data: {
                 action: 'wp_desa_save_peta',
                 _ajax_nonce: wpDesaSettings.nonce,
-                settings: data
+                settings: JSON.stringify(data)
             },
             success: function() {
                 $('#wp-desa-peta-save-status').css('color', '#059669').text('Peta berhasil disimpan!').fadeOut(3000);

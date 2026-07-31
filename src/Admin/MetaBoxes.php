@@ -28,11 +28,11 @@ class MetaBoxes
         global $post;
         if (($hook == 'post-new.php' || $hook == 'post.php') && 'desa_umkm' === $post->post_type) {
             wp_enqueue_media();
-            wp_enqueue_script('desa-umkm-gallery', WP_DESA_URL . 'assets/js/admin/umkm-gallery.js', ['jquery'], '1.0.0', true);
+            wp_enqueue_script('desa-umkm-gallery', WP_DESA_URL . 'assets/js/admin/umkm-gallery.js', ['jquery'], '1.0.1', true);
         }
         if (($hook == 'post-new.php' || $hook == 'post.php') && 'desa_galeri' === $post->post_type) {
             wp_enqueue_media();
-            wp_enqueue_script('desa-umkm-gallery', WP_DESA_URL . 'assets/js/admin/umkm-gallery.js', ['jquery'], '1.0.0', true);
+            wp_enqueue_script('desa-umkm-gallery', WP_DESA_URL . 'assets/js/admin/umkm-gallery.js', ['jquery'], '1.0.1', true);
         }
     }
 

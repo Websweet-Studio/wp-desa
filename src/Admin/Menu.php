@@ -7,6 +7,7 @@ class Menu
     public function register_menus()
     {
         add_action('admin_init', [$this, 'handle_seed_clear']);
+        add_action('admin_init', [$this, 'handle_page_generate']);
         add_action('admin_init', [$this, 'handle_settings_submit']);
 
         // Main Menu
@@ -253,6 +254,116 @@ class Menu
             wp_redirect(admin_url('admin.php?page=wp-desa-settings&tab=sistem&clear_done=1'));
             exit;
         }
+    }
+
+    public function handle_page_generate()
+    {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        if (!isset($_POST['wp_desa_generate_page'])) {
+            return;
+        }
+
+        check_admin_referer('wp_desa_generate_page_action', 'wp_desa_generate_page_nonce');
+
+        $features = self::feature_pages();
+        $keys = !empty($_POST['page_key'])
+            ? [sanitize_key($_POST['page_key'])]
+            : array_keys($features);
+
+        $publish = !empty($_POST['publish']);
+        $post_status = $publish ? 'publish' : 'draft';
+
+        $saved = get_option('wp_desa_pages', []);
+
+        foreach ($keys as $key) {
+            if (!isset($features[$key])) {
+                continue;
+            }
+
+            // Sudah dibuat & masih ada (bukan trash) → publikasikan kalau diminta, lalu lewati.
+            if (!empty($saved[$key])) {
+                $existing_id = (int) $saved[$key];
+                $status = get_post_status($existing_id);
+                if ($status && $status !== 'trash') {
+                    if ($publish && $status !== 'publish') {
+                        wp_update_post(['ID' => $existing_id, 'post_status' => 'publish']);
+                    }
+                    continue;
+                }
+            }
+
+            // Kalau sudah ada halaman dengan slug sama, pakai yang itu.
+            $existing_page = get_page_by_path('wp-desa-' . $key, OBJECT, 'page');
+            if ($existing_page) {
+                $saved[$key] = (int) $existing_page->ID;
+                if ($publish && $existing_page->post_status !== 'publish') {
+                    wp_update_post(['ID' => $existing_page->ID, 'post_status' => 'publish']);
+                }
+                continue;
+            }
+
+            $page_id = wp_insert_post([
+                'post_type'    => 'page',
+                'post_status'  => $post_status,
+                'post_title'   => $features[$key]['title'],
+                'post_name'    => 'wp-desa-' . $key,
+                'post_content' => $features[$key]['shortcode'],
+            ]);
+
+            if (is_wp_error($page_id)) {
+                continue;
+            }
+
+            $saved[$key] = (int) $page_id;
+        }
+
+        update_option('wp_desa_pages', $saved);
+
+        wp_redirect(admin_url('admin.php?page=wp-desa-settings&tab=sistem&pages_done=1'));
+        exit;
+    }
+
+    public static function feature_pages()
+    {
+        return [
+            'layanan'      => ['title' => 'Layanan Surat', 'shortcode' => '[wp_desa_layanan]'],
+            'aduan'        => ['title' => 'Pengaduan Masyarakat', 'shortcode' => '[wp_desa_aduan]'],
+            'keuangan'     => ['title' => 'Keuangan Desa', 'shortcode' => '[wp_desa_keuangan]'],
+            'bantuan'      => ['title' => 'Bantuan Sosial', 'shortcode' => '[wp_desa_bantuan]'],
+            'profil'       => ['title' => 'Profil Desa', 'shortcode' => '[wp_desa_profil]'],
+            'kepala_desa'  => ['title' => 'Kepala Desa', 'shortcode' => '[wp_desa_kepala_desa]'],
+            'statistik'    => ['title' => 'Statistik Penduduk', 'shortcode' => '[wp_desa_statistik]'],
+            'umkm'         => ['title' => 'UMKM Desa', 'shortcode' => '[wp_desa_umkm]'],
+            'potensi'      => ['title' => 'Potensi Desa', 'shortcode' => '[wp_desa_potensi]'],
+            'struktur'     => ['title' => 'Struktur Organisasi', 'shortcode' => '[wp_desa_struktur]'],
+            'produk_hukum' => ['title' => 'Produk Hukum', 'shortcode' => '[wp_desa_produk_hukum]'],
+            'berita'       => ['title' => 'Berita Desa', 'shortcode' => '[wp_desa_berita]'],
+            'agenda'       => ['title' => 'Agenda Kegiatan', 'shortcode' => '[wp_desa_agenda]'],
+            'galeri'       => ['title' => 'Galeri Desa', 'shortcode' => '[wp_desa_galeri]'],
+            'peta'         => ['title' => 'Peta Desa', 'shortcode' => '[wp_desa_peta]'],
+            'wisata'       => ['title' => 'Destinasi Wisata', 'shortcode' => '[wp_desa_wisata]'],
+            'jam_kerja'    => ['title' => 'Jam Kerja', 'shortcode' => '[wp_desa_jam_kerja]'],
+        ];
+    }
+
+    public static function page_status($key)
+    {
+        $saved = get_option('wp_desa_pages', []);
+        if (empty($saved[$key])) {
+            return 0;
+        }
+
+        $page_id = (int) $saved[$key];
+        $status = get_post_status($page_id);
+
+        if (!$status || $status === 'trash') {
+            return 0;
+        }
+
+        return $page_id;
     }
 
     public function handle_settings_submit()

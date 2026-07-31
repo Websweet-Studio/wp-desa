@@ -2076,6 +2076,8 @@ class Shortcode
                   <a href="<?php the_permalink(); ?>" style="display:block;height:120px;overflow:hidden;">
                     <?php the_post_thumbnail('medium', ['style' => 'width:100%;height:100%;object-fit:cover;']); ?>
                   </a>
+                <?php else : ?>
+                  <a href="<?php the_permalink(); ?>" style="display:flex;align-items:center;justify-content:center;height:120px;background:linear-gradient(135deg,var(--primary-soft),var(--primary));color:var(--on-primary);font-weight:600;font-size:0.95em;text-decoration:none;"><?php echo esc_html(get_bloginfo('name')); ?></a>
                 <?php endif; ?>
                 <div style="padding:var(--sp-md);">
                   <div style="font-size:12px;color:var(--graphite);margin-bottom:4px;">
@@ -2103,6 +2105,8 @@ class Shortcode
                   <a href="<?php the_permalink(); ?>" style="display:block;height:200px;overflow:hidden;">
                     <?php the_post_thumbnail('medium', ['style' => 'width:100%;height:100%;object-fit:cover;']); ?>
                   </a>
+                <?php else : ?>
+                  <a href="<?php the_permalink(); ?>" style="display:flex;align-items:center;justify-content:center;height:200px;background:linear-gradient(135deg,var(--primary-soft),var(--primary));color:var(--on-primary);font-weight:600;font-size:1.05em;text-decoration:none;"><?php echo esc_html(get_bloginfo('name')); ?></a>
                 <?php endif; ?>
                 <div style="padding:var(--sp-lg);">
                   <div style="font-size:0.85em;color:var(--graphite);margin-bottom:8px;">
