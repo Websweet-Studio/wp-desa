@@ -24,6 +24,7 @@ class Shortcode
     add_shortcode('wp_desa_profil', [$this, 'render_profil']);
     add_shortcode('wp_desa_kepala_desa', [$this, 'render_kepala_desa']);
     add_shortcode('wp_desa_statistik', [$this, 'render_statistik']);
+    add_shortcode('wp_desa_gender', [$this, 'render_gender_stats']);
     add_shortcode('wp_desa_umkm', [$this, 'render_umkm']);
     add_shortcode('wp_desa_potensi', [$this, 'render_potensi']);
     add_shortcode('single-umkm', [$this, 'render_single_umkm']);
@@ -167,19 +168,28 @@ class Shortcode
             <h4 class="wp-desa-stat-card--grid__title">Komposisi Penduduk</h4>
             <div class="wp-desa-doughnut">
               <svg viewBox="0 0 160 160" class="wp-desa-doughnut-svg">
-                <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#e8e8e8" stroke-width="<?php echo $sw; ?>" />
-                <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#024ad8" stroke-width="<?php echo $sw; ?>"
-                  stroke-dasharray="<?php echo round($male_dash, 1); ?> <?php echo round($c - $male_dash, 1); ?>" stroke-dashoffset="0"
-                  stroke-linecap="butt" transform="rotate(-90 80 80)" />
-                <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#b3262b" stroke-width="<?php echo $sw; ?>"
-                  stroke-dasharray="<?php echo round($female_dash, 1); ?> <?php echo round($c - $female_dash, 1); ?>" stroke-dashoffset="<?php echo round(-$male_dash, 1); ?>"
-                  stroke-linecap="butt" transform="rotate(-90 80 80)" />
-                <text x="80" y="76" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="28" font-weight="500" fill="#1a1a1a"><?php echo number_format_i18n($total_gender); ?></text>
-                <text x="80" y="96" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="12" fill="#636363" font-weight="500">Jiwa</text>
+                <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#e8e8e8"
+                  stroke-width="<?php echo $sw; ?>" />
+                <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#024ad8"
+                  stroke-width="<?php echo $sw; ?>"
+                  stroke-dasharray="<?php echo round($male_dash, 1); ?> <?php echo round($c - $male_dash, 1); ?>"
+                  stroke-dashoffset="0" stroke-linecap="butt" transform="rotate(-90 80 80)" />
+                <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#b3262b"
+                  stroke-width="<?php echo $sw; ?>"
+                  stroke-dasharray="<?php echo round($female_dash, 1); ?> <?php echo round($c - $female_dash, 1); ?>"
+                  stroke-dashoffset="<?php echo round(-$male_dash, 1); ?>" stroke-linecap="butt"
+                  transform="rotate(-90 80 80)" />
+                <text x="80" y="76" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif"
+                  font-size="28" font-weight="500"
+                  fill="#1a1a1a"><?php echo number_format_i18n($total_gender); ?></text>
+                <text x="80" y="96" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif"
+                  font-size="12" fill="#636363" font-weight="500">Jiwa</text>
               </svg>
               <div class="wp-desa-doughnut-legend">
-                <span class="wp-desa-doughnut-legend-item"><i style="background:#024ad8"></i> Laki-laki: <b><?php echo number_format_i18n($male_val); ?></b> (<?php echo $male_pct; ?>%)</span>
-                <span class="wp-desa-doughnut-legend-item"><i style="background:#b3262b"></i> Perempuan: <b><?php echo number_format_i18n($female_val); ?></b> (<?php echo $female_pct; ?>%)</span>
+                <span class="wp-desa-doughnut-legend-item"><i style="background:#024ad8"></i> Laki-laki:
+                  <b><?php echo number_format_i18n($male_val); ?></b> (<?php echo $male_pct; ?>%)</span>
+                <span class="wp-desa-doughnut-legend-item"><i style="background:#b3262b"></i> Perempuan:
+                  <b><?php echo number_format_i18n($female_val); ?></b> (<?php echo $female_pct; ?>%)</span>
               </div>
             </div>
           </div>
@@ -259,19 +269,28 @@ class Shortcode
           <h3 class="wp-desa-chart-title" style="text-align: center;">Komposisi Penduduk</h3>
           <div class="wp-desa-doughnut">
             <svg viewBox="0 0 160 160" class="wp-desa-doughnut-svg">
-              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#e8e8e8" stroke-width="<?php echo $sw; ?>" />
-              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#024ad8" stroke-width="<?php echo $sw; ?>"
-                stroke-dasharray="<?php echo round($male_dash, 1); ?> <?php echo round($c - $male_dash, 1); ?>" stroke-dashoffset="0"
-                stroke-linecap="butt" transform="rotate(-90 80 80)" />
-              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#b3262b" stroke-width="<?php echo $sw; ?>"
-                stroke-dasharray="<?php echo round($female_dash, 1); ?> <?php echo round($c - $female_dash, 1); ?>" stroke-dashoffset="<?php echo round(-$male_dash, 1); ?>"
-                stroke-linecap="butt" transform="rotate(-90 80 80)" />
-              <text x="80" y="76" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="28" font-weight="500" fill="#1a1a1a"><?php echo number_format_i18n($total_gender); ?></text>
-              <text x="80" y="96" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="12" fill="#636363" font-weight="500">Jiwa</text>
+              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#e8e8e8"
+                stroke-width="<?php echo $sw; ?>" />
+              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#024ad8"
+                stroke-width="<?php echo $sw; ?>"
+                stroke-dasharray="<?php echo round($male_dash, 1); ?> <?php echo round($c - $male_dash, 1); ?>"
+                stroke-dashoffset="0" stroke-linecap="butt" transform="rotate(-90 80 80)" />
+              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#b3262b"
+                stroke-width="<?php echo $sw; ?>"
+                stroke-dasharray="<?php echo round($female_dash, 1); ?> <?php echo round($c - $female_dash, 1); ?>"
+                stroke-dashoffset="<?php echo round(-$male_dash, 1); ?>" stroke-linecap="butt"
+                transform="rotate(-90 80 80)" />
+              <text x="80" y="76" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif"
+                font-size="28" font-weight="500"
+                fill="#1a1a1a"><?php echo number_format_i18n($total_gender); ?></text>
+              <text x="80" y="96" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif"
+                font-size="12" fill="#636363" font-weight="500">Jiwa</text>
             </svg>
             <div class="wp-desa-doughnut-legend">
-              <span class="wp-desa-doughnut-legend-item"><i style="background:#024ad8"></i> Laki-laki: <b><?php echo number_format_i18n($male_val); ?></b> (<?php echo $male_pct; ?>%)</span>
-              <span class="wp-desa-doughnut-legend-item"><i style="background:#b3262b"></i> Perempuan: <b><?php echo number_format_i18n($female_val); ?></b> (<?php echo $female_pct; ?>%)</span>
+              <span class="wp-desa-doughnut-legend-item"><i style="background:#024ad8"></i> Laki-laki:
+                <b><?php echo number_format_i18n($male_val); ?></b> (<?php echo $male_pct; ?>%)</span>
+              <span class="wp-desa-doughnut-legend-item"><i style="background:#b3262b"></i> Perempuan:
+                <b><?php echo number_format_i18n($female_val); ?></b> (<?php echo $female_pct; ?>%)</span>
             </div>
           </div>
         </div>
@@ -281,28 +300,32 @@ class Shortcode
         <div class="wp-desa-stats--minimal-section">
           <div class="wp-desa-stats--minimal-row">
             <div class="wp-desa-stats--minimal-row__left">
-              <span class="wp-desa-stats--minimal-row__icon" style="color:#024ad8;"><?php echo \WpDesa\Frontend\Icons::svg('users', 'width:20px;height:20px'); ?></span>
+              <span class="wp-desa-stats--minimal-row__icon"
+                style="color:#024ad8;"><?php echo \WpDesa\Frontend\Icons::svg('users', 'width:20px;height:20px'); ?></span>
               <span class="wp-desa-stats--minimal-row__label">Total Penduduk</span>
             </div>
             <span class="wp-desa-stats--minimal-row__value"><?php echo number_format_i18n($total_val); ?></span>
           </div>
           <div class="wp-desa-stats--minimal-row">
             <div class="wp-desa-stats--minimal-row__left">
-              <span class="wp-desa-stats--minimal-row__icon" style="color:#1f6b3c;"><?php echo \WpDesa\Frontend\Icons::svg('home', 'width:20px;height:20px'); ?></span>
+              <span class="wp-desa-stats--minimal-row__icon"
+                style="color:#1f6b3c;"><?php echo \WpDesa\Frontend\Icons::svg('home', 'width:20px;height:20px'); ?></span>
               <span class="wp-desa-stats--minimal-row__label">Kepala Keluarga</span>
             </div>
             <span class="wp-desa-stats--minimal-row__value"><?php echo number_format_i18n($families_val); ?></span>
           </div>
           <div class="wp-desa-stats--minimal-row">
             <div class="wp-desa-stats--minimal-row__left">
-              <span class="wp-desa-stats--minimal-row__icon" style="color:#024ad8;"><?php echo \WpDesa\Frontend\Icons::svg('mars', 'width:20px;height:20px'); ?></span>
+              <span class="wp-desa-stats--minimal-row__icon"
+                style="color:#024ad8;"><?php echo \WpDesa\Frontend\Icons::svg('mars', 'width:20px;height:20px'); ?></span>
               <span class="wp-desa-stats--minimal-row__label">Laki-laki</span>
             </div>
             <span class="wp-desa-stats--minimal-row__value"><?php echo number_format_i18n($male_val); ?></span>
           </div>
           <div class="wp-desa-stats--minimal-row">
             <div class="wp-desa-stats--minimal-row__left">
-              <span class="wp-desa-stats--minimal-row__icon" style="color:#b3262b;"><?php echo \WpDesa\Frontend\Icons::svg('venus', 'width:20px;height:20px'); ?></span>
+              <span class="wp-desa-stats--minimal-row__icon"
+                style="color:#b3262b;"><?php echo \WpDesa\Frontend\Icons::svg('venus', 'width:20px;height:20px'); ?></span>
               <span class="wp-desa-stats--minimal-row__label">Perempuan</span>
             </div>
             <span class="wp-desa-stats--minimal-row__value"><?php echo number_format_i18n($female_val); ?></span>
@@ -322,24 +345,35 @@ class Shortcode
           </div>
         </div>
 
-      <?php else: ?><!-- CLASSIC (default) -->
+      <?php else: ?>
+        <!-- CLASSIC (default) -->
         <div class="wp-desa-chart-container">
-          <h3 style="text-align: center; margin-top: 0; color: #1a1a1a; font-size: 1.1em; margin-bottom: 15px;">Komposisi Penduduk</h3>
+          <h3 style="text-align: center; margin-top: 0; color: #1a1a1a; font-size: 1.1em; margin-bottom: 15px;">Komposisi
+            Penduduk</h3>
           <div class="wp-desa-doughnut">
             <svg viewBox="0 0 160 160" class="wp-desa-doughnut-svg">
-              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#e8e8e8" stroke-width="<?php echo $sw; ?>" />
-              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#024ad8" stroke-width="<?php echo $sw; ?>"
-                stroke-dasharray="<?php echo round($male_dash, 1); ?> <?php echo round($c - $male_dash, 1); ?>" stroke-dashoffset="0"
-                stroke-linecap="butt" transform="rotate(-90 80 80)" />
-              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#b3262b" stroke-width="<?php echo $sw; ?>"
-                stroke-dasharray="<?php echo round($female_dash, 1); ?> <?php echo round($c - $female_dash, 1); ?>" stroke-dashoffset="<?php echo round(-$male_dash, 1); ?>"
-                stroke-linecap="butt" transform="rotate(-90 80 80)" />
-              <text x="80" y="76" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="28" font-weight="500" fill="#1a1a1a"><?php echo number_format_i18n($total_gender); ?></text>
-              <text x="80" y="96" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif" font-size="12" fill="#636363" font-weight="500">Jiwa</text>
+              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#e8e8e8"
+                stroke-width="<?php echo $sw; ?>" />
+              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#024ad8"
+                stroke-width="<?php echo $sw; ?>"
+                stroke-dasharray="<?php echo round($male_dash, 1); ?> <?php echo round($c - $male_dash, 1); ?>"
+                stroke-dashoffset="0" stroke-linecap="butt" transform="rotate(-90 80 80)" />
+              <circle cx="80" cy="80" r="<?php echo $r; ?>" fill="none" stroke="#b3262b"
+                stroke-width="<?php echo $sw; ?>"
+                stroke-dasharray="<?php echo round($female_dash, 1); ?> <?php echo round($c - $female_dash, 1); ?>"
+                stroke-dashoffset="<?php echo round(-$male_dash, 1); ?>" stroke-linecap="butt"
+                transform="rotate(-90 80 80)" />
+              <text x="80" y="76" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif"
+                font-size="28" font-weight="500"
+                fill="#1a1a1a"><?php echo number_format_i18n($total_gender); ?></text>
+              <text x="80" y="96" text-anchor="middle" font-family="Forma DJR Micro, Manrope, Inter, sans-serif"
+                font-size="12" fill="#636363" font-weight="500">Jiwa</text>
             </svg>
             <div class="wp-desa-doughnut-legend">
-              <span class="wp-desa-doughnut-legend-item"><i style="background:#024ad8"></i> Laki-laki: <b><?php echo number_format_i18n($male_val); ?></b> (<?php echo $male_pct; ?>%)</span>
-              <span class="wp-desa-doughnut-legend-item"><i style="background:#b3262b"></i> Perempuan: <b><?php echo number_format_i18n($female_val); ?></b> (<?php echo $female_pct; ?>%)</span>
+              <span class="wp-desa-doughnut-legend-item"><i style="background:#024ad8"></i> Laki-laki:
+                <b><?php echo number_format_i18n($male_val); ?></b> (<?php echo $male_pct; ?>%)</span>
+              <span class="wp-desa-doughnut-legend-item"><i style="background:#b3262b"></i> Perempuan:
+                <b><?php echo number_format_i18n($female_val); ?></b> (<?php echo $female_pct; ?>%)</span>
             </div>
           </div>
         </div>
@@ -418,8 +452,10 @@ class Shortcode
                 <ul class="wp-desa-demografi-list">
                   <?php foreach ($job_stats as $row): ?>
                     <li class="wp-desa-demografi-item">
-                      <span class="wp-desa-demografi-label"><?php echo esc_html($row->label ?: 'Tidak Diisi'); ?></span>
-                      <span class="wp-desa-demografi-value"><?php echo number_format_i18n((int) $row->count); ?></span>
+                      <span
+                        class="wp-desa-demografi-label"><?php echo esc_html($row->label ?: 'Tidak Diisi'); ?></span>
+                      <span
+                        class="wp-desa-demografi-value"><?php echo number_format_i18n((int) $row->count); ?></span>
                     </li>
                   <?php endforeach; ?>
                 </ul>
@@ -432,8 +468,10 @@ class Shortcode
                 <ul class="wp-desa-demografi-list">
                   <?php foreach ($marital_stats as $row): ?>
                     <li class="wp-desa-demografi-item">
-                      <span class="wp-desa-demografi-label"><?php echo esc_html($row->label ?: 'Tidak Diisi'); ?></span>
-                      <span class="wp-desa-demografi-value"><?php echo number_format_i18n((int) $row->count); ?></span>
+                      <span
+                        class="wp-desa-demografi-label"><?php echo esc_html($row->label ?: 'Tidak Diisi'); ?></span>
+                      <span
+                        class="wp-desa-demografi-value"><?php echo number_format_i18n((int) $row->count); ?></span>
                     </li>
                   <?php endforeach; ?>
                 </ul>
@@ -442,6 +480,148 @@ class Shortcode
           </div>
         </div>
       <?php endif; ?>
+    </div>
+  <?php
+    return ob_get_clean();
+  }
+
+  public function render_gender_stats($atts = [])
+  {
+    $atts = shortcode_atts([
+      'style' => 'classic',
+    ], $atts);
+
+    $style = $atts['style'];
+    if (!in_array($style, ['classic', 'cards', 'minimal'])) {
+      $style = 'classic';
+    }
+
+    global $wpdb;
+    $table = $wpdb->prefix . 'desa_residents';
+
+    $stats = get_transient('wp_desa_gender_stats');
+
+    if ($stats === false || !is_array($stats)) {
+      if ($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+        $stats = ['male' => 0, 'female' => 0, 'total' => 0];
+      } else {
+        $male   = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table WHERE jenis_kelamin = 'Laki-laki'");
+        $female = (int) $wpdb->get_var("SELECT COUNT(*) FROM $table WHERE jenis_kelamin = 'Perempuan'");
+        $stats  = [
+          'male'   => $male,
+          'female' => $female,
+          'total'  => $male + $female,
+        ];
+      }
+      set_transient('wp_desa_gender_stats', $stats, HOUR_IN_SECONDS);
+    }
+
+    $male   = (int) $stats['male'];
+    $female = (int) $stats['female'];
+    $total  = (int) $stats['total'];
+    $male_pct   = $total > 0 ? round(($male / $total) * 100) : 0;
+    $female_pct = $total > 0 ? round(($female / $total) * 100) : 0;
+
+    ob_start();
+  ?>
+    <div class="wp-desa-wrapper wp-desa-gender--<?php echo esc_attr($style); ?>">
+
+      <?php if ($style === 'cards'): ?>
+        <!-- ============ CARDS STYLE ============ -->
+        <div class="wp-desa-gender-row" style="display:flex;gap:16px;">
+          <div class="wp-desa-stats--cards-item" style="flex:1;">
+            <div class="wp-desa-stats--cards-item__icon" style="background: #c9e0fc; color: #024ad8;">
+              <?php echo \WpDesa\Frontend\Icons::svg('mars', 'width:28px;height:28px'); ?>
+            </div>
+            <div class="wp-desa-stats--cards-item__info">
+              <div class="wp-desa-stats--cards-item__number"><?php echo number_format_i18n($male); ?></div>
+              <div class="wp-desa-stats--cards-item__label">Laki-laki</div>
+            </div>
+          </div>
+
+          <div class="wp-desa-stats--cards-item" style="flex:1;">
+            <div class="wp-desa-stats--cards-item__icon" style="background: #f9d4d2; color: #b3262b;">
+              <?php echo \WpDesa\Frontend\Icons::svg('venus', 'width:28px;height:28px'); ?>
+            </div>
+            <div class="wp-desa-stats--cards-item__info">
+              <div class="wp-desa-stats--cards-item__number"><?php echo number_format_i18n($female); ?></div>
+              <div class="wp-desa-stats--cards-item__label">Perempuan</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wp-desa-stats--cards-item" style="margin-top:16px;">
+          <div class="wp-desa-stats--cards-item__icon" style="background: #e6f4ea; color: #1f6b3c;">
+            <?php echo \WpDesa\Frontend\Icons::svg('users', 'width:28px;height:28px'); ?>
+          </div>
+          <div class="wp-desa-stats--cards-item__info">
+            <div class="wp-desa-stats--cards-item__number"><?php echo number_format_i18n($total); ?></div>
+            <div class="wp-desa-stats--cards-item__label">Total</div>
+          </div>
+        </div>
+
+      <?php elseif ($style === 'minimal'): ?>
+        <!-- ============ MINIMAL STYLE ============ -->
+        <div class="wp-desa-stats--minimal-section">
+          <div class="wp-desa-gender-row" style="display:flex;gap:16px;">
+            <div class="wp-desa-stats--minimal-row" style="flex:1;">
+              <div class="wp-desa-stats--minimal-row__left">
+                <span class="wp-desa-stats--minimal-row__icon"
+                  style="color:#024ad8;"><?php echo \WpDesa\Frontend\Icons::svg('mars', 'width:20px;height:20px'); ?></span>
+                <span class="wp-desa-stats--minimal-row__label">Laki-laki</span>
+              </div>
+              <span class="wp-desa-stats--minimal-row__value"><?php echo number_format_i18n($male); ?></span>
+            </div>
+            <div class="wp-desa-stats--minimal-row" style="flex:1;">
+              <div class="wp-desa-stats--minimal-row__left">
+                <span class="wp-desa-stats--minimal-row__icon"
+                  style="color:#b3262b;"><?php echo \WpDesa\Frontend\Icons::svg('venus', 'width:20px;height:20px'); ?></span>
+                <span class="wp-desa-stats--minimal-row__label">Perempuan</span>
+              </div>
+              <span class="wp-desa-stats--minimal-row__value"><?php echo number_format_i18n($female); ?></span>
+            </div>
+          </div>
+          <div class="wp-desa-stats--minimal-divider"></div>
+          <div class="wp-desa-stats--minimal-row wp-desa-stats--minimal-row--total">
+            <div class="wp-desa-stats--minimal-row__left">
+              <span class="wp-desa-stats--minimal-row__icon"
+                style="color:#1f6b3c;"><?php echo \WpDesa\Frontend\Icons::svg('users', 'width:20px;height:20px'); ?></span>
+              <span class="wp-desa-stats--minimal-row__label">Total</span>
+            </div>
+            <span class="wp-desa-stats--minimal-row__value"
+              style="font-weight:700;"><?php echo number_format_i18n($total); ?></span>
+          </div>
+        </div>
+
+      <?php else: ?>
+        <!-- ============ CLASSIC STYLE (default) ============ -->
+        <div class="wp-desa-gender-row" style="display:flex;gap:20px;">
+          <div class="wp-desa-stat-card" style="flex:1;">
+            <div class="wp-desa-stat-icon" style="background: #c9e0fc; color: #024ad8;">
+              <?php echo \WpDesa\Frontend\Icons::svg('mars', 'width:24px;height:24px'); ?>
+            </div>
+            <div class="wp-desa-stat-number"><?php echo number_format_i18n($male); ?></div>
+            <div class="wp-desa-stat-label">Laki-laki</div>
+          </div>
+
+          <div class="wp-desa-stat-card" style="flex:1;">
+            <div class="wp-desa-stat-icon" style="background: #f9d4d2; color: #b3262b;">
+              <?php echo \WpDesa\Frontend\Icons::svg('venus', 'width:24px;height:24px'); ?>
+            </div>
+            <div class="wp-desa-stat-number"><?php echo number_format_i18n($female); ?></div>
+            <div class="wp-desa-stat-label">Perempuan</div>
+          </div>
+        </div>
+
+        <div class="wp-desa-stat-card" style="margin-top:20px;">
+          <div class="wp-desa-stat-icon" style="background: #e6f4ea; color: #1f6b3c;">
+            <?php echo \WpDesa\Frontend\Icons::svg('users', 'width:24px;height:24px'); ?>
+          </div>
+          <div class="wp-desa-stat-number"><?php echo number_format_i18n($total); ?></div>
+          <div class="wp-desa-stat-label">Total Penduduk</div>
+        </div>
+      <?php endif; ?>
+
     </div>
   <?php
     return ob_get_clean();
@@ -487,16 +667,19 @@ class Shortcode
           $btn_sz   = $style === 'compact' ? 12 : 14;
           $btn_pad  = $style === 'compact' ? '6px 12px' : '8px 16px';
           ?>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(<?php echo $min_w; ?>,1fr));gap:<?php echo $gap; ?>;">
+          <div
+            style="display:grid;grid-template-columns:repeat(auto-fill,minmax(<?php echo $min_w; ?>,1fr));gap:<?php echo $gap; ?>;">
             <?php while ($query->have_posts()): $query->the_post();
               $phone = get_post_meta(get_the_ID(), '_desa_umkm_phone', true);
               $location = get_post_meta(get_the_ID(), '_desa_umkm_location', true);
               $categories = get_the_terms(get_the_ID(), 'desa_umkm_cat');
               $cat_name = !empty($categories) ? $categories[0]->name : 'UMKM';
             ?>
-              <div class="wp-desa-stat-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;text-align:left;border:1px solid var(--fog);background:var(--canvas);border-radius:<?php echo $rad; ?>;">
+              <div class="wp-desa-stat-card"
+                style="padding:0;overflow:hidden;display:flex;flex-direction:column;text-align:left;border:1px solid var(--fog);background:var(--canvas);border-radius:<?php echo $rad; ?>;">
                 <div style="height:<?php echo $img_h; ?>px;background:var(--cloud);overflow:hidden;position:relative;">
-                  <div style="position:absolute;top:<?php echo $style === 'compact' ? '6px' : 'var(--sp-sm)'; ?>;right:<?php echo $style === 'compact' ? '6px' : 'var(--sp-sm)'; ?>;background:rgba(255,255,255,0.9);padding:<?php echo $style === 'compact' ? '2px 8px' : '4px 10px'; ?>;border-radius:var(--rounded-pill);font-size:<?php echo $badge_sz; ?>px;font-weight:600;color:var(--ink);z-index:2;">
+                  <div
+                    style="position:absolute;top:<?php echo $style === 'compact' ? '6px' : 'var(--sp-sm)'; ?>;right:<?php echo $style === 'compact' ? '6px' : 'var(--sp-sm)'; ?>;background:rgba(255,255,255,0.9);padding:<?php echo $style === 'compact' ? '2px 8px' : '4px 10px'; ?>;border-radius:var(--rounded-pill);font-size:<?php echo $badge_sz; ?>px;font-weight:600;color:var(--ink);z-index:2;">
                     <?php echo esc_html($cat_name); ?>
                   </div>
                   <?php if (has_post_thumbnail()): ?>
@@ -504,27 +687,34 @@ class Shortcode
                       <?php the_post_thumbnail('medium', ['style' => 'width:100%;height:100%;object-fit:cover;']); ?>
                     </a>
                   <?php else: ?>
-                    <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--graphite);background:var(--cloud);">
+                    <div
+                      style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--graphite);background:var(--cloud);">
                       <?php echo \WpDesa\Frontend\Icons::svg('store', 'width:' . $icon_sz . 'px;height:' . $icon_sz . 'px;'); ?>
                     </div>
                   <?php endif; ?>
                 </div>
                 <div style="padding:<?php echo $pad; ?>;flex:1;display:flex;flex-direction:column;">
-                  <h3 style="margin:0 0 <?php echo $style === 'compact' ? '4px' : 'var(--sp-xs)'; ?> 0;font-family:var(--font-display);font-size:<?php echo $title_sz; ?>px;font-weight:500;line-height:1.0;">
-                    <a href="<?php the_permalink(); ?>" style="text-decoration:none;color:var(--ink);"><?php the_title(); ?></a>
+                  <h3
+                    style="margin:0 0 <?php echo $style === 'compact' ? '4px' : 'var(--sp-xs)'; ?> 0;font-family:var(--font-display);font-size:<?php echo $title_sz; ?>px;font-weight:500;line-height:1.0;">
+                    <a href="<?php the_permalink(); ?>"
+                      style="text-decoration:none;color:var(--ink);"><?php the_title(); ?></a>
                   </h3>
-                  <div style="font-size:<?php echo $txt_sz; ?>px;color:var(--graphite);margin-bottom:<?php echo $style === 'compact' ? 'var(--sp-sm)' : 'var(--sp-lg)'; ?>;flex:1;line-height:1.5;">
+                  <div
+                    style="font-size:<?php echo $txt_sz; ?>px;color:var(--graphite);margin-bottom:<?php echo $style === 'compact' ? 'var(--sp-sm)' : 'var(--sp-lg)'; ?>;flex:1;line-height:1.5;">
                     <?php echo wp_trim_words(get_the_excerpt(), $excerpt_w); ?>
                   </div>
-                  <div style="border-top:1px solid var(--fog);padding-top:var(--sp-sm);margin-top:auto;display:flex;justify-content:space-between;align-items:center;">
-                    <a href="<?php the_permalink(); ?>" style="font-size:<?php echo $txt_sz; ?>px;font-weight:500;color:var(--primary);text-decoration:none;display:flex;align-items:center;gap:4px;">
+                  <div
+                    style="border-top:1px solid var(--fog);padding-top:var(--sp-sm);margin-top:auto;display:flex;justify-content:space-between;align-items:center;">
+                    <a href="<?php the_permalink(); ?>"
+                      style="font-size:<?php echo $txt_sz; ?>px;font-weight:500;color:var(--primary);text-decoration:none;display:flex;align-items:center;gap:4px;">
                       Detail <?php echo \WpDesa\Frontend\Icons::svg('arrow-right', 'width:16px;height:16px;'); ?>
                     </a>
                     <?php if ($phone):
                       $clean_phone = preg_replace('/[^0-9]/', '', $phone);
                       if (substr($clean_phone, 0, 1) == '0') $clean_phone = '62' . substr($clean_phone, 1);
                     ?>
-                      <a href="https://wa.me/<?php echo esc_attr($clean_phone); ?>" target="_blank" style="background:#25D366;color:#fff;border:none;font-size:<?php echo $btn_sz; ?>px;font-weight:700;display:inline-flex;align-items:center;gap:6px;padding:<?php echo $btn_pad; ?>;border-radius:var(--rounded-md);text-decoration:none;">
+                      <a href="https://wa.me/<?php echo esc_attr($clean_phone); ?>" target="_blank"
+                        style="background:#25D366;color:#fff;border:none;font-size:<?php echo $btn_sz; ?>px;font-weight:700;display:inline-flex;align-items:center;gap:6px;padding:<?php echo $btn_pad; ?>;border-radius:var(--rounded-md);text-decoration:none;">
                         <?php echo \WpDesa\Frontend\Icons::svg('message-circle', 'width:16px;height:16px;'); ?> Chat
                       </a>
                     <?php endif; ?>
@@ -541,38 +731,47 @@ class Shortcode
               $categories = get_the_terms(get_the_ID(), 'desa_umkm_cat');
               $cat_name = !empty($categories) ? $categories[0]->name : 'UMKM';
             ?>
-              <div style="display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-md);border-bottom:1px solid var(--fog);background:var(--canvas);">
+              <div
+                style="display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-md);border-bottom:1px solid var(--fog);background:var(--canvas);">
                 <div style="flex-shrink:0;">
                   <?php if (has_post_thumbnail()): ?>
                     <?php the_post_thumbnail('thumbnail', ['style' => 'width:48px;height:48px;border-radius:var(--rounded-md);object-fit:cover;display:block;']); ?>
                   <?php else: ?>
-                    <div style="width:48px;height:48px;border-radius:var(--rounded-md);background:var(--cloud);display:flex;align-items:center;justify-content:center;color:var(--graphite);">
+                    <div
+                      style="width:48px;height:48px;border-radius:var(--rounded-md);background:var(--cloud);display:flex;align-items:center;justify-content:center;color:var(--graphite);">
                       <?php echo \WpDesa\Frontend\Icons::svg('store', 'width:24px;height:24px;'); ?>
                     </div>
                   <?php endif; ?>
                 </div>
                 <div style="flex:1;min-width:0;">
-                  <a href="<?php the_permalink(); ?>" style="font-weight:500;font-size:15px;color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
+                  <a href="<?php the_permalink(); ?>"
+                    style="font-weight:500;font-size:15px;color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
                   <div style="font-size:12px;color:var(--graphite);margin-top:2px;">
-                    <span style="background:var(--primary-soft);color:var(--primary-deep);padding:1px 8px;border-radius:var(--rounded-pill);font-size:11px;"><?php echo esc_html($cat_name); ?></span>
+                    <span
+                      style="background:var(--primary-soft);color:var(--primary-deep);padding:1px 8px;border-radius:var(--rounded-pill);font-size:11px;"><?php echo esc_html($cat_name); ?></span>
                     <?php if ($location): ?>
                       <span style="margin-left:var(--sp-xs);">📍 <?php echo esc_html($location); ?></span>
                     <?php endif; ?>
                   </div>
                 </div>
                 <?php if ($phone): ?>
-                  <a href="https://wa.me/<?php echo esc_attr(preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $phone))); ?>" target="_blank" style="background:#25D366;color:#fff;border:none;font-size:12px;font-weight:700;padding:6px 12px;border-radius:var(--rounded-md);text-decoration:none;flex-shrink:0;">
+                  <a href="https://wa.me/<?php echo esc_attr(preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $phone))); ?>"
+                    target="_blank"
+                    style="background:#25D366;color:#fff;border:none;font-size:12px;font-weight:700;padding:6px 12px;border-radius:var(--rounded-md);text-decoration:none;flex-shrink:0;">
                     <?php echo \WpDesa\Frontend\Icons::svg('message-circle', 'width:14px;height:14px;'); ?> Chat
                   </a>
                 <?php endif; ?>
-                <a href="<?php the_permalink(); ?>" style="font-size:13px;font-weight:500;color:var(--primary);text-decoration:none;flex-shrink:0;">Detail →</a>
+                <a href="<?php the_permalink(); ?>"
+                  style="font-size:13px;font-weight:500;color:var(--primary);text-decoration:none;flex-shrink:0;">Detail
+                  →</a>
               </div>
             <?php endwhile; ?>
           </div>
         <?php endif; /* style end */ ?>
 
       <?php else: ?>
-        <div style="text-align:center;padding:60px 20px;background:var(--cloud);border-radius:var(--rounded-xl);border:1px solid var(--fog);color:var(--graphite);">
+        <div
+          style="text-align:center;padding:60px 20px;background:var(--cloud);border-radius:var(--rounded-xl);border:1px solid var(--fog);color:var(--graphite);">
           <?php echo \WpDesa\Frontend\Icons::svg('store', 'width:48px;height:48px;margin-bottom:10px;'); ?>
           <p style="margin:0;font-size:1.1em;">Belum ada data UMKM yang ditampilkan.</p>
         </div>
@@ -629,10 +828,14 @@ class Shortcode
           <h1 style="margin:0 0 var(--sp-xs);color:var(--ink);font-size:<?php echo $title_sz; ?>px;font-weight:500;">
             <?php echo esc_html($post->post_title); ?>
           </h1>
-          <div style="display:flex;flex-wrap:wrap;gap:var(--sp-xs);font-size:13px;color:var(--graphite);align-items:center;">
-            <span style="background:var(--primary-soft);color:var(--primary-deep);padding:2px 10px;border-radius:var(--rounded-pill);font-weight:500;"><?php echo esc_html($cat_name); ?></span>
+          <div
+            style="display:flex;flex-wrap:wrap;gap:var(--sp-xs);font-size:13px;color:var(--graphite);align-items:center;">
+            <span
+              style="background:var(--primary-soft);color:var(--primary-deep);padding:2px 10px;border-radius:var(--rounded-pill);font-weight:500;"><?php echo esc_html($cat_name); ?></span>
             <?php if ($phone): ?>
-              <a href="https://wa.me/<?php echo esc_attr(preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $phone))); ?>" target="_blank" style="display:inline-flex;align-items:center;gap:4px;color:#25D366;text-decoration:none;font-weight:500;">
+              <a href="https://wa.me/<?php echo esc_attr(preg_replace('/^0/', '62', preg_replace('/[^0-9]/', '', $phone))); ?>"
+                target="_blank"
+                style="display:inline-flex;align-items:center;gap:4px;color:#25D366;text-decoration:none;font-weight:500;">
                 <?php echo \WpDesa\Frontend\Icons::svg('message-circle', 'width:14px;height:14px;'); ?> WhatsApp
               </a>
             <?php endif; ?>
@@ -647,13 +850,15 @@ class Shortcode
         </div>
 
         <?php if ($gallery_ids): $ids = explode(',', $gallery_ids); ?>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:var(--sp-lg);">
+          <div
+            style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:var(--sp-lg);">
             <?php foreach ($ids as $id):
               $img = wp_get_attachment_image_url($id, 'thumbnail');
               $full = wp_get_attachment_image_url($id, 'full');
               if (!$img) continue;
             ?>
-              <a href="<?php echo esc_url($full); ?>" class="glightbox" data-gallery="umkm-gallery" style="display:block;aspect-ratio:1;border-radius:var(--rounded-md);overflow:hidden;border:1px solid var(--fog);">
+              <a href="<?php echo esc_url($full); ?>" class="glightbox" data-gallery="umkm-gallery"
+                style="display:block;aspect-ratio:1;border-radius:var(--rounded-md);overflow:hidden;border:1px solid var(--fog);">
                 <img src="<?php echo esc_url($img); ?>" style="width:100%;height:100%;object-fit:cover;">
               </a>
             <?php endforeach; ?>
@@ -661,13 +866,16 @@ class Shortcode
         <?php endif; ?>
 
       <?php else: /* full / compact */ ?>
-        <div style="background:var(--canvas);border-radius:var(--rounded-xl);overflow:hidden;border:1px solid var(--fog);box-shadow:var(--shadow-soft-lift);">
+        <div
+          style="background:var(--canvas);border-radius:var(--rounded-xl);overflow:hidden;border:1px solid var(--fog);box-shadow:var(--shadow-soft-lift);">
 
           <!-- Header Image -->
           <?php if ($thumb_url): ?>
             <div style="width:100%;height:<?php echo $img_h; ?>px;overflow:hidden;position:relative;">
-              <img src="<?php echo esc_url($thumb_url); ?>" alt="<?php echo esc_attr($post->post_title); ?>" style="width:100%;height:100%;object-fit:cover;">
-              <div style="position:absolute;top:20px;right:20px;background:var(--canvas);padding:6px 14px;border-radius:20px;font-weight:600;color:#3d3d3d;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+              <img src="<?php echo esc_url($thumb_url); ?>" alt="<?php echo esc_attr($post->post_title); ?>"
+                style="width:100%;height:100%;object-fit:cover;">
+              <div
+                style="position:absolute;top:20px;right:20px;background:var(--canvas);padding:6px 14px;border-radius:20px;font-weight:600;color:#3d3d3d;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
                 <?php echo esc_html($cat_name); ?>
               </div>
             </div>
@@ -686,7 +894,8 @@ class Shortcode
                 </div>
 
                 <?php if ($gallery_ids): $ids = explode(',', $gallery_ids); ?>
-                  <h3 style="margin:40px 0 20px;color:#1a1a1a;font-size:1.3em;display:flex;align-items:center;gap:10px;border-bottom:2px solid #f7f7f7;padding-bottom:10px;">
+                  <h3
+                    style="margin:40px 0 20px;color:#1a1a1a;font-size:1.3em;display:flex;align-items:center;gap:10px;border-bottom:2px solid #f7f7f7;padding-bottom:10px;">
                     <?php echo \WpDesa\Frontend\Icons::svg('image', 'width:24px;height:24px;'); ?> Galeri Produk
                   </h3>
                   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:15px;">
@@ -695,7 +904,8 @@ class Shortcode
                       $full = wp_get_attachment_image_url($id, 'full');
                       if (!$img) continue;
                     ?>
-                      <a href="<?php echo esc_url($full); ?>" class="glightbox" data-gallery="umkm-gallery" style="display:block;aspect-ratio:1;border-radius:var(--rounded-xl);overflow:hidden;border:1px solid var(--fog);position:relative;box-shadow:var(--shadow-soft-lift);">
+                      <a href="<?php echo esc_url($full); ?>" class="glightbox" data-gallery="umkm-gallery"
+                        style="display:block;aspect-ratio:1;border-radius:var(--rounded-xl);overflow:hidden;border:1px solid var(--fog);position:relative;box-shadow:var(--shadow-soft-lift);">
                         <img src="<?php echo esc_url($img); ?>" style="width:100%;height:100%;object-fit:cover;">
                       </a>
                     <?php endforeach; ?>
@@ -705,8 +915,11 @@ class Shortcode
 
               <!-- Sidebar -->
               <div style="flex:1;min-width:280px;">
-                <div style="background:var(--cloud);padding:<?php echo $pad; ?>;border-radius:var(--rounded-xl);border:1px solid var(--fog);position:sticky;top:20px;">
-                  <h3 style="margin-top:0;color:#1a1a1a;font-size:1.2em;margin-bottom:20px;border-bottom:1px solid #e8e8e8;padding-bottom:15px;font-weight:700;">Informasi Kontak</h3>
+                <div
+                  style="background:var(--cloud);padding:<?php echo $pad; ?>;border-radius:var(--rounded-xl);border:1px solid var(--fog);position:sticky;top:20px;">
+                  <h3
+                    style="margin-top:0;color:#1a1a1a;font-size:1.2em;margin-bottom:20px;border-bottom:1px solid #e8e8e8;padding-bottom:15px;font-weight:700;">
+                    Informasi Kontak</h3>
 
                   <?php if ($phone):
                     $clean_phone = preg_replace('/[^0-9]/', '', $phone);
@@ -714,7 +927,8 @@ class Shortcode
                   ?>
                     <div style="margin-bottom:25px;">
                       <div style="font-size:0.9em;color:#636363;margin-bottom:8px;font-weight:600;">WhatsApp</div>
-                      <a href="https://wa.me/<?php echo esc_attr($clean_phone); ?>" target="_blank" style="display:flex;align-items:center;gap:10px;text-decoration:none;background:#e6f4ea;color:#1f6b3c;padding:12px 15px;border-radius:8px;font-weight:600;justify-content:center;">
+                      <a href="https://wa.me/<?php echo esc_attr($clean_phone); ?>" target="_blank"
+                        style="display:flex;align-items:center;gap:10px;text-decoration:none;background:#e6f4ea;color:#1f6b3c;padding:12px 15px;border-radius:8px;font-weight:600;justify-content:center;">
                         <?php echo \WpDesa\Frontend\Icons::svg('message-circle', 'width:20px;height:20px;'); ?>
                         Hubungi Penjual
                       </a>
@@ -735,13 +949,17 @@ class Shortcode
                       <div style="color:#1a1a1a;">
                         <?php if ($lat && $lon): ?>
                           <div style="border-radius:8px;overflow:hidden;border:1px solid var(--fog);">
-                            <iframe width="100%" height="200" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                            <iframe width="100%" height="200" frameborder="0" scrolling="no" marginheight="0"
+                              marginwidth="0"
                               src="https://maps.google.com/maps?q=<?php echo esc_attr($lat); ?>,<?php echo esc_attr($lon); ?>&hl=es&z=14&amp;output=embed">
                             </iframe>
                           </div>
                         <?php else: ?>
-                          <a href="https://www.google.com/maps/search/?api=1&query=<?php echo urlencode($location); ?>" target="_blank" style="font-size:0.9em;color:#024ad8;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:4px;">
-                            Lihat di Google Maps <?php echo \WpDesa\Frontend\Icons::svg('arrow-right', 'width:14px;height:14px;'); ?>
+                          <a href="https://www.google.com/maps/search/?api=1&query=<?php echo urlencode($location); ?>"
+                            target="_blank"
+                            style="font-size:0.9em;color:#024ad8;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:4px;">
+                            Lihat di Google Maps
+                            <?php echo \WpDesa\Frontend\Icons::svg('arrow-right', 'width:14px;height:14px;'); ?>
                           </a>
                         <?php endif; ?>
                       </div>
@@ -752,13 +970,19 @@ class Shortcode
                   <div>
                     <div style="font-size:0.9em;color:#636363;margin-bottom:10px;font-weight:600;">Bagikan</div>
                     <div style="display:flex;gap:10px;">
-                      <a href="https://www.facebook.com/sharer/sharer.php?u=<?php the_permalink($post_id); ?>" target="_blank" style="width:40px;height:40px;background:#1877f2;color:white;display:flex;align-items:center;justify-content:center;border-radius:50%;text-decoration:none;">
+                      <a href="https://www.facebook.com/sharer/sharer.php?u=<?php the_permalink($post_id); ?>"
+                        target="_blank"
+                        style="width:40px;height:40px;background:#1877f2;color:white;display:flex;align-items:center;justify-content:center;border-radius:50%;text-decoration:none;">
                         <?php echo \WpDesa\Frontend\Icons::svg('facebook', 'width:20px;height:20px;'); ?>
                       </a>
-                      <a href="https://twitter.com/intent/tweet?url=<?php the_permalink($post_id); ?>&text=<?php echo urlencode($post->post_title); ?>" target="_blank" style="width:40px;height:40px;background:#000;color:white;display:flex;align-items:center;justify-content:center;border-radius:50%;text-decoration:none;">
+                      <a href="https://twitter.com/intent/tweet?url=<?php the_permalink($post_id); ?>&text=<?php echo urlencode($post->post_title); ?>"
+                        target="_blank"
+                        style="width:40px;height:40px;background:#000;color:white;display:flex;align-items:center;justify-content:center;border-radius:50%;text-decoration:none;">
                         <?php echo \WpDesa\Frontend\Icons::svg('twitter', 'width:20px;height:20px;'); ?>
                       </a>
-                      <button onclick="navigator.clipboard.writeText('<?php the_permalink($post_id); ?>');alert('Link disalin!');" style="width:40px;height:40px;background:#636363;color:white;display:flex;align-items:center;justify-content:center;border-radius:50%;border:none;cursor:pointer;">
+                      <button
+                        onclick="navigator.clipboard.writeText('<?php the_permalink($post_id); ?>');alert('Link disalin!');"
+                        style="width:40px;height:40px;background:#636363;color:white;display:flex;align-items:center;justify-content:center;border-radius:50%;border:none;cursor:pointer;">
                         <?php echo \WpDesa\Frontend\Icons::svg('link', 'width:20px;height:20px;'); ?>
                       </button>
                     </div>
@@ -809,29 +1033,37 @@ class Shortcode
           $txt_sz    = $style === 'compact' ? 13 : 14;
           $icon_sz   = $style === 'compact' ? 32 : 48;
           ?>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(<?php echo $min_w; ?>,1fr));gap:<?php echo $gap; ?>;">
+          <div
+            style="display:grid;grid-template-columns:repeat(auto-fill,minmax(<?php echo $min_w; ?>,1fr));gap:<?php echo $gap; ?>;">
             <?php while ($query->have_posts()): $query->the_post(); ?>
-              <div class="wp-desa-stat-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;text-align:left;border:1px solid var(--fog);background:var(--canvas);border-radius:var(--rounded-xl);">
+              <div class="wp-desa-stat-card"
+                style="padding:0;overflow:hidden;display:flex;flex-direction:column;text-align:left;border:1px solid var(--fog);background:var(--canvas);border-radius:var(--rounded-xl);">
                 <div style="height:<?php echo $img_h; ?>px;background:var(--cloud);overflow:hidden;position:relative;">
                   <?php if (has_post_thumbnail()): ?>
                     <a href="<?php the_permalink(); ?>" style="display:block;width:100%;height:100%;">
                       <?php the_post_thumbnail('medium', ['style' => 'width:100%;height:100%;object-fit:cover;']); ?>
                     </a>
                   <?php else: ?>
-                    <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--graphite);background:var(--cloud);">
+                    <div
+                      style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--graphite);background:var(--cloud);">
                       <?php echo \WpDesa\Frontend\Icons::svg('carrot', 'width:' . $icon_sz . 'px;height:' . $icon_sz . 'px;'); ?>
                     </div>
                   <?php endif; ?>
                 </div>
                 <div style="padding:<?php echo $pad; ?>;flex:1;display:flex;flex-direction:column;">
-                  <h3 style="margin:0 0 <?php echo $style === 'compact' ? '4px' : 'var(--sp-xs)'; ?> 0;font-family:var(--font-display);font-size:<?php echo $title_sz; ?>px;font-weight:500;">
-                    <a href="<?php the_permalink(); ?>" style="text-decoration:none;color:var(--ink);"><?php the_title(); ?></a>
+                  <h3
+                    style="margin:0 0 <?php echo $style === 'compact' ? '4px' : 'var(--sp-xs)'; ?> 0;font-family:var(--font-display);font-size:<?php echo $title_sz; ?>px;font-weight:500;">
+                    <a href="<?php the_permalink(); ?>"
+                      style="text-decoration:none;color:var(--ink);"><?php the_title(); ?></a>
                   </h3>
-                  <div style="font-size:<?php echo $txt_sz; ?>px;color:var(--graphite);margin-bottom:<?php echo $style === 'compact' ? 'var(--sp-sm)' : 'var(--sp-lg)'; ?>;flex:1;line-height:1.5;">
+                  <div
+                    style="font-size:<?php echo $txt_sz; ?>px;color:var(--graphite);margin-bottom:<?php echo $style === 'compact' ? 'var(--sp-sm)' : 'var(--sp-lg)'; ?>;flex:1;line-height:1.5;">
                     <?php echo wp_trim_words(get_the_excerpt(), $excerpt_w); ?>
                   </div>
-                  <a href="<?php the_permalink(); ?>" style="font-size:<?php echo $txt_sz; ?>px;font-weight:500;color:var(--primary);text-decoration:none;display:flex;align-items:center;gap:4px;margin-top:auto;">
-                    Baca Selengkapnya <?php echo \WpDesa\Frontend\Icons::svg('arrow-right', 'width:16px;height:16px;'); ?>
+                  <a href="<?php the_permalink(); ?>"
+                    style="font-size:<?php echo $txt_sz; ?>px;font-weight:500;color:var(--primary);text-decoration:none;display:flex;align-items:center;gap:4px;margin-top:auto;">
+                    Baca Selengkapnya
+                    <?php echo \WpDesa\Frontend\Icons::svg('arrow-right', 'width:16px;height:16px;'); ?>
                   </a>
                 </div>
               </div>
@@ -841,30 +1073,37 @@ class Shortcode
         <?php else: /* minimal */ ?>
           <div style="border:1px solid var(--fog);border-radius:var(--rounded-lg);overflow:hidden;">
             <?php while ($query->have_posts()): $query->the_post(); ?>
-              <div style="display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-md);border-bottom:1px solid var(--fog);background:var(--canvas);">
+              <div
+                style="display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-md);border-bottom:1px solid var(--fog);background:var(--canvas);">
                 <div style="flex-shrink:0;">
                   <?php if (has_post_thumbnail()): ?>
                     <?php the_post_thumbnail('thumbnail', ['style' => 'width:48px;height:48px;object-fit:cover;border-radius:var(--rounded-md);display:block;']); ?>
                   <?php else: ?>
-                    <div style="width:48px;height:48px;border-radius:var(--rounded-md);background:var(--cloud);display:flex;align-items:center;justify-content:center;color:var(--graphite);">
+                    <div
+                      style="width:48px;height:48px;border-radius:var(--rounded-md);background:var(--cloud);display:flex;align-items:center;justify-content:center;color:var(--graphite);">
                       <?php echo \WpDesa\Frontend\Icons::svg('carrot', 'width:24px;height:24px;'); ?>
                     </div>
                   <?php endif; ?>
                 </div>
                 <div style="flex:1;min-width:0;">
-                  <a href="<?php the_permalink(); ?>" style="font-weight:500;font-size:15px;color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
-                  <div style="font-size:13px;color:var(--graphite);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;">
+                  <a href="<?php the_permalink(); ?>"
+                    style="font-weight:500;font-size:15px;color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
+                  <div
+                    style="font-size:13px;color:var(--graphite);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;">
                     <?php echo wp_trim_words(get_the_excerpt(), 8); ?>
                   </div>
                 </div>
-                <a href="<?php the_permalink(); ?>" style="font-size:13px;font-weight:500;color:var(--primary);text-decoration:none;flex-shrink:0;">Baca →</a>
+                <a href="<?php the_permalink(); ?>"
+                  style="font-size:13px;font-weight:500;color:var(--primary);text-decoration:none;flex-shrink:0;">Baca
+                  →</a>
               </div>
             <?php endwhile; ?>
           </div>
         <?php endif; /* style end */ ?>
 
       <?php else: ?>
-        <div style="text-align:center;padding:60px 20px;background:var(--cloud);border-radius:var(--rounded-xl);border:1px solid var(--fog);color:var(--graphite);">
+        <div
+          style="text-align:center;padding:60px 20px;background:var(--cloud);border-radius:var(--rounded-xl);border:1px solid var(--fog);color:var(--graphite);">
           <?php echo \WpDesa\Frontend\Icons::svg('carrot', 'width:48px;height:48px;margin-bottom:10px;'); ?>
           <p style="margin:0;font-size:1.1em;">Belum ada data Potensi Desa.</p>
         </div>
@@ -934,7 +1173,8 @@ class Shortcode
                 </div>
                 <div>
                   <div class="wp-desa-profil-contact-label">Email</div>
-                  <a href="mailto:<?php echo esc_attr($email); ?>" class="wp-desa-profil-contact-link"><?php echo esc_html($email); ?></a>
+                  <a href="mailto:<?php echo esc_attr($email); ?>"
+                    class="wp-desa-profil-contact-link"><?php echo esc_html($email); ?></a>
                 </div>
               </div>
             <?php endif; ?>
@@ -946,7 +1186,8 @@ class Shortcode
                 </div>
                 <div>
                   <div class="wp-desa-profil-contact-label">Telepon</div>
-                  <a href="tel:<?php echo esc_attr($telepon); ?>" class="wp-desa-profil-contact-link"><?php echo esc_html($telepon); ?></a>
+                  <a href="tel:<?php echo esc_attr($telepon); ?>"
+                    class="wp-desa-profil-contact-link"><?php echo esc_html($telepon); ?></a>
                 </div>
               </div>
             <?php endif; ?>
@@ -962,7 +1203,8 @@ class Shortcode
             </div>
           <?php endif; ?>
           <div style="flex:1;min-width:0;">
-            <h2 style="margin:0;font-family:var(--font-display);font-size:22px;font-weight:500;color:var(--ink);"><?php echo esc_html('Desa ' . $nama_desa); ?></h2>
+            <h2 style="margin:0;font-family:var(--font-display);font-size:22px;font-weight:500;color:var(--ink);">
+              <?php echo esc_html('Desa ' . $nama_desa); ?></h2>
             <p style="margin:4px 0 var(--sp-sm);color:var(--graphite);font-size:14px;">
               <?php echo esc_html('Kecamatan ' . $nama_kecamatan . ', ' . $nama_kabupaten); ?>
             </p>
@@ -976,13 +1218,15 @@ class Shortcode
               <?php if ($email): ?>
                 <div style="display:flex;align-items:center;gap:var(--sp-xs);font-size:14px;">
                   <?php echo \WpDesa\Frontend\Icons::svg('mail', 'width:16px;height:16px;flex-shrink:0;'); ?>
-                  <a href="mailto:<?php echo esc_attr($email); ?>" style="color:var(--primary);text-decoration:none;"><?php echo esc_html($email); ?></a>
+                  <a href="mailto:<?php echo esc_attr($email); ?>"
+                    style="color:var(--primary);text-decoration:none;"><?php echo esc_html($email); ?></a>
                 </div>
               <?php endif; ?>
               <?php if ($telepon): ?>
                 <div style="display:flex;align-items:center;gap:var(--sp-xs);font-size:14px;">
                   <?php echo \WpDesa\Frontend\Icons::svg('phone', 'width:16px;height:16px;flex-shrink:0;'); ?>
-                  <a href="tel:<?php echo esc_attr($telepon); ?>" style="color:var(--primary);text-decoration:none;"><?php echo esc_html($telepon); ?></a>
+                  <a href="tel:<?php echo esc_attr($telepon); ?>"
+                    style="color:var(--primary);text-decoration:none;"><?php echo esc_html($telepon); ?></a>
                 </div>
               <?php endif; ?>
             </div>
@@ -991,13 +1235,16 @@ class Shortcode
 
       <?php elseif ($style === 'minimal'): ?>
         <!-- Minimal: baris border-bottom dengan flex-wrap -->
-        <div style="display:flex;align-items:center;gap:var(--sp-md);flex-wrap:wrap;padding:var(--sp-md) 0;border-bottom:1px solid var(--fog);">
+        <div
+          style="display:flex;align-items:center;gap:var(--sp-md);flex-wrap:wrap;padding:var(--sp-md) 0;border-bottom:1px solid var(--fog);">
           <div style="display:flex;align-items:center;gap:var(--sp-xs);flex-shrink:0;">
             <?php if ($logo): ?>
               <img src="<?php echo esc_url($logo); ?>" alt="Logo" style="width:28px;height:28px;object-fit:contain;">
             <?php endif; ?>
-            <span style="font-weight:600;font-size:15px;color:var(--ink);"><?php echo esc_html('Desa ' . $nama_desa); ?></span>
-            <span style="color:var(--graphite);font-size:13px;">— <?php echo esc_html(($nama_kecamatan ? 'Kec. ' . $nama_kecamatan . ', ' : '') . $nama_kabupaten); ?></span>
+            <span
+              style="font-weight:600;font-size:15px;color:var(--ink);"><?php echo esc_html('Desa ' . $nama_desa); ?></span>
+            <span style="color:var(--graphite);font-size:13px;">—
+              <?php echo esc_html(($nama_kecamatan ? 'Kec. ' . $nama_kecamatan . ', ' : '') . $nama_kabupaten); ?></span>
           </div>
           <?php if ($alamat): ?>
             <span style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--graphite);">
@@ -1006,13 +1253,15 @@ class Shortcode
             </span>
           <?php endif; ?>
           <?php if ($email): ?>
-            <a href="mailto:<?php echo esc_attr($email); ?>" style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--primary);text-decoration:none;">
+            <a href="mailto:<?php echo esc_attr($email); ?>"
+              style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--primary);text-decoration:none;">
               <?php echo \WpDesa\Frontend\Icons::svg('mail', 'width:14px;height:14px;'); ?>
               <?php echo esc_html($email); ?>
             </a>
           <?php endif; ?>
           <?php if ($telepon): ?>
-            <a href="tel:<?php echo esc_attr($telepon); ?>" style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--primary);text-decoration:none;">
+            <a href="tel:<?php echo esc_attr($telepon); ?>"
+              style="display:flex;align-items:center;gap:4px;font-size:13px;color:var(--primary);text-decoration:none;">
               <?php echo \WpDesa\Frontend\Icons::svg('phone', 'width:14px;height:14px;'); ?>
               <?php echo esc_html($telepon); ?>
             </a>
@@ -1089,8 +1338,10 @@ class Shortcode
 
     ob_start();
   ?>
-    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper wp-desa-bantuan--<?php echo esc_attr($style); ?>" data-wp-desa="bantuan" data-style="<?php echo esc_attr($style); ?>">
-      <h2 class="wp-desa-title" style="text-align:center; margin-bottom: 30px; font-size: 2em; color: #1a1a1a;">Program & Bantuan Sosial</h2>
+    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper wp-desa-bantuan--<?php echo esc_attr($style); ?>"
+      data-wp-desa="bantuan" data-style="<?php echo esc_attr($style); ?>">
+      <h2 class="wp-desa-title" style="text-align:center; margin-bottom: 30px; font-size: 2em; color: #1a1a1a;">Program &
+        Bantuan Sosial</h2>
       <div style="display: grid; gap: 20px;" class="wp-desa-bantuan-grid">
       </div>
     </div>
@@ -1115,7 +1366,8 @@ class Shortcode
 
     ob_start();
   ?>
-    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper wp-desa-keu--<?php echo esc_attr($style); ?>" data-wp-desa="keuangan">
+    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper wp-desa-keu--<?php echo esc_attr($style); ?>"
+      data-wp-desa="keuangan">
       <div class="wp-desa-header">
         <div>
           <h2 class="wp-desa-title">Transparansi Keuangan</h2>
@@ -1256,28 +1508,34 @@ class Shortcode
 
     ob_start();
   ?>
-    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper wp-desa-aduan--<?php echo esc_attr($style); ?>" data-wp-desa="aduan" data-active-tab="<?php echo esc_attr($active_tab); ?>">
+    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper wp-desa-aduan--<?php echo esc_attr($style); ?>"
+      data-wp-desa="aduan" data-active-tab="<?php echo esc_attr($active_tab); ?>">
 
       <?php echo $card_open; ?>
 
       <?php if ($tab_style === 'pill'): ?>
         <!-- Pill Tabs (classic) -->
-        <div style="display:flex;align-items:center;gap:var(--sp-xs);padding:var(--sp-md) var(--sp-xl);border-bottom:1px solid var(--fog);">
+        <div
+          style="display:flex;align-items:center;gap:var(--sp-xs);padding:var(--sp-md) var(--sp-xl);border-bottom:1px solid var(--fog);">
           <h3 style="margin:0;font-size:20px;font-weight:500;color:var(--ink);margin-right:auto;">Laporan Aduan</h3>
-          <button class="wp-desa-tab-line<?php echo $active_tab === 'form' ? ' active' : ''; ?>" data-tab="form" style="padding:6px 14px;border:none;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;background:<?php echo $active_tab === 'form' ? 'var(--ink)' : 'transparent'; ?>;color:<?php echo $active_tab === 'form' ? 'var(--on-ink)' : 'var(--ink)'; ?>;">
+          <button class="wp-desa-tab-line<?php echo $active_tab === 'form' ? ' active' : ''; ?>" data-tab="form"
+            style="padding:6px 14px;border:none;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;background:<?php echo $active_tab === 'form' ? 'var(--ink)' : 'transparent'; ?>;color:<?php echo $active_tab === 'form' ? 'var(--on-ink)' : 'var(--ink)'; ?>;">
             <?php echo \WpDesa\Frontend\Icons::svg('edit', 'width:18px;height:18px;'); ?> Buat Laporan
           </button>
-          <button class="wp-desa-tab-line<?php echo $active_tab === 'track' ? ' active' : ''; ?>" data-tab="track" style="padding:6px 14px;border:none;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;background:<?php echo $active_tab === 'track' ? 'var(--ink)' : 'transparent'; ?>;color:<?php echo $active_tab === 'track' ? 'var(--on-ink)' : 'var(--ink)'; ?>;">
+          <button class="wp-desa-tab-line<?php echo $active_tab === 'track' ? ' active' : ''; ?>" data-tab="track"
+            style="padding:6px 14px;border:none;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;background:<?php echo $active_tab === 'track' ? 'var(--ink)' : 'transparent'; ?>;color:<?php echo $active_tab === 'track' ? 'var(--on-ink)' : 'var(--ink)'; ?>;">
             <?php echo \WpDesa\Frontend\Icons::svg('search', 'width:18px;height:18px;'); ?> Cek Status
           </button>
         </div>
       <?php elseif ($tab_style === 'line'): ?>
         <!-- Line Tabs (compact) -->
         <div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid var(--fog);margin-bottom:var(--sp-lg);">
-          <button class="wp-desa-tab-line<?php echo $active_tab === 'form' ? ' active' : ''; ?>" data-tab="form" style="padding:8px 16px;border:none;border-bottom:2px solid <?php echo $active_tab === 'form' ? 'var(--ink)' : 'transparent'; ?>;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:<?php echo $active_tab === 'form' ? 'var(--ink)' : 'var(--graphite)'; ?>;margin-bottom:-1px;">
+          <button class="wp-desa-tab-line<?php echo $active_tab === 'form' ? ' active' : ''; ?>" data-tab="form"
+            style="padding:8px 16px;border:none;border-bottom:2px solid <?php echo $active_tab === 'form' ? 'var(--ink)' : 'transparent'; ?>;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:<?php echo $active_tab === 'form' ? 'var(--ink)' : 'var(--graphite)'; ?>;margin-bottom:-1px;">
             <?php echo \WpDesa\Frontend\Icons::svg('edit', 'width:16px;height:16px;'); ?> Buat Laporan
           </button>
-          <button class="wp-desa-tab-line<?php echo $active_tab === 'track' ? ' active' : ''; ?>" data-tab="track" style="padding:8px 16px;border:none;border-bottom:2px solid <?php echo $active_tab === 'track' ? 'var(--ink)' : 'transparent'; ?>;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:<?php echo $active_tab === 'track' ? 'var(--ink)' : 'var(--graphite)'; ?>;margin-bottom:-1px;">
+          <button class="wp-desa-tab-line<?php echo $active_tab === 'track' ? ' active' : ''; ?>" data-tab="track"
+            style="padding:8px 16px;border:none;border-bottom:2px solid <?php echo $active_tab === 'track' ? 'var(--ink)' : 'transparent'; ?>;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:<?php echo $active_tab === 'track' ? 'var(--ink)' : 'var(--graphite)'; ?>;margin-bottom:-1px;">
             <?php echo \WpDesa\Frontend\Icons::svg('search', 'width:16px;height:16px;'); ?> Cek Status
           </button>
         </div>
@@ -1290,7 +1548,8 @@ class Shortcode
       <?php endif; ?>
 
       <!-- Form Aduan -->
-      <div class="wp-desa-tab-panel" x-show="tab === 'form'" <?php echo $form_hide ? ' style="' . $form_hide . '"' : ''; ?>>
+      <div class="wp-desa-tab-panel" x-show="tab === 'form'"
+        <?php echo $form_hide ? ' style="' . $form_hide . '"' : ''; ?>>
         <div x-show="message.content" class="wp-desa-message" style="display: none;"></div>
 
         <div x-show="trackingCode" class="wp-desa-tracking-box" style="display: none;">
@@ -1303,17 +1562,20 @@ class Shortcode
           <div style="padding:<?php echo $is_classic ? 'var(--sp-xl)' : '0'; ?>;">
             <div class="wp-desa-form-group" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
               <label class="wp-desa-label" style="<?php echo $label_style; ?>">Nama Pelapor (Opsional)</label>
-              <input type="text" x-model="form.reporter_name" name="reporter_name" class="wp-desa-input" placeholder="Nama Anda (Boleh dikosongkan)" style="<?php echo $input_style; ?>">
+              <input type="text" x-model="form.reporter_name" name="reporter_name" class="wp-desa-input"
+                placeholder="Nama Anda (Boleh dikosongkan)" style="<?php echo $input_style; ?>">
             </div>
 
             <div class="wp-desa-form-group" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
               <label class="wp-desa-label" style="<?php echo $label_style; ?>">Kontak (HP/Email)</label>
-              <input type="text" x-model="form.reporter_contact" name="reporter_contact" class="wp-desa-input" placeholder="Untuk konfirmasi status" style="<?php echo $input_style; ?>">
+              <input type="text" x-model="form.reporter_contact" name="reporter_contact" class="wp-desa-input"
+                placeholder="Untuk konfirmasi status" style="<?php echo $input_style; ?>">
             </div>
 
             <div class="wp-desa-form-group" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
               <label class="wp-desa-label" style="<?php echo $label_style; ?>">Kategori Masalah</label>
-              <select x-model="form.category" name="category" required class="wp-desa-select" style="<?php echo $input_style; ?>">
+              <select x-model="form.category" name="category" required class="wp-desa-select"
+                style="<?php echo $input_style; ?>">
                 <option value="">-- Pilih Kategori --</option>
                 <option value="Infrastruktur">Infrastruktur (Jalan, Jembatan, dll)</option>
                 <option value="Pelayanan Publik">Pelayanan Publik</option>
@@ -1325,24 +1587,30 @@ class Shortcode
 
             <div class="wp-desa-form-group" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
               <label class="wp-desa-label" style="<?php echo $label_style; ?>">Judul Laporan</label>
-              <input type="text" x-model="form.subject" name="subject" required class="wp-desa-input" placeholder="Ringkasan masalah" style="<?php echo $input_style; ?>">
+              <input type="text" x-model="form.subject" name="subject" required class="wp-desa-input"
+                placeholder="Ringkasan masalah" style="<?php echo $input_style; ?>">
             </div>
 
             <div class="wp-desa-form-group" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
               <label class="wp-desa-label" style="<?php echo $label_style; ?>">Isi Laporan</label>
-              <textarea x-model="form.description" name="description" required rows="5" class="wp-desa-textarea" placeholder="Jelaskan detail masalah, lokasi, dll" style="<?php echo $input_style; ?>"></textarea>
+              <textarea x-model="form.description" name="description" required rows="5" class="wp-desa-textarea"
+                placeholder="Jelaskan detail masalah, lokasi, dll"
+                style="<?php echo $input_style; ?>"></textarea>
             </div>
 
             <div class="wp-desa-form-group" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
               <label class="wp-desa-label" style="<?php echo $label_style; ?>">Upload Foto Bukti</label>
-              <div style="border: 2px dashed #c2c2c2; padding: 20px; border-radius: 8px; text-align: center; background: var(--cloud); transition: all 0.2s;" class="wp-desa-upload-area">
-                <input type="file" name="photo" accept="image/*" class="wp-desa-input" style="border: none; padding: 0; background: transparent; width: auto;">
+              <div style="border: 2px dashed #c2c2c2; padding: 20px; border-radius: 8px; text-align: center; background: var(--cloud); transition: all 0.2s;"
+                class="wp-desa-upload-area">
+                <input type="file" name="photo" accept="image/*" class="wp-desa-input"
+                  style="border: none; padding: 0; background: transparent; width: auto;">
                 <small class="wp-desa-helper">Format: JPG, PNG. Maks 2MB.</small>
               </div>
             </div>
 
             <div style="margin-top:<?php echo $is_classic ? 'var(--sp-lg)' : '0'; ?>;">
-              <button type="submit" class="wp-desa-btn wp-desa-btn-primary" style="width:100%;font-size:14px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;">
+              <button type="submit" class="wp-desa-btn wp-desa-btn-primary"
+                style="width:100%;font-size:14px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;">
                 <span>Kirim Laporan</span>
                 <span style="display: none;">Mengirim...</span>
               </button>
@@ -1352,14 +1620,18 @@ class Shortcode
       </div>
 
       <!-- Tracking Panel -->
-      <div class="wp-desa-tab-panel" x-show="tab === 'track'" <?php echo $track_hide ? ' style="' . $track_hide . '"' : ''; ?>>
+      <div class="wp-desa-tab-panel" x-show="tab === 'track'"
+        <?php echo $track_hide ? ' style="' . $track_hide . '"' : ''; ?>>
         <form>
           <div style="padding:<?php echo $is_classic ? 'var(--sp-xl)' : '0'; ?>;">
             <div class="wp-desa-form-group">
               <label class="wp-desa-label" style="margin-bottom:12px;">Masukkan Kode Tracking</label>
               <div class="wp-desa-tracking-input-group" style="display:flex;gap:var(--sp-xs);">
-                <input type="text" x-model="trackCode" placeholder="Contoh: ADU-XXXXXX" required class="wp-desa-input" style="flex:1;font-family:monospace;letter-spacing:1px;font-weight:600;">
-                <button type="submit" class="wp-desa-btn wp-desa-btn-primary" style="font-size:14px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;">
+                <input type="text" x-model="trackCode" placeholder="Contoh: ADU-XXXXXX" required
+                  class="wp-desa-input"
+                  style="flex:1;font-family:monospace;letter-spacing:1px;font-weight:600;">
+                <button type="submit" class="wp-desa-btn wp-desa-btn-primary"
+                  style="font-size:14px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;">
                   <span>Cek</span>
                   <span style="display: none;">...</span>
                 </button>
@@ -1386,9 +1658,11 @@ class Shortcode
             <span class="wp-desa-track-status wp-desa-status-badge"></span>
           </div>
 
-          <div class="wp-desa-track-response" style="margin-top:20px;background:var(--cloud);padding:15px;border-radius:8px;border:1px solid var(--fog);display:none;">
+          <div class="wp-desa-track-response"
+            style="margin-top:20px;background:var(--cloud);padding:15px;border-radius:8px;border:1px solid var(--fog);display:none;">
             <strong style="display:flex;align-items:center;gap:6px;margin-bottom:8px;color:var(--ink);">
-              <?php echo \WpDesa\Frontend\Icons::svg('message-square-text', 'width:18px;height:18px;'); ?> Tanggapan Admin:
+              <?php echo \WpDesa\Frontend\Icons::svg('message-square-text', 'width:18px;height:18px;'); ?>
+              Tanggapan Admin:
             </strong>
             <p style="margin:0;color:#4b5563;line-height:1.6;"></p>
           </div>
@@ -1480,26 +1754,36 @@ class Shortcode
     $input_style = $is_minimal ? 'border:none; border-bottom:1px solid var(--fog); border-radius:0; padding:var(--sp-xs) 0; background:transparent;' : '';
     $gap_class   = $is_simple ? 'wp-desa-form-grid--tight' : '';
   ?>
-    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper wp-desa-layanan--<?php echo esc_attr($style); ?>" data-wp-desa="layanan" data-active-tab="<?php echo esc_attr($active_tab); ?>" x-ignore>
+    <div id="<?php echo esc_attr($uid); ?>" class="wp-desa-wrapper wp-desa-layanan--<?php echo esc_attr($style); ?>"
+      data-wp-desa="layanan" data-active-tab="<?php echo esc_attr($active_tab); ?>" x-ignore>
 
       <?php echo $card_open; ?>
 
       <?php if ($tab_style === 'pill'): ?>
         <!-- Pill Tabs (classic) -->
-        <div style="display:flex;align-items:center;gap:var(--sp-xs);padding:var(--sp-md) var(--sp-xl);border-bottom:1px solid var(--fog);">
+        <div
+          style="display:flex;align-items:center;gap:var(--sp-xs);padding:var(--sp-md) var(--sp-xl);border-bottom:1px solid var(--fog);">
           <h3 style="margin:0;font-size:20px;font-weight:500;color:var(--ink);margin-right:auto;">Permohonan Surat</h3>
-          <button class="wp-desa-tab-line<?php echo $active_tab === 'request' ? ' active' : ''; ?>" data-tab="request" style="padding:6px 14px;border:none;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;background:<?php echo $active_tab === 'request' ? 'var(--ink)' : 'transparent'; ?>;color:<?php echo $active_tab === 'request' ? 'var(--on-ink)' : 'var(--ink)'; ?>;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;">
-              <path d="M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35" />
+          <button class="wp-desa-tab-line<?php echo $active_tab === 'request' ? ' active' : ''; ?>" data-tab="request"
+            style="padding:6px 14px;border:none;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;background:<?php echo $active_tab === 'request' ? 'var(--ink)' : 'transparent'; ?>;color:<?php echo $active_tab === 'request' ? 'var(--on-ink)' : 'var(--ink)'; ?>;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              style="vertical-align:middle;margin-right:4px;">
+              <path
+                d="M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35" />
               <path d="M14 2v5a1 1 0 0 0 1 1h5" />
               <path d="M14 19h6" />
               <path d="M17 16v6" />
             </svg>
             Formulir
           </button>
-          <button class="wp-desa-tab-line<?php echo $active_tab === 'tracking' ? ' active' : ''; ?>" data-tab="tracking" style="padding:6px 14px;border:none;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;background:<?php echo $active_tab === 'tracking' ? 'var(--ink)' : 'transparent'; ?>;color:<?php echo $active_tab === 'tracking' ? 'var(--on-ink)' : 'var(--ink)'; ?>;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;">
-              <path d="M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35" />
+          <button class="wp-desa-tab-line<?php echo $active_tab === 'tracking' ? ' active' : ''; ?>" data-tab="tracking"
+            style="padding:6px 14px;border:none;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;background:<?php echo $active_tab === 'tracking' ? 'var(--ink)' : 'transparent'; ?>;color:<?php echo $active_tab === 'tracking' ? 'var(--on-ink)' : 'var(--ink)'; ?>;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              style="vertical-align:middle;margin-right:4px;">
+              <path
+                d="M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35" />
               <path d="M14 2v5a1 1 0 0 0 1 1h5" />
               <path d="M14 19h6" />
               <path d="M17 16v6" />
@@ -1510,18 +1794,26 @@ class Shortcode
       <?php elseif ($tab_style === 'line'): ?>
         <!-- Line Tabs (compact) -->
         <div style="display:flex;align-items:stretch;gap:0;border-bottom:1px solid var(--fog);margin-bottom:var(--sp-lg);">
-          <button class="wp-desa-tab-line<?php echo $active_tab === 'request' ? ' active' : ''; ?>" data-tab="request" style="padding:8px 16px;border:none;border-bottom:2px solid <?php echo $active_tab === 'request' ? 'var(--ink)' : 'transparent'; ?>;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:<?php echo $active_tab === 'request' ? 'var(--ink)' : 'var(--graphite)'; ?>;margin-bottom:-1px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;">
-              <path d="M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35" />
+          <button class="wp-desa-tab-line<?php echo $active_tab === 'request' ? ' active' : ''; ?>" data-tab="request"
+            style="padding:8px 16px;border:none;border-bottom:2px solid <?php echo $active_tab === 'request' ? 'var(--ink)' : 'transparent'; ?>;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:<?php echo $active_tab === 'request' ? 'var(--ink)' : 'var(--graphite)'; ?>;margin-bottom:-1px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              style="vertical-align:middle;margin-right:6px;">
+              <path
+                d="M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35" />
               <path d="M14 2v5a1 1 0 0 0 1 1h5" />
               <path d="M14 19h6" />
               <path d="M17 16v6" />
             </svg>
             Formulir
           </button>
-          <button class="wp-desa-tab-line<?php echo $active_tab === 'tracking' ? ' active' : ''; ?>" data-tab="tracking" style="padding:8px 16px;border:none;border-bottom:2px solid <?php echo $active_tab === 'tracking' ? 'var(--ink)' : 'transparent'; ?>;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:<?php echo $active_tab === 'tracking' ? 'var(--ink)' : 'var(--graphite)'; ?>;margin-bottom:-1px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;">
-              <path d="M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35" />
+          <button class="wp-desa-tab-line<?php echo $active_tab === 'tracking' ? ' active' : ''; ?>" data-tab="tracking"
+            style="padding:8px 16px;border:none;border-bottom:2px solid <?php echo $active_tab === 'tracking' ? 'var(--ink)' : 'transparent'; ?>;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:<?php echo $active_tab === 'tracking' ? 'var(--ink)' : 'var(--graphite)'; ?>;margin-bottom:-1px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              style="vertical-align:middle;margin-right:6px;">
+              <path
+                d="M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35" />
               <path d="M14 2v5a1 1 0 0 0 1 1h5" />
               <path d="M14 19h6" />
               <path d="M17 16v6" />
@@ -1551,7 +1843,8 @@ class Shortcode
       ?>
 
       <!-- Request Form -->
-      <div class="wp-desa-tab-panel" x-show="tab === 'request'" <?php echo $req_hide ? ' style="' . $req_hide . '"' : ''; ?>>
+      <div class="wp-desa-tab-panel" x-show="tab === 'request'"
+        <?php echo $req_hide ? ' style="' . $req_hide . '"' : ''; ?>>
         <div x-show="message.content" class="wp-desa-message" style="display: none;"></div>
 
         <div x-show="trackingCode" class="wp-desa-tracking-box" style="display: none;">
@@ -1562,36 +1855,47 @@ class Shortcode
 
         <form style="<?php echo $form_style; ?>">
           <div style="padding:<?php echo $is_classic ? 'var(--sp-xl)' : '0'; ?>;">
-            <div class="wp-desa-form-group <?php echo $gap_class; ?>" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
+            <div class="wp-desa-form-group <?php echo $gap_class; ?>"
+              style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
               <label class="wp-desa-label" style="<?php echo $label_style; ?>">NIK</label>
-              <input type="text" x-model="form.nik" name="nik" class="wp-desa-input" required maxlength="16" placeholder="16 digit NIK" style="<?php echo $input_style; ?>">
+              <input type="text" x-model="form.nik" name="nik" class="wp-desa-input" required maxlength="16"
+                placeholder="16 digit NIK" style="<?php echo $input_style; ?>">
             </div>
 
-            <div class="wp-desa-form-group <?php echo $gap_class; ?>" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
+            <div class="wp-desa-form-group <?php echo $gap_class; ?>"
+              style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
               <label class="wp-desa-label" style="<?php echo $label_style; ?>">Nama Lengkap</label>
-              <input type="text" x-model="form.name" name="name" class="wp-desa-input" required placeholder="Sesuai KTP" style="<?php echo $input_style; ?>">
+              <input type="text" x-model="form.name" name="name" class="wp-desa-input" required
+                placeholder="Sesuai KTP" style="<?php echo $input_style; ?>">
             </div>
 
-            <div class="wp-desa-form-group <?php echo $gap_class; ?>" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
+            <div class="wp-desa-form-group <?php echo $gap_class; ?>"
+              style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
               <label class="wp-desa-label" style="<?php echo $label_style; ?>">Nomor WhatsApp</label>
-              <input type="text" x-model="form.phone" name="phone" class="wp-desa-input" required placeholder="08..." maxlength="15" style="<?php echo $input_style; ?>">
+              <input type="text" x-model="form.phone" name="phone" class="wp-desa-input" required
+                placeholder="08..." maxlength="15" style="<?php echo $input_style; ?>">
             </div>
 
-            <div class="wp-desa-form-group <?php echo $gap_class; ?>" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
+            <div class="wp-desa-form-group <?php echo $gap_class; ?>"
+              style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
               <label class="wp-desa-label" style="<?php echo $label_style; ?>">Jenis Surat</label>
-              <select x-model="form.letter_type_id" name="letter_type_id" class="wp-desa-select" required style="<?php echo $input_style; ?>">
+              <select x-model="form.letter_type_id" name="letter_type_id" class="wp-desa-select" required
+                style="<?php echo $input_style; ?>">
                 <option value="">Pilih Jenis Surat</option>
               </select>
               <small class="wp-desa-helper wp-desa-layanan-type-desc"></small>
             </div>
 
-            <div class="wp-desa-form-group <?php echo $gap_class; ?>" style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
+            <div class="wp-desa-form-group <?php echo $gap_class; ?>"
+              style="<?php echo $is_minimal ? 'margin-bottom:var(--sp-md);' : ''; ?>">
               <label class="wp-desa-label" style="<?php echo $label_style; ?>">Keterangan / Keperluan</label>
-              <textarea x-model="form.details" name="details" class="wp-desa-textarea" rows="3" placeholder="Jelaskan keperluan surat..." style="<?php echo $input_style; ?>"></textarea>
+              <textarea x-model="form.details" name="details" class="wp-desa-textarea" rows="3"
+                placeholder="Jelaskan keperluan surat..." style="<?php echo $input_style; ?>"></textarea>
             </div>
 
             <div style="margin-top:<?php echo $is_classic ? 'var(--sp-lg)' : '0'; ?>;">
-              <button type="submit" class="<?php echo $btn_class; ?>" style="<?php echo $btn_width; ?>font-size:14px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;">
+              <button type="submit" class="<?php echo $btn_class; ?>"
+                style="<?php echo $btn_width; ?>font-size:14px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;">
                 <span>Kirim Permohonan</span>
                 <span style="display: none;">Mengirim...</span>
               </button>
@@ -1607,9 +1911,13 @@ class Shortcode
             <div class="wp-desa-form-group">
               <label class="wp-desa-label">Masukkan Kode Tracking</label>
               <div class="wp-desa-tracking-input-group" style="display:flex;gap:var(--sp-xs);">
-                <input type="text" x-model="trackCode" class="wp-desa-input" placeholder="Contoh: REQ-..." style="flex:1;">
-                <button type="button" class="<?php echo $btn_class; ?>" style="font-size:14px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;">
+                <input type="text" x-model="trackCode" class="wp-desa-input" placeholder="Contoh: REQ-..."
+                  style="flex:1;">
+                <button type="button" class="<?php echo $btn_class; ?>"
+                  style="font-size:14px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;">
                     <path d="m21 21-4.34-4.34" />
                     <circle cx="11" cy="11" r="8" />
                   </svg>
@@ -1699,9 +2007,11 @@ class Shortcode
           <div class="wp-desa-struktur-node-root" style="text-align: center;">
             <?php echo $this->render_struktur_node_card($root); ?>
             <?php if ($root->children) : ?>
-              <div class="wp-desa-struktur-children" style="display: flex; justify-content: center; gap: 20px; margin-top: 20px; padding-top: 20px; position: relative; border-top: 2px solid #e2e8f0; flex-wrap: wrap;">
+              <div class="wp-desa-struktur-children"
+                style="display: flex; justify-content: center; gap: 20px; margin-top: 20px; padding-top: 20px; position: relative; border-top: 2px solid #e2e8f0; flex-wrap: wrap;">
                 <?php foreach ($root->children as $child) : ?>
-                  <div class="wp-desa-struktur-branch" style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+                  <div class="wp-desa-struktur-branch"
+                    style="display: flex; flex-direction: column; align-items: center; gap: 0;">
                     <div style="width: 2px; height: 20px; background: #e2e8f0;"></div>
                     <?php echo $this->render_struktur_node_card($child); ?>
                   </div>
@@ -1811,14 +2121,19 @@ class Shortcode
               <td style="padding:10px 16px;"><?php echo $no; ?></td>
               <td style="padding:10px 16px;">
                 <?php if (!empty($item->foto)) : ?>
-                  <img src="<?php echo esc_url($item->foto); ?>" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                  <img src="<?php echo esc_url($item->foto); ?>"
+                    style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
                 <?php else : ?>
-                  <span style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;background:#e2e8f0;border-radius:50%;color:#94a3b8;">?</span>
+                  <span
+                    style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;background:#e2e8f0;border-radius:50%;color:#94a3b8;">?</span>
                 <?php endif; ?>
               </td>
               <td style="padding:10px 16px;font-weight:600;"><?php echo esc_html($item->nama); ?></td>
-              <td style="padding:10px 16px;"><span style="background:#dbeafe;color:#1e40af;padding:2px 10px;border-radius:4px;font-size:0.85em;"><?php echo esc_html($item->jabatan); ?></span></td>
-              <td style="padding:10px 16px;color:#64748b;"><?php echo !empty($item->nip) ? esc_html($item->nip) : '-'; ?></td>
+              <td style="padding:10px 16px;"><span
+                  style="background:#dbeafe;color:#1e40af;padding:2px 10px;border-radius:4px;font-size:0.85em;"><?php echo esc_html($item->jabatan); ?></span>
+              </td>
+              <td style="padding:10px 16px;color:#64748b;">
+                <?php echo !empty($item->nip) ? esc_html($item->nip) : '-'; ?></td>
             </tr>
           <?php endforeach; ?>
         </tbody>
@@ -1832,21 +2147,27 @@ class Shortcode
         {
           ob_start();
   ?>
-    <div class="wp-desa-struktur-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px;padding:10px 0;">
+    <div class="wp-desa-struktur-cards"
+      style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px;padding:10px 0;">
       <?php foreach ($items as $item) : ?>
-        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;text-align:center;transition:box-shadow 0.2s;">
+        <div
+          style="background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;text-align:center;transition:box-shadow 0.2s;">
           <?php if (!empty($item->foto)) : ?>
-            <img src="<?php echo esc_url($item->foto); ?>" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 12px;display:block;">
+            <img src="<?php echo esc_url($item->foto); ?>"
+              style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 12px;display:block;">
           <?php else : ?>
-            <div style="width:80px;height:80px;border-radius:50%;margin:0 auto 12px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;">
+            <div
+              style="width:80px;height:80px;border-radius:50%;margin:0 auto 12px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;">
               <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
             </div>
           <?php endif; ?>
-          <div style="font-weight:600;font-size:1.05em;color:#1e293b;margin-bottom:4px;"><?php echo esc_html($item->nama); ?></div>
-          <div style="font-size:0.85em;font-weight:500;color:#2563eb;margin-bottom:4px;"><?php echo esc_html($item->jabatan); ?></div>
+          <div style="font-weight:600;font-size:1.05em;color:#1e293b;margin-bottom:4px;">
+            <?php echo esc_html($item->nama); ?></div>
+          <div style="font-size:0.85em;font-weight:500;color:#2563eb;margin-bottom:4px;">
+            <?php echo esc_html($item->jabatan); ?></div>
           <?php if (!empty($item->nip)) : ?>
             <div style="font-size:0.8em;color:#94a3b8;">NIP: <?php echo esc_html($item->nip); ?></div>
           <?php endif; ?>
@@ -1863,20 +2184,25 @@ class Shortcode
           ob_start();
   ?>
     <div class="wp-desa-carousel-wrapper" style="position:relative;padding:10px 40px;">
-      <div id="<?php echo $id; ?>" class="wp-desa-carousel-track" style="display:flex;gap:24px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;padding:10px 4px;scroll-snap-type:x mandatory;">
+      <div id="<?php echo $id; ?>" class="wp-desa-carousel-track"
+        style="display:flex;gap:24px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;padding:10px 4px;scroll-snap-type:x mandatory;">
         <?php foreach ($items as $item) : ?>
-          <div style="flex:0 0 250px;scroll-snap-align:start;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;text-align:center;">
+          <div
+            style="flex:0 0 250px;scroll-snap-align:start;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;text-align:center;">
             <?php if (!empty($item->foto)) : ?>
-              <img src="<?php echo esc_url($item->foto); ?>" style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 12px;display:block;">
+              <img src="<?php echo esc_url($item->foto); ?>"
+                style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 12px;display:block;">
             <?php else : ?>
-              <div style="width:80px;height:80px;border-radius:50%;margin:0 auto 12px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;">
+              <div
+                style="width:80px;height:80px;border-radius:50%;margin:0 auto 12px;background:#e2e8f0;display:flex;align-items:center;justify-content:center;">
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
                 </svg>
               </div>
             <?php endif; ?>
-            <div style="font-weight:600;font-size:1em;color:#1e293b;margin-bottom:4px;"><?php echo esc_html($item->nama); ?></div>
+            <div style="font-weight:600;font-size:1em;color:#1e293b;margin-bottom:4px;">
+              <?php echo esc_html($item->nama); ?></div>
             <div style="font-size:0.85em;font-weight:500;color:#2563eb;"><?php echo esc_html($item->jabatan); ?></div>
             <?php if (!empty($item->nip)) : ?>
               <div style="font-size:0.8em;color:#94a3b8;margin-top:4px;"><?php echo esc_html($item->nip); ?></div>
@@ -1884,8 +2210,12 @@ class Shortcode
           </div>
         <?php endforeach; ?>
       </div>
-      <button type="button" class="wp-desa-carousel-btn wp-desa-carousel-prev" style="position:absolute;top:50%;left:0;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-size:18px;line-height:1;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.1);" onclick="document.getElementById('<?php echo $id; ?>').scrollBy({left:-290,behavior:'smooth'})">‹</button>
-      <button type="button" class="wp-desa-carousel-btn wp-desa-carousel-next" style="position:absolute;top:50%;right:0;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-size:18px;line-height:1;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.1);" onclick="document.getElementById('<?php echo $id; ?>').scrollBy({left:290,behavior:'smooth'})">›</button>
+      <button type="button" class="wp-desa-carousel-btn wp-desa-carousel-prev"
+        style="position:absolute;top:50%;left:0;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-size:18px;line-height:1;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.1);"
+        onclick="document.getElementById('<?php echo $id; ?>').scrollBy({left:-290,behavior:'smooth'})">‹</button>
+      <button type="button" class="wp-desa-carousel-btn wp-desa-carousel-next"
+        style="position:absolute;top:50%;right:0;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-size:18px;line-height:1;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.1);"
+        onclick="document.getElementById('<?php echo $id; ?>').scrollBy({left:290,behavior:'smooth'})">›</button>
     </div>
   <?php
           return ob_get_clean();
@@ -1897,11 +2227,14 @@ class Shortcode
   ?>
     <div class="wp-desa-struktur-list" style="display:flex;flex-direction:column;gap:8px;padding:10px 0;">
       <?php foreach ($items as $item) : ?>
-        <div style="display:flex;align-items:center;gap:16px;padding:14px 16px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;">
+        <div
+          style="display:flex;align-items:center;gap:16px;padding:14px 16px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;">
           <?php if (!empty($item->foto)) : ?>
-            <img src="<?php echo esc_url($item->foto); ?>" style="width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0;">
+            <img src="<?php echo esc_url($item->foto); ?>"
+              style="width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0;">
           <?php else : ?>
-            <div style="width:48px;height:48px;border-radius:50%;flex-shrink:0;background:#e2e8f0;display:flex;align-items:center;justify-content:center;">
+            <div
+              style="width:48px;height:48px;border-radius:50%;flex-shrink:0;background:#e2e8f0;display:flex;align-items:center;justify-content:center;">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
@@ -1911,7 +2244,8 @@ class Shortcode
           <div style="flex:1;">
             <div style="font-weight:600;color:#1e293b;"><?php echo esc_html($item->nama); ?></div>
             <div style="display:flex;gap:12px;font-size:0.85em;color:#64748b;margin-top:2px;">
-              <span style="background:#dbeafe;color:#1e40af;padding:1px 8px;border-radius:4px;"><?php echo esc_html($item->jabatan); ?></span>
+              <span
+                style="background:#dbeafe;color:#1e40af;padding:1px 8px;border-radius:4px;"><?php echo esc_html($item->jabatan); ?></span>
               <?php if (!empty($item->nip)) : ?><span>NIP: <?php echo esc_html($item->nip); ?></span><?php endif; ?>
             </div>
           </div>
@@ -1961,52 +2295,69 @@ class Shortcode
         <?php while ($query->have_posts()) : $query->the_post(); ?>
           <?php $cats = get_the_terms(get_the_ID(), 'desa_produk_hukum_cat'); ?>
           <?php if ($style === 'minimal'): ?>
-            <div style="display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-sm) 0;border-bottom:1px solid var(--fog);">
-              <a href="<?php the_permalink(); ?>" style="font-weight:500;font-size:14px;color:var(--ink);text-decoration:none;flex:1;min-width:0;"><?php the_title(); ?></a>
+            <div
+              style="display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-sm) 0;border-bottom:1px solid var(--fog);">
+              <a href="<?php the_permalink(); ?>"
+                style="font-weight:500;font-size:14px;color:var(--ink);text-decoration:none;flex:1;min-width:0;"><?php the_title(); ?></a>
               <?php if ($cats && !is_wp_error($cats)) : ?>
-                <span style="background:var(--primary-soft);color:var(--primary-deep);padding:1px 8px;border-radius:4px;font-size:12px;white-space:nowrap;"><?php echo esc_html($cats[0]->name); ?></span>
+                <span
+                  style="background:var(--primary-soft);color:var(--primary-deep);padding:1px 8px;border-radius:4px;font-size:12px;white-space:nowrap;"><?php echo esc_html($cats[0]->name); ?></span>
               <?php endif; ?>
               <span style="font-size:12px;color:var(--graphite);white-space:nowrap;"><?php echo get_the_date(); ?></span>
-              <a href="<?php the_permalink(); ?>" style="color:var(--primary);text-decoration:none;font-size:13px;font-weight:500;flex-shrink:0;">Baca →</a>
+              <a href="<?php the_permalink(); ?>"
+                style="color:var(--primary);text-decoration:none;font-size:13px;font-weight:500;flex-shrink:0;">Baca →</a>
             </div>
           <?php elseif ($style === 'compact'): ?>
-            <div style="display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-sm);border:1px solid var(--fog);border-radius:var(--rounded-lg);background:var(--canvas);">
-              <div style="flex-shrink:0;width:32px;height:32px;background:var(--primary-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+            <div
+              style="display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-sm);border:1px solid var(--fog);border-radius:var(--rounded-lg);background:var(--canvas);">
+              <div
+                style="flex-shrink:0;width:32px;height:32px;background:var(--primary-soft);border-radius:6px;display:flex;align-items:center;justify-content:center;">
                 <?php echo \WpDesa\Frontend\Icons::svg('file-text', 'width:16px;height:16px;color:var(--primary-deep);'); ?>
               </div>
               <div style="flex:1;min-width:0;">
-                <a href="<?php the_permalink(); ?>" style="font-weight:500;color:var(--ink);text-decoration:none;font-size:14px;"><?php the_title(); ?></a>
+                <a href="<?php the_permalink(); ?>"
+                  style="font-weight:500;color:var(--ink);text-decoration:none;font-size:14px;"><?php the_title(); ?></a>
                 <div style="display:flex;gap:var(--sp-xs);margin-top:2px;font-size:12px;color:var(--graphite);">
                   <?php if ($cats && !is_wp_error($cats)) : ?>
-                    <span style="background:var(--primary-soft);color:var(--primary-deep);padding:1px 6px;border-radius:4px;"><?php echo esc_html($cats[0]->name); ?></span>
+                    <span
+                      style="background:var(--primary-soft);color:var(--primary-deep);padding:1px 6px;border-radius:4px;"><?php echo esc_html($cats[0]->name); ?></span>
                   <?php endif; ?>
                   <span><?php echo get_the_date(); ?></span>
                 </div>
               </div>
-              <a href="<?php the_permalink(); ?>" style="color:var(--primary);text-decoration:none;font-size:13px;font-weight:500;flex-shrink:0;">Baca →</a>
+              <a href="<?php the_permalink(); ?>"
+                style="color:var(--primary);text-decoration:none;font-size:13px;font-weight:500;flex-shrink:0;">Baca →</a>
             </div>
           <?php else: /* classic */ ?>
-            <div style="display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-md);border:1px solid var(--fog);border-radius:var(--rounded-lg);background:var(--canvas);">
-              <div style="flex-shrink:0;width:48px;height:48px;background:var(--primary-soft);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+            <div
+              style="display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-md);border:1px solid var(--fog);border-radius:var(--rounded-lg);background:var(--canvas);">
+              <div
+                style="flex-shrink:0;width:48px;height:48px;background:var(--primary-soft);border-radius:8px;display:flex;align-items:center;justify-content:center;">
                 <?php echo \WpDesa\Frontend\Icons::svg('file-text', 'width:24px;height:24px;color:var(--primary-deep);'); ?>
               </div>
               <div style="flex:1;min-width:0;">
-                <a href="<?php the_permalink(); ?>" style="font-weight:600;color:var(--ink);text-decoration:none;font-size:1em;"><?php the_title(); ?></a>
+                <a href="<?php the_permalink(); ?>"
+                  style="font-weight:600;color:var(--ink);text-decoration:none;font-size:1em;"><?php the_title(); ?></a>
                 <div style="display:flex;gap:var(--sp-sm);margin-top:4px;font-size:0.85em;color:var(--graphite);">
                   <?php if ($cats && !is_wp_error($cats)) : ?>
-                    <span style="background:var(--primary-soft);color:var(--primary-deep);padding:1px 8px;border-radius:4px;"><?php echo esc_html($cats[0]->name); ?></span>
+                    <span
+                      style="background:var(--primary-soft);color:var(--primary-deep);padding:1px 8px;border-radius:4px;"><?php echo esc_html($cats[0]->name); ?></span>
                   <?php endif; ?>
                   <span><?php echo get_the_date(); ?></span>
                 </div>
               </div>
-              <a href="<?php the_permalink(); ?>" style="color:var(--primary);text-decoration:none;font-size:0.9em;font-weight:500;flex-shrink:0;">Baca &rarr;</a>
+              <a href="<?php the_permalink(); ?>"
+                style="color:var(--primary);text-decoration:none;font-size:0.9em;font-weight:500;flex-shrink:0;">Baca
+                &rarr;</a>
             </div>
           <?php endif; ?>
         <?php endwhile; ?>
       </div>
       <?php if ($query->found_posts > intval($atts['limit'])) : ?>
         <div style="text-align:center;margin-top:var(--sp-md);">
-          <a href="<?php echo get_post_type_archive_link('desa_produk_hukum'); ?>" style="display:inline-block;padding:8px 24px;background:var(--primary);color:var(--on-primary);border-radius:6px;text-decoration:none;font-weight:500;">Lihat Semua Produk Hukum</a>
+          <a href="<?php echo get_post_type_archive_link('desa_produk_hukum'); ?>"
+            style="display:inline-block;padding:8px 24px;background:var(--primary);color:var(--on-primary);border-radius:6px;text-decoration:none;font-weight:500;">Lihat
+            Semua Produk Hukum</a>
         </div>
       <?php endif; ?>
     <?php
@@ -2056,11 +2407,15 @@ class Shortcode
             <?php while ($query->have_posts()) : $query->the_post();
                 $cats = get_the_terms(get_the_ID(), 'desa_berita_cat');
             ?>
-              <div style="display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-sm) 0;border-bottom:1px solid var(--fog);">
-                <span style="font-size:12px;color:var(--graphite);white-space:nowrap;min-width:80px;"><?php echo get_the_date('d M Y'); ?></span>
-                <a href="<?php the_permalink(); ?>" style="font-weight:500;font-size:14px;color:var(--ink);text-decoration:none;flex:1;min-width:0;"><?php the_title(); ?></a>
+              <div
+                style="display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-sm) 0;border-bottom:1px solid var(--fog);">
+                <span
+                  style="font-size:12px;color:var(--graphite);white-space:nowrap;min-width:80px;"><?php echo get_the_date('d M Y'); ?></span>
+                <a href="<?php the_permalink(); ?>"
+                  style="font-weight:500;font-size:14px;color:var(--ink);text-decoration:none;flex:1;min-width:0;"><?php the_title(); ?></a>
                 <?php if ($cats && !is_wp_error($cats)) : ?>
-                  <span style="background:var(--primary-soft);color:var(--primary-deep);padding:1px 8px;border-radius:4px;font-size:11px;white-space:nowrap;"><?php echo esc_html($cats[0]->name); ?></span>
+                  <span
+                    style="background:var(--primary-soft);color:var(--primary-deep);padding:1px 8px;border-radius:4px;font-size:11px;white-space:nowrap;"><?php echo esc_html($cats[0]->name); ?></span>
                 <?php endif; ?>
               </div>
             <?php endwhile; ?>
@@ -2071,25 +2426,31 @@ class Shortcode
             <?php while ($query->have_posts()) : $query->the_post();
                 $cats = get_the_terms(get_the_ID(), 'desa_berita_cat');
             ?>
-              <div style="border:1px solid var(--fog);border-radius:var(--rounded-lg);overflow:hidden;background:var(--canvas);">
+              <div
+                style="border:1px solid var(--fog);border-radius:var(--rounded-lg);overflow:hidden;background:var(--canvas);">
                 <?php if (has_post_thumbnail()) : ?>
                   <a href="<?php the_permalink(); ?>" style="display:block;height:120px;overflow:hidden;">
                     <?php the_post_thumbnail('medium', ['style' => 'width:100%;height:100%;object-fit:cover;']); ?>
                   </a>
                 <?php else : ?>
-                  <a href="<?php the_permalink(); ?>" style="display:flex;align-items:center;justify-content:center;height:120px;background:linear-gradient(135deg,var(--primary-soft),var(--primary));color:var(--on-primary);font-weight:600;font-size:0.95em;text-decoration:none;"><?php echo esc_html(get_bloginfo('name')); ?></a>
+                  <a href="<?php the_permalink(); ?>"
+                    style="display:flex;align-items:center;justify-content:center;height:120px;background:linear-gradient(135deg,var(--primary-soft),var(--primary));color:var(--on-primary);font-weight:600;font-size:0.95em;text-decoration:none;"><?php echo esc_html(get_bloginfo('name')); ?></a>
                 <?php endif; ?>
                 <div style="padding:var(--sp-md);">
                   <div style="font-size:12px;color:var(--graphite);margin-bottom:4px;">
                     <?php echo get_the_date(); ?>
                     <?php if ($cats && !is_wp_error($cats)) : ?>
-                      <span style="margin-left:6px;background:var(--primary-soft);color:var(--primary-deep);padding:1px 6px;border-radius:4px;"><?php echo esc_html($cats[0]->name); ?></span>
+                      <span
+                        style="margin-left:6px;background:var(--primary-soft);color:var(--primary-deep);padding:1px 6px;border-radius:4px;"><?php echo esc_html($cats[0]->name); ?></span>
                     <?php endif; ?>
                   </div>
                   <h3 style="margin:0;font-size:15px;line-height:1.4;">
-                    <a href="<?php the_permalink(); ?>" style="color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
+                    <a href="<?php the_permalink(); ?>"
+                      style="color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
                   </h3>
-                  <p style="color:var(--graphite);font-size:13px;line-height:1.5;margin:6px 0 0;display:-webkit-box;-webkit-line-clamp:2;overflow:hidden;"><?php echo wp_trim_words(get_the_excerpt(), 12); ?></p>
+                  <p
+                    style="color:var(--graphite);font-size:13px;line-height:1.5;margin:6px 0 0;display:-webkit-box;-webkit-line-clamp:2;overflow:hidden;">
+                    <?php echo wp_trim_words(get_the_excerpt(), 12); ?></p>
                 </div>
               </div>
             <?php endwhile; ?>
@@ -2100,25 +2461,30 @@ class Shortcode
             <?php while ($query->have_posts()) : $query->the_post();
                 $cats = get_the_terms(get_the_ID(), 'desa_berita_cat');
             ?>
-              <div style="border:1px solid var(--fog);border-radius:var(--rounded-xl);overflow:hidden;background:var(--canvas);">
+              <div
+                style="border:1px solid var(--fog);border-radius:var(--rounded-xl);overflow:hidden;background:var(--canvas);">
                 <?php if (has_post_thumbnail()) : ?>
                   <a href="<?php the_permalink(); ?>" style="display:block;height:200px;overflow:hidden;">
                     <?php the_post_thumbnail('medium', ['style' => 'width:100%;height:100%;object-fit:cover;']); ?>
                   </a>
                 <?php else : ?>
-                  <a href="<?php the_permalink(); ?>" style="display:flex;align-items:center;justify-content:center;height:200px;background:linear-gradient(135deg,var(--primary-soft),var(--primary));color:var(--on-primary);font-weight:600;font-size:1.05em;text-decoration:none;"><?php echo esc_html(get_bloginfo('name')); ?></a>
+                  <a href="<?php the_permalink(); ?>"
+                    style="display:flex;align-items:center;justify-content:center;height:200px;background:linear-gradient(135deg,var(--primary-soft),var(--primary));color:var(--on-primary);font-weight:600;font-size:1.05em;text-decoration:none;"><?php echo esc_html(get_bloginfo('name')); ?></a>
                 <?php endif; ?>
                 <div style="padding:var(--sp-lg);">
                   <div style="font-size:0.85em;color:var(--graphite);margin-bottom:8px;">
                     <?php echo get_the_date(); ?>
                     <?php if ($cats && !is_wp_error($cats)) : ?>
-                      <span style="margin-left:8px;background:var(--primary-soft);color:var(--primary-deep);padding:2px 8px;border-radius:4px;"><?php echo esc_html($cats[0]->name); ?></span>
+                      <span
+                        style="margin-left:8px;background:var(--primary-soft);color:var(--primary-deep);padding:2px 8px;border-radius:4px;"><?php echo esc_html($cats[0]->name); ?></span>
                     <?php endif; ?>
                   </div>
                   <h3 style="margin:0 0 8px;font-size:1.1em;line-height:1.4;">
-                    <a href="<?php the_permalink(); ?>" style="color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
+                    <a href="<?php the_permalink(); ?>"
+                      style="color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
                   </h3>
-                  <p style="color:var(--graphite);font-size:0.95em;line-height:1.6;margin:0;"><?php echo wp_trim_words(get_the_excerpt(), 20); ?></p>
+                  <p style="color:var(--graphite);font-size:0.95em;line-height:1.6;margin:0;">
+                    <?php echo wp_trim_words(get_the_excerpt(), 20); ?></p>
                 </div>
               </div>
             <?php endwhile; ?>
@@ -2127,7 +2493,9 @@ class Shortcode
       </div>
       <?php if ($query->found_posts > intval($atts['limit'])) : ?>
         <div style="text-align:center;margin-top:var(--sp-lg);">
-          <a href="<?php echo get_post_type_archive_link('desa_berita'); ?>" style="display:inline-block;padding:10px 28px;background:var(--primary);color:var(--on-primary);border-radius:6px;text-decoration:none;font-weight:500;">Lihat Semua Berita</a>
+          <a href="<?php echo get_post_type_archive_link('desa_berita'); ?>"
+            style="display:inline-block;padding:10px 28px;background:var(--primary);color:var(--on-primary);border-radius:6px;text-decoration:none;font-weight:500;">Lihat
+            Semua Berita</a>
         </div>
       <?php endif; ?>
     <?php
@@ -2177,7 +2545,8 @@ class Shortcode
           ob_start();
           if ($query->have_posts()) :
     ?>
-      <div class="wp-desa-agenda-list wp-desa-agenda--<?php echo esc_attr($style); ?>" style="display:flex;flex-direction:column;gap:<?php echo $style === 'compact' ? '10px' : ($style === 'minimal' ? '0' : '12px'); ?>;">
+      <div class="wp-desa-agenda-list wp-desa-agenda--<?php echo esc_attr($style); ?>"
+        style="display:flex;flex-direction:column;gap:<?php echo $style === 'compact' ? '10px' : ($style === 'minimal' ? '0' : '12px'); ?>;">
         <?php while ($query->have_posts()) : $query->the_post(); ?>
           <?php
               $date = get_post_meta(get_the_ID(), '_desa_agenda_date', true);
@@ -2191,24 +2560,32 @@ class Shortcode
           ?>
 
           <?php if ($style === 'minimal'): ?>
-            <div style="display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-sm) 0;border-bottom:1px solid var(--fog);">
-              <span style="font-size:13px;font-weight:600;color:var(--ink);min-width:75px;"><?php echo $date ? date_i18n('d M', strtotime($date)) : '?'; ?></span>
+            <div
+              style="display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-sm) 0;border-bottom:1px solid var(--fog);">
+              <span
+                style="font-size:13px;font-weight:600;color:var(--ink);min-width:75px;"><?php echo $date ? date_i18n('d M', strtotime($date)) : '?'; ?></span>
               <div style="flex:1;min-width:0;">
-                <a href="<?php the_permalink(); ?>" style="font-weight:500;font-size:14px;color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
+                <a href="<?php the_permalink(); ?>"
+                  style="font-weight:500;font-size:14px;color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
                 <?php if ($time || $location): ?>
                   <div style="font-size:12px;color:var(--graphite);margin-top:1px;">
                     <?php if ($time) : ?><span>🕐 <?php echo esc_html($time); ?></span><?php endif; ?>
-                    <?php if ($location) : ?><span style="margin-left:8px;">📍 <?php echo esc_html($location); ?></span><?php endif; ?>
+                    <?php if ($location) : ?><span style="margin-left:8px;">📍
+                        <?php echo esc_html($location); ?></span><?php endif; ?>
                   </div>
                 <?php endif; ?>
               </div>
             </div>
 
           <?php elseif ($style === 'compact'): ?>
-            <div style="display:flex;gap:12px;padding:var(--sp-sm);border:1px solid var(--fog);border-radius:var(--rounded-lg);background:var(--canvas);align-items:flex-start;">
-              <div style="flex-shrink:0;width:40px;height:40px;background:var(--warning-soft);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
-                <span style="font-weight:700;color:var(--warning-deep);font-size:1em;line-height:1;"><?php echo $date ? date_i18n('d', strtotime($date)) : '?'; ?></span>
-                <span style="font-size:0.65em;color:var(--warning-deep);"><?php echo $date ? date_i18n('M', strtotime($date)) : ''; ?></span>
+            <div
+              style="display:flex;gap:12px;padding:var(--sp-sm);border:1px solid var(--fog);border-radius:var(--rounded-lg);background:var(--canvas);align-items:flex-start;">
+              <div
+                style="flex-shrink:0;width:40px;height:40px;background:var(--warning-soft);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+                <span
+                  style="font-weight:700;color:var(--warning-deep);font-size:1em;line-height:1;"><?php echo $date ? date_i18n('d', strtotime($date)) : '?'; ?></span>
+                <span
+                  style="font-size:0.65em;color:var(--warning-deep);"><?php echo $date ? date_i18n('M', strtotime($date)) : ''; ?></span>
               </div>
               <div style="flex:1;">
                 <h4 style="margin:0 0 2px;font-size:0.95em;color:var(--ink);"><?php the_title(); ?></h4>
@@ -2220,10 +2597,14 @@ class Shortcode
             </div>
 
           <?php else: /* classic */ ?>
-            <div style="display:flex;gap:16px;padding:var(--sp-md);border:1px solid var(--fog);border-radius:var(--rounded-lg);background:var(--canvas);align-items:flex-start;">
-              <div style="flex-shrink:0;width:56px;height:56px;background:var(--warning-soft);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
-                <span style="font-weight:700;color:var(--warning-deep);font-size:1.2em;line-height:1;"><?php echo $date ? date_i18n('d', strtotime($date)) : '?'; ?></span>
-                <span style="font-size:0.75em;color:var(--warning-deep);"><?php echo $date ? date_i18n('M', strtotime($date)) : ''; ?></span>
+            <div
+              style="display:flex;gap:16px;padding:var(--sp-md);border:1px solid var(--fog);border-radius:var(--rounded-lg);background:var(--canvas);align-items:flex-start;">
+              <div
+                style="flex-shrink:0;width:56px;height:56px;background:var(--warning-soft);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+                <span
+                  style="font-weight:700;color:var(--warning-deep);font-size:1.2em;line-height:1;"><?php echo $date ? date_i18n('d', strtotime($date)) : '?'; ?></span>
+                <span
+                  style="font-size:0.75em;color:var(--warning-deep);"><?php echo $date ? date_i18n('M', strtotime($date)) : ''; ?></span>
               </div>
               <div style="flex:1;">
                 <h4 style="margin:0 0 4px;font-size:1.05em;color:var(--ink);"><?php the_title(); ?></h4>
@@ -2232,7 +2613,8 @@ class Shortcode
                   <?php if ($location) : ?><span>📍 <?php echo esc_html($location); ?></span><?php endif; ?>
                 </div>
                 <?php if (get_the_content()) : ?>
-                  <p style="margin:8px 0 0;font-size:0.9em;color:var(--graphite);line-height:1.5;"><?php echo wp_trim_words(get_the_content(), 15); ?></p>
+                  <p style="margin:8px 0 0;font-size:0.9em;color:var(--graphite);line-height:1.5;">
+                    <?php echo wp_trim_words(get_the_content(), 15); ?></p>
                 <?php endif; ?>
               </div>
             </div>
@@ -2241,7 +2623,9 @@ class Shortcode
       </div>
       <?php if ($query->found_posts > intval($atts['limit'])) : ?>
         <div style="text-align:center;margin-top:var(--sp-lg);">
-          <a href="<?php echo get_post_type_archive_link('desa_agenda'); ?>" style="display:inline-block;padding:8px 24px;background:var(--primary);color:var(--on-primary);border-radius:6px;text-decoration:none;font-weight:500;">Lihat Semua Agenda</a>
+          <a href="<?php echo get_post_type_archive_link('desa_agenda'); ?>"
+            style="display:inline-block;padding:8px 24px;background:var(--primary);color:var(--on-primary);border-radius:6px;text-decoration:none;font-weight:500;">Lihat
+            Semua Agenda</a>
         </div>
       <?php endif; ?>
     <?php
@@ -2289,7 +2673,8 @@ class Shortcode
             $img_h = $style === 'compact' ? 140 : ($style === 'minimal' ? 80 : 200);
             $show_title = $style !== 'minimal';
     ?>
-      <div class="wp-desa-galeri-grid wp-desa-galeri--<?php echo esc_attr($style); ?>" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(<?php echo $min_w; ?>,1fr));gap:<?php echo $gap; ?>;">
+      <div class="wp-desa-galeri-grid wp-desa-galeri--<?php echo esc_attr($style); ?>"
+        style="display:grid;grid-template-columns:repeat(auto-fill,minmax(<?php echo $min_w; ?>,1fr));gap:<?php echo $gap; ?>;">
         <?php while ($query->have_posts()) : $query->the_post(); ?>
           <?php
               $gallery_ids = get_post_meta(get_the_ID(), '_desa_galeri_images', true);
@@ -2302,12 +2687,15 @@ class Shortcode
                 $thumb_url = get_the_post_thumbnail_url(null, 'medium');
               }
           ?>
-          <div style="border:1px solid var(--fog);border-radius:<?php echo $style === 'minimal' ? 'var(--rounded-md)' : 'var(--rounded-lg)'; ?>;overflow:hidden;background:var(--canvas);">
+          <div
+            style="border:1px solid var(--fog);border-radius:<?php echo $style === 'minimal' ? 'var(--rounded-md)' : 'var(--rounded-lg)'; ?>;overflow:hidden;background:var(--canvas);">
             <a href="<?php the_permalink(); ?>" style="display:block;aspect-ratio:1;overflow:hidden;">
               <?php if ($thumb_url) : ?>
-                <img src="<?php echo esc_url($thumb_url); ?>" alt="<?php the_title_attribute(); ?>" style="width:100%;height:100%;object-fit:cover;">
+                <img src="<?php echo esc_url($thumb_url); ?>" alt="<?php the_title_attribute(); ?>"
+                  style="width:100%;height:100%;object-fit:cover;">
               <?php else : ?>
-                <div style="width:100%;height:100%;background:var(--cloud);display:flex;align-items:center;justify-content:center;color:var(--graphite);">
+                <div
+                  style="width:100%;height:100%;background:var(--cloud);display:flex;align-items:center;justify-content:center;color:var(--graphite);">
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                     <circle cx="8.5" cy="8.5" r="1.5"></circle>
@@ -2319,7 +2707,8 @@ class Shortcode
             <?php if ($show_title): ?>
               <div style="padding:<?php echo $style === 'compact' ? '8px 10px' : '12px 16px'; ?>;">
                 <h4 style="margin:0;font-size:<?php echo $style === 'compact' ? '0.85em' : '0.95em'; ?>;">
-                  <a href="<?php the_permalink(); ?>" style="color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
+                  <a href="<?php the_permalink(); ?>"
+                    style="color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
                 </h4>
               </div>
             <?php endif; ?>
@@ -2328,7 +2717,9 @@ class Shortcode
       </div>
       <?php if ($query->found_posts > intval($atts['limit'])) : ?>
         <div style="text-align:center;margin-top:var(--sp-lg);">
-          <a href="<?php echo get_post_type_archive_link('desa_galeri'); ?>" style="display:inline-block;padding:8px 24px;background:var(--primary);color:var(--on-primary);border-radius:6px;text-decoration:none;font-weight:500;">Lihat Semua Galeri</a>
+          <a href="<?php echo get_post_type_archive_link('desa_galeri'); ?>"
+            style="display:inline-block;padding:8px 24px;background:var(--primary);color:var(--on-primary);border-radius:6px;text-decoration:none;font-weight:500;">Lihat
+            Semua Galeri</a>
         </div>
       <?php endif; ?>
     <?php
@@ -2387,7 +2778,9 @@ class Shortcode
 
         function initPetaDesa() {
           if (!window.L) return setTimeout(initPetaDesa, 200);
-          var map = L.map('wp-desa-peta-frontend').setView([<?php echo esc_js($center_lat); ?>, <?php echo esc_js($center_lng); ?>], <?php echo esc_js($zoom); ?>);
+          var map = L.map('wp-desa-peta-frontend').setView([<?php echo esc_js($center_lat); ?>,
+            <?php echo esc_js($center_lng); ?>
+          ], <?php echo esc_js($zoom); ?>);
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
           }).addTo(map);
@@ -2406,7 +2799,8 @@ class Shortcode
             var color = colorMap[m.type] || '#6b7280';
             var icon = L.divIcon({
               className: '',
-              html: '<div style="width:22px;height:22px;background:' + color + ';border-radius:50%;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>',
+              html: '<div style="width:22px;height:22px;background:' + color +
+                ';border-radius:50%;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);"></div>',
               iconSize: [22, 22],
               iconAnchor: [11, 11],
               popupAnchor: [0, -13]
@@ -2470,29 +2864,37 @@ class Shortcode
             <?php while ($query->have_posts()) : $query->the_post();
                 $address = get_post_meta(get_the_ID(), '_desa_wisata_address', true);
             ?>
-              <div style="display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-md);border-bottom:1px solid var(--fog);background:var(--canvas);">
+              <div
+                style="display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-md);border-bottom:1px solid var(--fog);background:var(--canvas);">
                 <div style="flex:1;min-width:0;">
-                  <a href="<?php the_permalink(); ?>" style="font-weight:500;font-size:15px;color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
+                  <a href="<?php the_permalink(); ?>"
+                    style="font-weight:500;font-size:15px;color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
                   <?php if ($address): ?>
-                    <div style="font-size:12px;color:var(--graphite);margin-top:2px;">📍 <?php echo esc_html($address); ?></div>
+                    <div style="font-size:12px;color:var(--graphite);margin-top:2px;">📍 <?php echo esc_html($address); ?>
+                    </div>
                   <?php endif; ?>
                 </div>
-                <a href="<?php the_permalink(); ?>" style="font-size:13px;font-weight:500;color:var(--primary);text-decoration:none;flex-shrink:0;">Detail →</a>
+                <a href="<?php the_permalink(); ?>"
+                  style="font-size:13px;font-weight:500;color:var(--primary);text-decoration:none;flex-shrink:0;">Detail
+                  →</a>
               </div>
             <?php endwhile; ?>
           </div>
         <?php else: /* classic / compact */ ?>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(<?php echo $min_w; ?>,1fr));gap:<?php echo $gap; ?>;">
+          <div
+            style="display:grid;grid-template-columns:repeat(auto-fill,minmax(<?php echo $min_w; ?>,1fr));gap:<?php echo $gap; ?>;">
             <?php while ($query->have_posts()) : $query->the_post();
                 $address = get_post_meta(get_the_ID(), '_desa_wisata_address', true);
             ?>
-              <div style="border:1px solid var(--fog);border-radius:var(--rounded-xl);overflow:hidden;background:var(--canvas);">
+              <div
+                style="border:1px solid var(--fog);border-radius:var(--rounded-xl);overflow:hidden;background:var(--canvas);">
                 <?php if (has_post_thumbnail()) : ?>
                   <a href="<?php the_permalink(); ?>" style="display:block;height:<?php echo $img_h; ?>px;overflow:hidden;">
                     <?php the_post_thumbnail('medium', ['style' => 'width:100%;height:100%;object-fit:cover;']); ?>
                   </a>
                 <?php else : ?>
-                  <div style="height:<?php echo $img_h; ?>px;background:var(--cloud);display:flex;align-items:center;justify-content:center;color:var(--graphite);">
+                  <div
+                    style="height:<?php echo $img_h; ?>px;background:var(--cloud);display:flex;align-items:center;justify-content:center;color:var(--graphite);">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                       <circle cx="12" cy="10" r="3"></circle>
@@ -2500,14 +2902,19 @@ class Shortcode
                   </div>
                 <?php endif; ?>
                 <div style="padding:<?php echo $pad; ?>;">
-                  <h3 style="margin:0 0 <?php echo $style === 'compact' ? '4px' : '8px'; ?>;font-size:<?php echo $title_sz; ?>px;">
-                    <a href="<?php the_permalink(); ?>" style="color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
+                  <h3
+                    style="margin:0 0 <?php echo $style === 'compact' ? '4px' : '8px'; ?>;font-size:<?php echo $title_sz; ?>px;">
+                    <a href="<?php the_permalink(); ?>"
+                      style="color:var(--ink);text-decoration:none;"><?php the_title(); ?></a>
                   </h3>
                   <?php if ($address) : ?>
-                    <div style="font-size:<?php echo $txt_sz - 1; ?>px;color:var(--graphite);margin-bottom:4px;">📍 <?php echo esc_html($address); ?></div>
+                    <div style="font-size:<?php echo $txt_sz - 1; ?>px;color:var(--graphite);margin-bottom:4px;">📍
+                      <?php echo esc_html($address); ?></div>
                   <?php endif; ?>
                   <?php if (has_excerpt()) : ?>
-                    <p style="color:var(--graphite);font-size:<?php echo $txt_sz; ?>px;line-height:1.5;margin:<?php echo $style === 'compact' ? '4px' : '8px'; ?> 0 0;"><?php echo get_the_excerpt(); ?></p>
+                    <p
+                      style="color:var(--graphite);font-size:<?php echo $txt_sz; ?>px;line-height:1.5;margin:<?php echo $style === 'compact' ? '4px' : '8px'; ?> 0 0;">
+                      <?php echo get_the_excerpt(); ?></p>
                   <?php endif; ?>
                 </div>
               </div>
@@ -2517,7 +2924,9 @@ class Shortcode
       </div>
       <?php if ($query->found_posts > intval($atts['limit'])) : ?>
         <div style="text-align:center;margin-top:var(--sp-lg);">
-          <a href="<?php echo get_post_type_archive_link('desa_wisata'); ?>" style="display:inline-block;padding:10px 28px;background:var(--primary);color:var(--on-primary);border-radius:6px;text-decoration:none;font-weight:500;">Lihat Semua Destinasi Wisata</a>
+          <a href="<?php echo get_post_type_archive_link('desa_wisata'); ?>"
+            style="display:inline-block;padding:10px 28px;background:var(--primary);color:var(--on-primary);border-radius:6px;text-decoration:none;font-weight:500;">Lihat
+            Semua Destinasi Wisata</a>
         </div>
       <?php endif; ?>
     <?php
@@ -2804,7 +3213,8 @@ class Shortcode
           <h3>Laporan Keuangan</h3>
         </div>
         <div class="wp-desa-ringkasan-card-body">
-          <?php if ($tahun) : ?><div class="wp-desa-ringkasan-subtitle">Tahun Anggaran <?php echo esc_html($tahun); ?></div><?php endif; ?>
+          <?php if ($tahun) : ?><div class="wp-desa-ringkasan-subtitle">Tahun Anggaran <?php echo esc_html($tahun); ?>
+            </div><?php endif; ?>
           <div class="wp-desa-ringkasan-stats">
             <div class="wp-desa-ringkasan-stat-item">
               <span class="wp-desa-ringkasan-stat-number"><?php echo $rp($budget_income); ?></span>
@@ -2815,11 +3225,13 @@ class Shortcode
               <span class="wp-desa-ringkasan-stat-label">Anggaran Belanja</span>
             </div>
             <div class="wp-desa-ringkasan-stat-item">
-              <span class="wp-desa-ringkasan-stat-number wp-desa-ringkasan-income"><?php echo $rp($income); ?></span>
+              <span
+                class="wp-desa-ringkasan-stat-number wp-desa-ringkasan-income"><?php echo $rp($income); ?></span>
               <span class="wp-desa-ringkasan-stat-label">Realisasi Pendapatan</span>
             </div>
             <div class="wp-desa-ringkasan-stat-item">
-              <span class="wp-desa-ringkasan-stat-number wp-desa-ringkasan-expense"><?php echo $rp($expense); ?></span>
+              <span
+                class="wp-desa-ringkasan-stat-number wp-desa-ringkasan-expense"><?php echo $rp($expense); ?></span>
               <span class="wp-desa-ringkasan-stat-label">Realisasi Belanja</span>
             </div>
             <div class="wp-desa-ringkasan-stat-item">
@@ -2827,7 +3239,8 @@ class Shortcode
               <span class="wp-desa-ringkasan-stat-label">Realisasi Pendapatan</span>
             </div>
             <div class="wp-desa-ringkasan-stat-item">
-              <span class="wp-desa-ringkasan-stat-number <?php echo $silpa >= 0 ? 'wp-desa-ringkasan-income' : 'wp-desa-ringkasan-expense'; ?>"><?php echo $rp($silpa); ?></span>
+              <span
+                class="wp-desa-ringkasan-stat-number <?php echo $silpa >= 0 ? 'wp-desa-ringkasan-income' : 'wp-desa-ringkasan-expense'; ?>"><?php echo $rp($silpa); ?></span>
               <span class="wp-desa-ringkasan-stat-label">SiLPA</span>
             </div>
           </div>
