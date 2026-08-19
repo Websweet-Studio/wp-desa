@@ -20,7 +20,7 @@ class AdminLayout
     public static function open($page_title, $active_page, $subnav = [])
     {
         $pages = self::get_pages();
-        $plugin_name = 'WP Desa';
+        $plugin_name = \WpDesa\Admin\Menu::plugin_name();
 ?>
         <div class="wrap wp-desa-dashboard wp-desa">
             <div class="wp-desa__globalnav">

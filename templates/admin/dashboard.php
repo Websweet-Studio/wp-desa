@@ -3,7 +3,7 @@
     <!-- Hero Band (Cohere dark-feature-band) -->
     <section class="wp-desa-hero">
         <div class="wp-desa-hero__head">
-            <span class="wp-desa-hero__eyebrow">WP Desa · Overview</span>
+            <span class="wp-desa-hero__eyebrow"><?php echo esc_html(\WpDesa\Admin\Menu::plugin_name()); ?> · Overview</span>
             <h1 class="wp-desa-hero__title">Dashboard Desa</h1>
             <p class="wp-desa-hero__sub">Ringkasan data dan statistik desa terkini — dalam satu pandangan.</p>
         </div>

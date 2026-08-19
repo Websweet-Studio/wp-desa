@@ -4,16 +4,29 @@ namespace WpDesa\Admin;
 
 class Menu
 {
+    /**
+     * Nama plugin whitelabel (default 'WP Desa').
+     */
+    public static function plugin_name()
+    {
+        $settings = get_option('wp_desa_settings', []);
+        $name = isset($settings['wl_plugin_name']) ? trim($settings['wl_plugin_name']) : '';
+
+        return $name !== '' ? $name : 'WP Desa';
+    }
+
     public function register_menus()
     {
         add_action('admin_init', [$this, 'handle_seed_clear']);
         add_action('admin_init', [$this, 'handle_page_generate']);
         add_action('admin_init', [$this, 'handle_settings_submit']);
 
+        $plugin_name = self::plugin_name();
+
         // Main Menu
         add_menu_page(
-            'WP Desa',
-            'WP Desa',
+            $plugin_name,
+            $plugin_name,
             'manage_options',
             'wp-desa',
             [$this, 'render_dashboard'],
@@ -547,6 +560,7 @@ class Menu
             'nip_kepala_desa' => sanitize_text_field($_POST['nip_kepala_desa']),
             'foto_kepala_desa' => esc_url_raw($_POST['foto_kepala_desa']),
             'notice_whitelist' => sanitize_textarea_field($_POST['notice_whitelist'] ?? ''),
+            'wl_plugin_name' => sanitize_text_field($_POST['wl_plugin_name'] ?? ''),
         ];
 
         update_option('wp_desa_settings', $data);

@@ -211,6 +211,14 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
                     <div class="wp-desa-form-grid">
                         <div class="wp-desa-box-gray">
                             <div>
+                                <label class="wp-desa-label wp-desa-label-lg" for="wl_plugin_name">Nama Plugin (Whitelabel)</label>
+                                <p class="wp-desa-helper wp-desa-m-0" style="margin-bottom:12px;">Ganti nama plugin "WP Desa" yang tampil di menu admin dan header panel. Kosongkan untuk kembali ke nama bawaan.</p>
+                                <input name="wl_plugin_name" type="text" id="wl_plugin_name" class="wp-desa-input" value="<?php echo esc_attr($settings['wl_plugin_name'] ?? ''); ?>" placeholder="WP Desa" maxlength="60">
+                            </div>
+                        </div>
+
+                        <div class="wp-desa-box-gray">
+                            <div>
                                 <label class="wp-desa-label wp-desa-label-lg" for="notice_whitelist">Whitelist Admin Notice</label>
                                 <p class="wp-desa-helper wp-desa-m-0" style="margin-bottom:12px;">Masukkan nama plugin atau slug plugin (satu per baris atau dipisah koma) agar admin notice dari plugin tersebut tetap ditampilkan di halaman admin WP Desa.</p>
                                 <textarea name="notice_whitelist" id="notice_whitelist" class="wp-desa-textarea" rows="5" placeholder="Contoh:&#10;akismet&#10;WooCommerce"><?php echo esc_textarea($settings['notice_whitelist'] ?? ''); ?></textarea>
