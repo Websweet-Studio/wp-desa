@@ -106,6 +106,7 @@ $polygon = isset($map_data['polygon']) ? $map_data['polygon'] : '';
 jQuery(function($) {
     var map, markersLayer;
     var mapData = <?php echo json_encode($map_data); ?>;
+    var wpDesaSettings = { nonce: '<?php echo wp_create_nonce('wp_rest'); ?>' };
     var markers = mapData.markers || [];
     var polygonData = mapData.polygon || '';
     var DEFAULT_LAT = parseFloat('<?php echo esc_js($center_lat); ?>');
