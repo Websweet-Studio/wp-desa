@@ -9,7 +9,6 @@ class PostTypes
         add_action('init', [$this, 'register_potensi_desa']);
         add_action('init', [$this, 'register_umkm_desa']);
         add_action('init', [$this, 'register_produk_hukum']);
-        add_action('init', [$this, 'register_berita']);
         add_action('init', [$this, 'register_agenda']);
         add_action('init', [$this, 'register_galeri']);
         add_action('init', [$this, 'register_wisata']);
@@ -213,63 +212,6 @@ class PostTypes
         ];
 
         register_post_type('desa_produk_hukum', $args);
-    }
-
-    public function register_berita()
-    {
-        // Register Taxonomy
-        $labels_cat = [
-            'name'              => 'Kategori Berita',
-            'singular_name'     => 'Kategori Berita',
-            'search_items'      => 'Cari Kategori',
-            'all_items'         => 'Semua Kategori',
-            'edit_item'         => 'Edit Kategori',
-            'update_item'       => 'Update Kategori',
-            'add_new_item'      => 'Tambah Kategori Baru',
-            'new_item_name'     => 'Nama Kategori Baru',
-            'menu_name'         => 'Kategori',
-        ];
-
-        register_taxonomy('desa_berita_cat', ['desa_berita'], [
-            'hierarchical'      => true,
-            'labels'            => $labels_cat,
-            'show_ui'           => true,
-            'show_admin_column' => true,
-            'query_var'         => true,
-            'rewrite'           => ['slug' => 'kategori-berita'],
-            'show_in_rest'      => true,
-        ]);
-
-        $labels = [
-            'name'                  => 'Berita Desa',
-            'singular_name'         => 'Berita Desa',
-            'menu_name'             => 'Berita Desa',
-            'add_new'               => 'Tambah Berita',
-            'add_new_item'          => 'Tambah Berita Baru',
-            'edit_item'             => 'Edit Berita',
-            'view_item'             => 'Lihat Berita',
-            'all_items'             => 'Semua Berita',
-            'search_items'          => 'Cari Berita',
-            'not_found'             => 'Tidak ditemukan.',
-            'not_found_in_trash'    => 'Tidak ditemukan di sampah.',
-        ];
-
-        register_post_type('desa_berita', [
-            'labels'             => $labels,
-            'public'             => true,
-            'publicly_queryable' => true,
-            'show_ui'            => true,
-            'show_in_menu'       => true,
-            'query_var'          => true,
-            'rewrite'            => ['slug' => 'berita-desa'],
-            'capability_type'    => 'post',
-            'has_archive'        => true,
-            'hierarchical'       => false,
-            'menu_position'      => 9,
-            'menu_icon'          => 'dashicons-megaphone',
-            'supports'           => ['title', 'editor', 'excerpt', 'thumbnail'],
-            'show_in_rest'       => true,
-        ]);
     }
 
     public function register_agenda()

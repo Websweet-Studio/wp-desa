@@ -249,10 +249,6 @@ class Seeder {
     }
 
     public static function seed_berita($count = 10) {
-        if (!post_type_exists('desa_berita')) {
-            (new \WpDesa\Core\PostTypes())->register_berita();
-        }
-
         $categories = ['Kegiatan Desa', 'Pembangunan', 'Pengumuman', 'Kesehatan', 'Pendidikan'];
         $titles = [
             'Kegiatan Gotong Royong Bulanan',
@@ -280,13 +276,13 @@ class Seeder {
                 'post_title' => $titles[$i % count($titles)],
                 'post_content' => $contents[array_rand($contents)],
                 'post_status' => 'publish',
-                'post_type' => 'desa_berita',
+                'post_type' => 'post',
                 'post_date' => date('Y-m-d H:i:s', rand(strtotime('-6 months'), time())),
                 'post_excerpt' => 'Berita terbaru dari desa kami.',
             ]);
 
             if ($post_id && !is_wp_error($post_id)) {
-                wp_set_object_terms($post_id, $categories[$i % count($categories)], 'desa_berita_cat', true);
+                wp_set_object_terms($post_id, $categories[$i % count($categories)], 'category', true);
                 $inserted++;
             }
         }

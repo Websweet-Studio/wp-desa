@@ -61,7 +61,7 @@ foreach ($meta_keys as $meta_key) {
 }
 
 // 4. Delete all posts of custom post types.
-$post_types = ['desa_umkm', 'desa_potensi', 'desa_produk_hukum', 'desa_berita', 'desa_agenda', 'desa_galeri', 'desa_wisata'];
+$post_types = ['desa_umkm', 'desa_potensi', 'desa_produk_hukum', 'desa_agenda', 'desa_galeri', 'desa_wisata'];
 
 foreach ($post_types as $post_type) {
     $posts = get_posts(
@@ -79,7 +79,7 @@ foreach ($post_types as $post_type) {
 }
 
 // 5. Delete all terms of custom taxonomies.
-$taxonomies = ['desa_umkm_cat', 'desa_potensi_cat', 'desa_produk_hukum_cat', 'desa_berita_cat', 'desa_agenda_cat', 'desa_galeri_cat', 'desa_wisata_cat'];
+$taxonomies = ['desa_umkm_cat', 'desa_potensi_cat', 'desa_produk_hukum_cat', 'desa_agenda_cat', 'desa_galeri_cat', 'desa_wisata_cat'];
 
 foreach ($taxonomies as $taxonomy) {
     $terms = get_terms(

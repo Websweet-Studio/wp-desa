@@ -2382,7 +2382,7 @@ class Shortcode
           }
 
           $args = [
-            'post_type' => 'desa_berita',
+            'post_type' => 'post',
             'posts_per_page' => intval($atts['limit']),
             'orderby' => 'date',
             'order' => 'DESC',
@@ -2390,7 +2390,7 @@ class Shortcode
 
           if (!empty($atts['category'])) {
             $args['tax_query'] = [[
-              'taxonomy' => 'desa_berita_cat',
+              'taxonomy' => 'category',
               'field' => 'slug',
               'terms' => sanitize_text_field($atts['category']),
             ]];
@@ -2405,7 +2405,7 @@ class Shortcode
         <?php if ($style === 'minimal'): ?>
           <div style="border:1px solid var(--fog);border-radius:var(--rounded-lg);overflow:hidden;">
             <?php while ($query->have_posts()) : $query->the_post();
-                $cats = get_the_terms(get_the_ID(), 'desa_berita_cat');
+                $cats = get_the_terms(get_the_ID(), 'category');
             ?>
               <div
                 style="display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-sm) 0;border-bottom:1px solid var(--fog);">
@@ -2424,7 +2424,7 @@ class Shortcode
         <?php elseif ($style === 'compact'): ?>
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:15px;">
             <?php while ($query->have_posts()) : $query->the_post();
-                $cats = get_the_terms(get_the_ID(), 'desa_berita_cat');
+                $cats = get_the_terms(get_the_ID(), 'category');
             ?>
               <div
                 style="border:1px solid var(--fog);border-radius:var(--rounded-lg);overflow:hidden;background:var(--canvas);">
@@ -2459,7 +2459,7 @@ class Shortcode
         <?php else: /* classic */ ?>
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;">
             <?php while ($query->have_posts()) : $query->the_post();
-                $cats = get_the_terms(get_the_ID(), 'desa_berita_cat');
+                $cats = get_the_terms(get_the_ID(), 'category');
             ?>
               <div
                 style="border:1px solid var(--fog);border-radius:var(--rounded-xl);overflow:hidden;background:var(--canvas);">
@@ -2493,7 +2493,7 @@ class Shortcode
       </div>
       <?php if ($query->found_posts > intval($atts['limit'])) : ?>
         <div style="text-align:center;margin-top:var(--sp-lg);">
-          <a href="<?php echo get_post_type_archive_link('desa_berita'); ?>"
+          <a href="<?php echo esc_url(home_url('/')); ?>"
             style="display:inline-block;padding:10px 28px;background:var(--primary);color:var(--on-primary);border-radius:6px;text-decoration:none;font-weight:500;">Lihat
             Semua Berita</a>
         </div>
