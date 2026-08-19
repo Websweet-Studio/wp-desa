@@ -12,6 +12,10 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
         <div class="notice notice-success is-dismissible">
             <p>Semua data berhasil dihapus.</p>
         </div>
+    <?php elseif (isset($_GET['pages_done'])): ?>
+        <div class="notice notice-success is-dismissible">
+            <p>Halaman fitur berhasil dibuat. Tinjau halaman draft lalu publikasikan.</p>
+        </div>
     <?php endif; ?>
 
     <form method="post" action="">
@@ -206,6 +210,14 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
                 <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'sistem' ? 'display:none;' : ''; ?>">
                     <div class="wp-desa-form-grid">
                         <div class="wp-desa-box-gray">
+                            <div>
+                                <label class="wp-desa-label wp-desa-label-lg" for="notice_whitelist">Whitelist Admin Notice</label>
+                                <p class="wp-desa-helper wp-desa-m-0" style="margin-bottom:12px;">Masukkan nama plugin atau slug plugin (satu per baris atau dipisah koma) agar admin notice dari plugin tersebut tetap ditampilkan di halaman admin WP Desa.</p>
+                                <textarea name="notice_whitelist" id="notice_whitelist" class="wp-desa-textarea" rows="5" placeholder="Contoh:&#10;akismet&#10;WooCommerce"><?php echo esc_textarea($settings['notice_whitelist'] ?? ''); ?></textarea>
+                            </div>
+                        </div>
+
+                        <div class="wp-desa-box-gray">
                             <div class="wp-desa-flex-between-center" style="margin-bottom:16px;">
                                 <div>
                                     <label class="wp-desa-label wp-desa-label-lg">Generate Data Dummy</label>
@@ -227,6 +239,77 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
                                     <span class="dashicons dashicons-trash"></span> Hapus Semua Data
                                 </button>
                             </div>
+                        </div>
+
+                        <div class="wp-desa-box-gray">
+                            <?php
+                            $all_pages_generated = true;
+                            foreach (\WpDesa\Admin\Menu::feature_pages() as $pk => $f) {
+                                if (!\WpDesa\Admin\Menu::page_status($pk)) {
+                                    $all_pages_generated = false;
+                                    break;
+                                }
+                            }
+                            ?>
+                            <div style="margin-bottom:16px;">
+                                <div>
+                                    <label class="wp-desa-label wp-desa-label-lg">Generate Halaman Fitur</label>
+                                    <p class="wp-desa-helper wp-desa-m-0" style="margin-bottom:12px;">Buat halaman publik untuk setiap fitur dengan shortcode terpasang otomatis. Default draft — bisa langsung dipublikasikan.</p>
+                                </div>
+                                <div class="wp-desa-flex-gap-8">
+                                    <?php if (!$all_pages_generated): ?>
+                                        <button type="button" class="wp-desa-btn wp-desa-btn-secondary" onclick="document.getElementById('pages-form').submit();">
+                                            <span class="dashicons dashicons-admin-page"></span> Generate Semua
+                                        </button>
+                                    <?php endif; ?>
+                                    <button type="button" class="wp-desa-btn wp-desa-btn-primary" onclick="document.getElementById('pages-form-publish').submit();">
+                                        <span class="dashicons dashicons-saved"></span> <?php echo $all_pages_generated ? 'Publikasikan Semua' : 'Generate Semua & Publikasikan'; ?>
+                                    </button>
+                                </div>
+                            </div>
+                            <table class="wp-desa-table" style="margin:0;">
+                                <thead>
+                                    <tr>
+                                        <th>Fitur</th>
+                                        <th>Shortcode</th>
+                                        <th>Status</th>
+                                        <th style="text-align:right;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach (\WpDesa\Admin\Menu::feature_pages() as $page_key => $feature): ?>
+                                        <?php $page_id = \WpDesa\Admin\Menu::page_status($page_key); ?>
+                                        <tr>
+                                            <td style="font-weight:600;"><?php echo esc_html($feature['title']); ?></td>
+                                            <td><code><?php echo esc_html($feature['shortcode']); ?></code></td>
+                                            <td>
+                                                <?php if ($page_id): ?>
+                                                    <span class="wp-desa-badge wp-desa-badge-success">Sudah Dibuat</span>
+                                                <?php else: ?>
+                                                    <span class="wp-desa-badge wp-desa-badge-default">Belum Dibuat</span>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td style="text-align:right;white-space:nowrap;">
+                                                <?php if ($page_id): ?>
+                                                    <a href="<?php echo esc_url(get_edit_post_link($page_id)); ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Edit</a>
+                                                    <?php if (get_post_status($page_id) === 'publish'): ?>
+                                                        <a href="<?php echo esc_url(get_permalink($page_id)); ?>" target="_blank" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Lihat</a>
+                                                    <?php else: ?>
+                                                        <a href="<?php echo esc_url(get_preview_post_link($page_id)); ?>" target="_blank" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Tinjau</a>
+                                                    <?php endif; ?>
+                                                <?php else: ?>
+                                                    <button type="button" class="wp-desa-btn wp-desa-btn-primary wp-desa-btn-sm" onclick="document.getElementById('page-key').value='<?php echo esc_attr($page_key); ?>';document.getElementById('pages-form').submit();">
+                                                        <span class="dashicons dashicons-admin-page"></span> Buat
+                                                    </button>
+                                                    <button type="button" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" onclick="document.getElementById('page-key-publish').value='<?php echo esc_attr($page_key); ?>';document.getElementById('pages-form-publish').submit();">
+                                                        <span class="dashicons dashicons-saved"></span> Buat & Publikasikan
+                                                    </button>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -259,6 +342,17 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
     <form id="clear-form" method="post" style="display:none;">
         <?php wp_nonce_field('wp_desa_clear_action', 'wp_desa_clear_nonce'); ?>
         <input type="hidden" name="wp_desa_clear_data" value="1">
+    </form>
+    <form id="pages-form" method="post" style="display:none;">
+        <?php wp_nonce_field('wp_desa_generate_page_action', 'wp_desa_generate_page_nonce'); ?>
+        <input type="hidden" name="wp_desa_generate_page" value="1">
+        <input type="hidden" name="page_key" id="page-key" value="">
+    </form>
+    <form id="pages-form-publish" method="post" style="display:none;">
+        <?php wp_nonce_field('wp_desa_generate_page_action', 'wp_desa_generate_page_nonce'); ?>
+        <input type="hidden" name="wp_desa_generate_page" value="1">
+        <input type="hidden" name="publish" value="1">
+        <input type="hidden" name="page_key" id="page-key-publish" value="">
     </form>
 
     <!-- Notification Toast -->
