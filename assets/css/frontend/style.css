@@ -3,6 +3,8 @@
 :root {
   --primary: #024ad8;
   --primary-soft: #c9e0fc;
+  --primary-deep: #0e3191;
+  --on-primary: #ffffff;
   --canvas: #ffffff;
   --cloud: #f7f7f7;
   --fog: #e8e8e8;
@@ -18,6 +20,7 @@
   --rounded-lg: 8px;
   --rounded-xl: 16px;
   --rounded-pill: 9999px;
+  --sp-xxs: 4px;
   --sp-xs: 8px;
   --sp-sm: 12px;
   --sp-md: 16px;
