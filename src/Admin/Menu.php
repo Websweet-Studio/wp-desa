@@ -126,20 +126,177 @@ class Menu
     public function remove_notices()
     {
         $screen = get_current_screen();
-        if ($screen && strpos($screen->id, 'wp-desa') !== false) {
-            echo '<style>
-                .wp-desa-card .wp-desa-tab-content { padding:0; }
-                .notice:not(.wp-desa-wrapper .notice) { display:none !important; }
-                .wp-desa-header-actions > h2,
-                .wp-desa-header-actions > h3 { display:none !important; }
-                .wp-desa-hero__head { display:none !important; }
-                .wp-desa-wrapper > h2:first-child { display:none !important; }
-                .wp-desa-wrapper > h2:first-child + p { display:none !important; }
-                #adminmenuwrap { z-index:1001 !important; }
-                .wp-desa__globalnav { z-index:1000 !important; }
-                #wpadminbar { z-index:1002 !important; }
-            </style>';
+        if (!$screen || strpos($screen->id, 'wp-desa') === false) {
+            return;
         }
+
+        $this->filter_admin_notices();
+
+        echo '<style>
+            .wp-desa-card .wp-desa-tab-content { padding:0; }
+            .wp-desa-header-actions > h2,
+            .wp-desa-header-actions > h3 { display:none !important; }
+            .wp-desa-hero__head { display:none !important; }
+            .wp-desa-wrapper > h2:first-child { display:none !important; }
+            .wp-desa-wrapper > h2:first-child + p { display:none !important; }
+            #adminmenuwrap { z-index:1001 !important; }
+            .wp-desa__globalnav { z-index:1000 !important; }
+            #wpadminbar { z-index:1002 !important; }
+        </style>';
+    }
+
+    /**
+     * Hapus callback admin notice dari plugin yang tidak masuk whitelist,
+     * sehingga hanya notice milik WP Desa dan plugin yang di-whitelist yang tampil.
+     */
+    private function filter_admin_notices()
+    {
+        $whitelist = $this->notice_whitelist();
+
+        foreach (['admin_notices', 'all_admin_notices'] as $hook) {
+            global $wp_filter;
+
+            if (!isset($wp_filter[$hook]) || !($wp_filter[$hook] instanceof \WP_Hook)) {
+                continue;
+            }
+
+            $to_remove = [];
+
+            foreach ($wp_filter[$hook]->callbacks as $priority => $group) {
+                foreach ($group as $cb) {
+                    $plugin = $this->callback_plugin($cb['function']);
+                    $slug   = isset($plugin['slug']) ? $plugin['slug'] : '';
+                    $title  = isset($plugin['title']) ? $plugin['title'] : '';
+
+                    $keep = ($slug === 'wp-desa' || stripos($title, 'wp-desa') !== false);
+
+                    if (!$keep && $this->matches_whitelist($slug, $title, $whitelist)) {
+                        $keep = true;
+                    }
+
+                    if (!$keep) {
+                        $to_remove[] = [$cb['function'], $priority];
+                    }
+                }
+            }
+
+            foreach ($to_remove as $item) {
+                remove_action($hook, $item[0], $item[1]);
+            }
+        }
+    }
+
+    /**
+     * Ambil daftar whitelist (nama plugin/slug dan judul) dari pengaturan.
+     */
+    private function notice_whitelist()
+    {
+        $settings = get_option('wp_desa_settings', []);
+        $raw      = isset($settings['notice_whitelist']) ? $settings['notice_whitelist'] : '';
+
+        return array_values(array_filter(array_map('trim', preg_split('/[\r\n,]+/', (string) $raw))));
+    }
+
+    /**
+     * Cek apakah slug/nama plugin cocok dengan salah satu kata kunci whitelist.
+     */
+    private function matches_whitelist($slug, $title, $whitelist)
+    {
+        if (empty($whitelist)) {
+            return false;
+        }
+
+        $haystacks = array_filter([strtolower((string) $slug), strtolower((string) $title)]);
+
+        foreach ($whitelist as $keyword) {
+            $keyword = strtolower(trim((string) $keyword));
+            if ($keyword === '') {
+                continue;
+            }
+
+            foreach ($haystacks as $haystack) {
+                if (strpos($haystack, $keyword) !== false || strpos($keyword, $haystack) !== false) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Tentukan plugin asal sebuah callback notice berdasarkan lokasi file.
+     */
+    private function callback_plugin($callback)
+    {
+        try {
+            if ($callback instanceof \Closure) {
+                $ref = new \ReflectionFunction($callback);
+            } elseif (is_array($callback) && (is_object($callback[0]) || is_string($callback[0]))) {
+                $ref = new \ReflectionMethod($callback[0], $callback[1]);
+            } elseif (is_string($callback) && function_exists($callback)) {
+                $ref = new \ReflectionFunction($callback);
+            } else {
+                return null;
+            }
+
+            $file = $ref->getFileName();
+            if (!$file) {
+                return null;
+            }
+
+            return $this->plugin_from_file($file);
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Petakan path file ke slug & judul plugin.
+     */
+    private function plugin_from_file($file)
+    {
+        $file = wp_normalize_path($file);
+        $file = str_replace('\\', '/', $file);
+
+        // Must-use plugins.
+        if (defined('WPMU_PLUGIN_DIR')) {
+            $mu_dir = str_replace('\\', '/', wp_normalize_path(WPMU_PLUGIN_DIR));
+            if (strpos($file, $mu_dir . '/') === 0) {
+                $rel  = trim(substr($file, strlen($mu_dir)), '/');
+                $slug = strtok($rel, '/');
+
+                return ['slug' => $slug, 'title' => $slug];
+            }
+        }
+
+        if (!function_exists('get_plugins')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+
+        $plugin_dir = str_replace('\\', '/', wp_normalize_path(WP_PLUGIN_DIR));
+
+        foreach (get_plugins() as $plugin_file => $data) {
+            $main = $plugin_dir . '/' . str_replace('\\', '/', $plugin_file);
+
+            if ($file === $main) {
+                return ['slug' => $this->plugin_slug($plugin_file), 'title' => $data['Name']];
+            }
+
+            $dir = $plugin_dir . '/' . str_replace('\\', '/', dirname($plugin_file));
+            if (strpos($file, $dir . '/') === 0) {
+                return ['slug' => $this->plugin_slug($plugin_file), 'title' => $data['Name']];
+            }
+        }
+
+        return null;
+    }
+
+    private function plugin_slug($plugin_file)
+    {
+        $dirname = dirname($plugin_file);
+
+        return ($dirname === '.' || $dirname === '') ? basename($plugin_file, '.php') : $dirname;
     }
 
     public function render_dashboard()
@@ -389,6 +546,7 @@ class Menu
             'kepala_desa' => sanitize_text_field($_POST['kepala_desa']),
             'nip_kepala_desa' => sanitize_text_field($_POST['nip_kepala_desa']),
             'foto_kepala_desa' => esc_url_raw($_POST['foto_kepala_desa']),
+            'notice_whitelist' => sanitize_textarea_field($_POST['notice_whitelist'] ?? ''),
         ];
 
         update_option('wp_desa_settings', $data);

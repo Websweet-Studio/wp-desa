@@ -210,6 +210,14 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
                 <div class="wp-desa-tab-content" style="<?php echo $current_tab !== 'sistem' ? 'display:none;' : ''; ?>">
                     <div class="wp-desa-form-grid">
                         <div class="wp-desa-box-gray">
+                            <div>
+                                <label class="wp-desa-label wp-desa-label-lg" for="notice_whitelist">Whitelist Admin Notice</label>
+                                <p class="wp-desa-helper wp-desa-m-0" style="margin-bottom:12px;">Masukkan nama plugin atau slug plugin (satu per baris atau dipisah koma) agar admin notice dari plugin tersebut tetap ditampilkan di halaman admin WP Desa.</p>
+                                <textarea name="notice_whitelist" id="notice_whitelist" class="wp-desa-textarea" rows="5" placeholder="Contoh:&#10;akismet&#10;WooCommerce"><?php echo esc_textarea($settings['notice_whitelist'] ?? ''); ?></textarea>
+                            </div>
+                        </div>
+
+                        <div class="wp-desa-box-gray">
                             <div class="wp-desa-flex-between-center" style="margin-bottom:16px;">
                                 <div>
                                     <label class="wp-desa-label wp-desa-label-lg">Generate Data Dummy</label>
@@ -250,9 +258,9 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
                                 </div>
                                 <div class="wp-desa-flex-gap-8">
                                     <?php if (!$all_pages_generated): ?>
-                                    <button type="button" class="wp-desa-btn wp-desa-btn-secondary" onclick="document.getElementById('pages-form').submit();">
-                                        <span class="dashicons dashicons-admin-page"></span> Generate Semua
-                                    </button>
+                                        <button type="button" class="wp-desa-btn wp-desa-btn-secondary" onclick="document.getElementById('pages-form').submit();">
+                                            <span class="dashicons dashicons-admin-page"></span> Generate Semua
+                                        </button>
                                     <?php endif; ?>
                                     <button type="button" class="wp-desa-btn wp-desa-btn-primary" onclick="document.getElementById('pages-form-publish').submit();">
                                         <span class="dashicons dashicons-saved"></span> <?php echo $all_pages_generated ? 'Publikasikan Semua' : 'Generate Semua & Publikasikan'; ?>
@@ -270,35 +278,35 @@ $current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'identitas';
                                 </thead>
                                 <tbody>
                                     <?php foreach (\WpDesa\Admin\Menu::feature_pages() as $page_key => $feature): ?>
-                                    <?php $page_id = \WpDesa\Admin\Menu::page_status($page_key); ?>
-                                    <tr>
-                                        <td style="font-weight:600;"><?php echo esc_html($feature['title']); ?></td>
-                                        <td><code><?php echo esc_html($feature['shortcode']); ?></code></td>
-                                        <td>
-                                            <?php if ($page_id): ?>
-                                                <span class="wp-desa-badge wp-desa-badge-success">Sudah Dibuat</span>
-                                            <?php else: ?>
-                                                <span class="wp-desa-badge wp-desa-badge-default">Belum Dibuat</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td style="text-align:right;white-space:nowrap;">
-                                            <?php if ($page_id): ?>
-                                                <a href="<?php echo esc_url(get_edit_post_link($page_id)); ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Edit</a>
-                                                <?php if (get_post_status($page_id) === 'publish'): ?>
-                                                    <a href="<?php echo esc_url(get_permalink($page_id)); ?>" target="_blank" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Lihat</a>
+                                        <?php $page_id = \WpDesa\Admin\Menu::page_status($page_key); ?>
+                                        <tr>
+                                            <td style="font-weight:600;"><?php echo esc_html($feature['title']); ?></td>
+                                            <td><code><?php echo esc_html($feature['shortcode']); ?></code></td>
+                                            <td>
+                                                <?php if ($page_id): ?>
+                                                    <span class="wp-desa-badge wp-desa-badge-success">Sudah Dibuat</span>
                                                 <?php else: ?>
-                                                    <a href="<?php echo esc_url(get_preview_post_link($page_id)); ?>" target="_blank" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Tinjau</a>
+                                                    <span class="wp-desa-badge wp-desa-badge-default">Belum Dibuat</span>
                                                 <?php endif; ?>
-                                            <?php else: ?>
-                                                <button type="button" class="wp-desa-btn wp-desa-btn-primary wp-desa-btn-sm" onclick="document.getElementById('page-key').value='<?php echo esc_attr($page_key); ?>';document.getElementById('pages-form').submit();">
-                                                    <span class="dashicons dashicons-admin-page"></span> Buat
-                                                </button>
-                                                <button type="button" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" onclick="document.getElementById('page-key-publish').value='<?php echo esc_attr($page_key); ?>';document.getElementById('pages-form-publish').submit();">
-                                                    <span class="dashicons dashicons-saved"></span> Buat & Publikasikan
-                                                </button>
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td style="text-align:right;white-space:nowrap;">
+                                                <?php if ($page_id): ?>
+                                                    <a href="<?php echo esc_url(get_edit_post_link($page_id)); ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Edit</a>
+                                                    <?php if (get_post_status($page_id) === 'publish'): ?>
+                                                        <a href="<?php echo esc_url(get_permalink($page_id)); ?>" target="_blank" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Lihat</a>
+                                                    <?php else: ?>
+                                                        <a href="<?php echo esc_url(get_preview_post_link($page_id)); ?>" target="_blank" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm">Tinjau</a>
+                                                    <?php endif; ?>
+                                                <?php else: ?>
+                                                    <button type="button" class="wp-desa-btn wp-desa-btn-primary wp-desa-btn-sm" onclick="document.getElementById('page-key').value='<?php echo esc_attr($page_key); ?>';document.getElementById('pages-form').submit();">
+                                                        <span class="dashicons dashicons-admin-page"></span> Buat
+                                                    </button>
+                                                    <button type="button" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" onclick="document.getElementById('page-key-publish').value='<?php echo esc_attr($page_key); ?>';document.getElementById('pages-form-publish').submit();">
+                                                        <span class="dashicons dashicons-saved"></span> Buat & Publikasikan
+                                                    </button>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
