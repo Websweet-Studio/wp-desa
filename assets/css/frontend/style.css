@@ -1184,6 +1184,26 @@
   display: block;
 }
 
+/* --- Aduan: Responsive --- */
+@media (max-width: 640px) {
+  [data-wp-desa="aduan"] .wp-desa-aduan-tabs {
+    flex-wrap: wrap;
+  }
+  [data-wp-desa="aduan"] .wp-desa-aduan-tabs > h3 {
+    width: 100%;
+    margin-right: 0;
+  }
+  [data-wp-desa="aduan"] .wp-desa-aduan-tabs > button {
+    flex: 1;
+  }
+  [data-wp-desa="aduan"] .wp-desa-tracking-input-group {
+    flex-wrap: wrap;
+  }
+  [data-wp-desa="aduan"] .wp-desa-tracking-input-group .wp-desa-input {
+    flex: 1 1 100%;
+  }
+}
+
 /* --- Keuangan Shortcode --- */
 /* ============================================
    [wp_desa_keuangan] — Finances Public
