@@ -20,6 +20,7 @@ class Menu
         add_action('admin_init', [$this, 'handle_seed_clear']);
         add_action('admin_init', [$this, 'handle_page_generate']);
         add_action('admin_init', [$this, 'handle_settings_submit']);
+        add_action('admin_init', [$this, 'handle_perangkat_submit']);
 
         $plugin_name = self::plugin_name();
 
@@ -125,8 +126,8 @@ class Menu
             wp_enqueue_style('wp-desa-admin-css', WP_DESA_URL . 'assets/css/admin/style.css', [], $css_ver);
         }
 
-        // Media Uploader for Settings Page
-        if ($hook === 'wp-desa_page_wp-desa-settings') {
+        // Media Uploader for pages that use wp.media (settings, struktur perangkat)
+        if (in_array($hook, ['wp-desa_page_wp-desa-settings', 'wp-desa_page_wp-desa-pemerintahan'])) {
             wp_enqueue_media();
         }
 
@@ -593,6 +594,36 @@ class Menu
         $redirect_url = add_query_arg($redirect_args, admin_url('admin.php'));
 
         wp_redirect($redirect_url);
+        exit;
+    }
+
+    public function handle_perangkat_submit()
+    {
+        if (!isset($_POST['wp_desa_save_perangkat']) || !current_user_can('manage_options')) {
+            return;
+        }
+
+        check_admin_referer('wp_desa_perangkat_action', 'wp_desa_perangkat_nonce');
+
+        global $wpdb;
+        $table    = $wpdb->prefix . 'desa_perangkat';
+        $id       = isset($_POST['id']) ? intval($_POST['id']) : 0;
+        $data     = [
+            'nama'      => sanitize_text_field($_POST['nama']),
+            'jabatan'   => sanitize_text_field($_POST['jabatan']),
+            'nip'       => sanitize_text_field($_POST['nip']),
+            'foto'      => esc_url_raw($_POST['foto']),
+            'parent_id' => isset($_POST['parent_id']) ? intval($_POST['parent_id']) : 0,
+            'urutan'    => isset($_POST['urutan']) ? intval($_POST['urutan']) : 0,
+        ];
+
+        if ($id > 0) {
+            $wpdb->update($table, $data, ['id' => $id]);
+        } else {
+            $wpdb->insert($table, $data);
+        }
+
+        wp_redirect(admin_url('admin.php?page=wp-desa-pemerintahan&tab=struktur&saved=1'));
         exit;
     }
 

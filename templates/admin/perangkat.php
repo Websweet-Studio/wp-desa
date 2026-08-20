@@ -11,39 +11,6 @@ $action = isset($_GET['action']) ? $_GET['action'] : 'list';
 $edit_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 // ============================================================
-// Handle POST: save / update
-// ============================================================
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wp_desa_save_perangkat'])) {
-    check_admin_referer('wp_desa_perangkat_action', 'wp_desa_perangkat_nonce');
-
-    $id       = isset($_POST['id']) ? intval($_POST['id']) : 0;
-    $nama     = sanitize_text_field($_POST['nama']);
-    $jabatan  = sanitize_text_field($_POST['jabatan']);
-    $nip      = sanitize_text_field($_POST['nip']);
-    $foto     = esc_url_raw($_POST['foto']);
-    $parent_id = isset($_POST['parent_id']) ? intval($_POST['parent_id']) : 0;
-    $urutan   = isset($_POST['urutan']) ? intval($_POST['urutan']) : 0;
-
-    $data = [
-        'nama'      => $nama,
-        'jabatan'   => $jabatan,
-        'nip'       => $nip,
-        'foto'      => $foto,
-        'parent_id' => $parent_id,
-        'urutan'    => $urutan,
-    ];
-
-    if ($id > 0) {
-        $wpdb->update($table_perangkat, $data, ['id' => $id]);
-    } else {
-        $wpdb->insert($table_perangkat, $data);
-    }
-
-    wp_redirect(admin_url('admin.php?page=wp-desa-pemerintahan&tab=struktur&saved=1'));
-    exit;
-}
-
-// ============================================================
 // Handle delete via GET (simple approach)
 // ============================================================
 if (isset($_GET['delete']) && $edit_id > 0) {
