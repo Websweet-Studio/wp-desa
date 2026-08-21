@@ -783,7 +783,7 @@
     $grid.on("click", ".btn-view-recipients", function () {
       var pid = parseInt($(this).data("program-id"), 10);
       var program = state.programs.find(function (p) {
-        return p.id === pid;
+        return parseInt(p.id, 10) === pid;
       });
       if (program) viewRecipients(program);
     });

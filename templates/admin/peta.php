@@ -126,7 +126,9 @@ jQuery(function($) {
 
     // Init map
     function initMap() {
-        map = L.map('wp-desa-peta-map').setView([DEFAULT_LAT, DEFAULT_LNG], DEFAULT_ZOOM);
+        var center = markers.length ? [parseFloat(markers[0].lat), parseFloat(markers[0].lng)] : [DEFAULT_LAT, DEFAULT_LNG];
+        var zoom = Math.max(DEFAULT_ZOOM, 13);
+        map = L.map('wp-desa-peta-map').setView(center, zoom);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
