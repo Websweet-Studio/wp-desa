@@ -684,7 +684,7 @@ class Shortcode
                 </div>
                 <?php if (has_post_thumbnail()): ?>
                 <a href="<?php the_permalink(); ?>" style="display:block;width:100%;height:100%;">
-                    <?php the_post_thumbnail('medium', ['style' => 'width:100%;height:100%;object-fit:cover;']); ?>
+                    <?php the_post_thumbnail('large', ['style' => 'width:100%;height:100%;object-fit:cover;']); ?>
                 </a>
                 <?php else: ?>
                 <div
@@ -1041,7 +1041,7 @@ class Shortcode
             <div style="height:<?php echo $img_h; ?>px;background:var(--cloud);overflow:hidden;position:relative;">
                 <?php if (has_post_thumbnail()): ?>
                 <a href="<?php the_permalink(); ?>" style="display:block;width:100%;height:100%;">
-                    <?php the_post_thumbnail('medium', ['style' => 'width:100%;height:100%;object-fit:cover;']); ?>
+                    <?php the_post_thumbnail('large', ['style' => 'width:100%;height:100%;object-fit:cover;']); ?>
                 </a>
                 <?php else: ?>
                 <div
@@ -2043,8 +2043,10 @@ class Shortcode
     height: 64px;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 10px;
+    display: block;
+    margin: 0 auto 10px;
     background: #f0f0f0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .wp-desa-struktur-card .foto-placeholder {
@@ -2681,10 +2683,10 @@ class Shortcode
               $thumb_url = '';
               if ($gallery_ids) {
                 $ids = explode(',', $gallery_ids);
-                $thumb_url = wp_get_attachment_thumb_url(trim($ids[0]));
+                $thumb_url = wp_get_attachment_image_url(trim($ids[0]), 'large');
               }
               if (!$thumb_url && has_post_thumbnail()) {
-                $thumb_url = get_the_post_thumbnail_url(null, 'medium');
+                $thumb_url = get_the_post_thumbnail_url(null, 'large');
               }
           ?>
     <div
@@ -2778,9 +2780,11 @@ class Shortcode
 
     function initPetaDesa() {
         if (!window.L) return setTimeout(initPetaDesa, 200);
-        var map = L.map('wp-desa-peta-frontend').setView([<?php echo esc_js($center_lat); ?>,
+        var markers = <?php echo json_encode($markers); ?>;
+        var center = markers.length ? [parseFloat(markers[0].lat), parseFloat(markers[0].lng)] : [<?php echo esc_js($center_lat); ?>,
             <?php echo esc_js($center_lng); ?>
-        ], <?php echo esc_js($zoom); ?>);
+        ];
+        var map = L.map('wp-desa-peta-frontend').setView(center, Math.max(<?php echo esc_js($zoom); ?>, 13));
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
@@ -2794,7 +2798,6 @@ class Shortcode
             'wisata': '#0891b2',
             'lainnya': '#6b7280'
         };
-        var markers = <?php echo json_encode($markers); ?>;
         markers.forEach(function(m) {
             var color = colorMap[m.type] || '#6b7280';
             var icon = L.divIcon({
@@ -2890,7 +2893,7 @@ class Shortcode
             style="border:1px solid var(--fog);border-radius:var(--rounded-xl);overflow:hidden;background:var(--canvas);">
             <?php if (has_post_thumbnail()) : ?>
             <a href="<?php the_permalink(); ?>" style="display:block;height:<?php echo $img_h; ?>px;overflow:hidden;">
-                <?php the_post_thumbnail('medium', ['style' => 'width:100%;height:100%;object-fit:cover;']); ?>
+                <?php the_post_thumbnail('large', ['style' => 'width:100%;height:100%;object-fit:cover;']); ?>
             </a>
             <?php else : ?>
             <div
