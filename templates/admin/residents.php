@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wp_desa_save_resident
     $tl       = isset($_POST['tempat_lahir']) ? sanitize_text_field($_POST['tempat_lahir']) : '';
     $tgl      = isset($_POST['tanggal_lahir']) ? sanitize_text_field($_POST['tanggal_lahir']) : '';
     $pkj      = isset($_POST['pekerjaan']) ? sanitize_text_field($_POST['pekerjaan']) : '';
+    $pdd      = isset($_POST['pendidikan']) ? sanitize_text_field($_POST['pendidikan']) : '';
     $alamat   = isset($_POST['alamat']) ? sanitize_textarea_field($_POST['alamat']) : '';
     $errors   = [];
 
@@ -42,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wp_desa_save_resident
             'tempat_lahir'      => $tl,
             'tanggal_lahir'     => $tgl,
             'pekerjaan'         => $pkj,
+            'pendidikan'        => $pdd,
             'alamat'            => $alamat,
         ];
 
@@ -135,6 +137,7 @@ function wp_desa_status_badge($status)
                             <th>Tempat/Tgl Lahir</th>
                             <th>Status Perkawinan</th>
                             <th>Pekerjaan</th>
+                            <th>Pendidikan</th>
                             <th style="text-align: right;">Aksi</th>
                         </tr>
                     </thead>
@@ -149,6 +152,7 @@ function wp_desa_status_badge($status)
                                     <td><?php echo esc_html($r->tempat_lahir ? $r->tempat_lahir . ', ' . $r->tanggal_lahir : ($r->tanggal_lahir ?: '-')); ?></td>
                                     <td><?php echo wp_desa_status_badge($r->status_perkawinan); ?></td>
                                     <td><?php echo esc_html($r->pekerjaan ?: '-'); ?></td>
+                                    <td><?php echo esc_html($r->pendidikan ?: '-'); ?></td>
                                     <td style="text-align:right;">
                                         <div class="wp-desa-inline-actions-end">
                                             <a href="?page=wp-desa-residents&action=edit&id=<?php echo (int)$r->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v2"/><path d="M21.34 15.664a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/><path d="M8 22H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></a>
@@ -159,7 +163,7 @@ function wp_desa_status_badge($status)
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="8" class="wp-desa-empty-state">
+                                <td colspan="9" class="wp-desa-empty-state">
                                     <span class="dashicons dashicons-warning"></span>
                                     <div class="wp-desa-mt-8">Belum ada data penduduk.</div>
                                 </td>
@@ -246,6 +250,23 @@ function wp_desa_status_badge($status)
                         <label class="wp-desa-label" for="res-pkj">Pekerjaan</label>
                         <input type="text" name="pekerjaan" id="res-pkj" class="wp-desa-input" placeholder="Contoh: Petani, PNS, Wiraswasta"
                             value="<?php echo $edit_resident ? esc_attr($edit_resident->pekerjaan) : ''; ?>">
+                    </div>
+                    <div class="wp-desa-form-group full-width">
+                        <label class="wp-desa-label" for="res-pdd">Pendidikan</label>
+                        <select name="pendidikan" id="res-pdd" class="wp-desa-select">
+                            <?php
+                            $edu_options = [
+                                'Belum Sekolah', 'Belum Tamat SD/Sederajat', 'Tamat SD/Sederajat',
+                                'SLTP/Sederajat', 'SLTA/Sederajat', 'Diploma I/II', 'Diploma III',
+                                'Diploma IV/Strata I', 'Strata II', 'Strata III',
+                            ];
+                            $current_pdd = $edit_resident ? $edit_resident->pendidikan : '';
+                            echo '<option value="">-- Pilih Pendidikan --</option>';
+                            foreach ($edu_options as $opt):
+                            ?>
+                                <option value="<?php echo esc_attr($opt); ?>" <?php selected($current_pdd === $opt); ?>><?php echo esc_html($opt); ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                     <div class="wp-desa-form-group full-width">
                         <label class="wp-desa-label" for="res-alamat">Alamat Lengkap</label>

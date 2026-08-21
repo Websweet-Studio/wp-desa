@@ -60,7 +60,7 @@ class Shortcode
     if ($stats === false || !is_array($stats)) {
       $needs_refresh = true;
     } else {
-      $required_keys = ['total', 'male', 'female', 'families', 'jobs', 'maritals', 'age_groups'];
+      $required_keys = ['total', 'male', 'female', 'families', 'jobs', 'maritals', 'age_groups', 'educations'];
       foreach ($required_keys as $key) {
         if (!array_key_exists($key, $stats)) {
           $needs_refresh = true;
@@ -78,6 +78,7 @@ class Shortcode
           'families' => 0,
           'jobs' => [],
           'maritals' => [],
+          'educations' => [],
           'age_groups' => [
             'anak' => 0,
             'dewasa' => 0,
@@ -96,6 +97,7 @@ class Shortcode
         }
 
         $job_stats = $wpdb->get_results("SELECT pekerjaan as label, COUNT(*) as count FROM $table GROUP BY pekerjaan ORDER BY count DESC LIMIT 6");
+        $education_stats = $wpdb->get_results("SELECT pendidikan as label, COUNT(*) as count FROM $table WHERE pendidikan != '' GROUP BY pendidikan ORDER BY count DESC LIMIT 10");
         $marital_stats = $wpdb->get_results("SELECT status_perkawinan as label, COUNT(*) as count FROM $table GROUP BY status_perkawinan");
         $age_groups = $wpdb->get_row("
                     SELECT
@@ -111,6 +113,7 @@ class Shortcode
           'families' => $families,
           'jobs' => $job_stats,
           'maritals' => $marital_stats,
+          'educations' => $education_stats,
           'age_groups' => $age_groups,
         ];
 
@@ -124,6 +127,7 @@ class Shortcode
     $female_val = isset($stats['female']) ? (int) $stats['female'] : 0;
     $job_stats = isset($stats['jobs']) && is_array($stats['jobs']) ? $stats['jobs'] : [];
     $marital_stats = isset($stats['maritals']) && is_array($stats['maritals']) ? $stats['maritals'] : [];
+    $education_stats = isset($stats['educations']) && is_array($stats['educations']) ? $stats['educations'] : [];
     $age_groups_raw = isset($stats['age_groups']) ? $stats['age_groups'] : null;
     if (is_object($age_groups_raw)) {
       $age_anak = isset($age_groups_raw->anak) ? (int) $age_groups_raw->anak : 0;
@@ -451,6 +455,22 @@ class Shortcode
                 <h5 class="wp-desa-demografi-group-title">Pekerjaan Terbanyak</h5>
                 <ul class="wp-desa-demografi-list">
                     <?php foreach ($job_stats as $row): ?>
+                    <li class="wp-desa-demografi-item">
+                        <span
+                            class="wp-desa-demografi-label"><?php echo esc_html($row->label ?: 'Tidak Diisi'); ?></span>
+                        <span
+                            class="wp-desa-demografi-value"><?php echo number_format_i18n((int) $row->count); ?></span>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+            <?php endif; ?>
+
+            <?php if (!empty($education_stats)): ?>
+            <div class="wp-desa-demografi-group">
+                <h5 class="wp-desa-demografi-group-title">Pendidikan Terbanyak</h5>
+                <ul class="wp-desa-demografi-list">
+                    <?php foreach ($education_stats as $row): ?>
                     <li class="wp-desa-demografi-item">
                         <span
                             class="wp-desa-demografi-label"><?php echo esc_html($row->label ?: 'Tidak Diisi'); ?></span>

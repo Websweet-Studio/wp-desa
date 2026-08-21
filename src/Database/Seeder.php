@@ -15,6 +15,7 @@ class Seeder {
         $cities = ['Jakarta', 'Surabaya', 'Bandung', 'Medan', 'Semarang', 'Makassar', 'Palembang', 'Depok', 'Tangerang', 'Bekasi', 'Yogyakarta', 'Malang', 'Solo', 'Denpasar', 'Padang'];
         $jobs = ['PNS', 'Wiraswasta', 'Petani', 'Buruh', 'Guru', 'Dokter', 'Pedagang', 'Karyawan Swasta', 'Mahasiswa', 'Ibu Rumah Tangga', 'Sopir', 'Nelayan'];
         $marital_statuses = ['Belum Kawin', 'Kawin', 'Cerai Hidup', 'Cerai Mati'];
+        $educations = ['Belum Sekolah', 'Belum Tamat SD/Sederajat', 'Tamat SD/Sederajat', 'SLTP/Sederajat', 'SLTA/Sederajat', 'Diploma I/II', 'Diploma III', 'Diploma IV/Strata I', 'Strata II', 'Strata III'];
 
         $inserted = 0;
         $duplicate_attempts = 0;
@@ -48,6 +49,7 @@ class Seeder {
                 'alamat' => 'Jl. ' . $last_names[array_rand($last_names)] . ' No. ' . rand(1, 999) . ', RT ' . sprintf('%03d', rand(1, 20)) . '/RW ' . sprintf('%03d', rand(1, 20)),
                 'status_perkawinan' => $marital_statuses[array_rand($marital_statuses)],
                 'pekerjaan' => $jobs[array_rand($jobs)],
+                'pendidikan' => $educations[array_rand($educations)],
                 'created_at' => current_time('mysql'),
             ];
 

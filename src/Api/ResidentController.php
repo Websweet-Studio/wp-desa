@@ -154,6 +154,7 @@ class ResidentController extends WP_REST_Controller
             'alamat' => sanitize_textarea_field($params['alamat']),
             'status_perkawinan' => sanitize_text_field($params['status_perkawinan']),
             'pekerjaan' => sanitize_text_field($params['pekerjaan']),
+            'pendidikan' => sanitize_text_field($params['pendidikan'] ?? ''),
             'created_at' => current_time('mysql'),
         ];
 
@@ -194,6 +195,7 @@ class ResidentController extends WP_REST_Controller
             'alamat' => sanitize_textarea_field($params['alamat']),
             'status_perkawinan' => sanitize_text_field($params['status_perkawinan']),
             'pekerjaan' => sanitize_text_field($params['pekerjaan']),
+            'pendidikan' => sanitize_text_field($params['pendidikan'] ?? ''),
         ];
 
         $where = ['id' => $id];
@@ -249,7 +251,7 @@ class ResidentController extends WP_REST_Controller
         $output = fopen('php://output', 'w');
 
         // Headers
-        fputcsv($output, ['NIK', 'No. KK', 'Nama Lengkap', 'Jenis Kelamin', 'Tempat Lahir', 'Tanggal Lahir', 'Alamat', 'Status Perkawinan', 'Pekerjaan']);
+        fputcsv($output, ['NIK', 'No. KK', 'Nama Lengkap', 'Jenis Kelamin', 'Tempat Lahir', 'Tanggal Lahir', 'Alamat', 'Status Perkawinan', 'Pekerjaan', 'Pendidikan']);
 
         foreach ($results as $row) {
             fputcsv($output, [
@@ -261,7 +263,8 @@ class ResidentController extends WP_REST_Controller
                 $row['tanggal_lahir'],
                 $row['alamat'],
                 $row['status_perkawinan'],
-                $row['pekerjaan']
+                $row['pekerjaan'],
+                $row['pendidikan'] ?? ''
             ]);
         }
 
@@ -307,6 +310,7 @@ class ResidentController extends WP_REST_Controller
                 'alamat' => sanitize_textarea_field($data[6]),
                 'status_perkawinan' => sanitize_text_field($data[7]),
                 'pekerjaan' => sanitize_text_field($data[8]),
+                'pendidikan' => sanitize_text_field($data[9] ?? ''),
                 'created_at' => current_time('mysql'),
             ];
 

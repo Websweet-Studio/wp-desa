@@ -22,6 +22,7 @@ class Activator
             alamat text NOT NULL,
             status_perkawinan varchar(50) NOT NULL,
             pekerjaan varchar(100) NOT NULL,
+            pendidikan varchar(100) NOT NULL DEFAULT '',
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY  (id),
             UNIQUE KEY nik (nik)
