@@ -49,4 +49,16 @@ add_action('plugins_loaded', 'wp_desa_init');
 // Activation Hook
 register_activation_hook(__FILE__, function () {
   \WpDesa\Database\Activator::activate();
+  update_option('wp_desa_db_version', WP_DESA_VERSION);
 });
+
+// DB Upgrade Check: ensure schema changes are applied to existing installs
+function wp_desa_check_upgrade()
+{
+  $installed = get_option('wp_desa_db_version', '0');
+  if (version_compare($installed, WP_DESA_VERSION, '<')) {
+    \WpDesa\Database\Activator::activate();
+    update_option('wp_desa_db_version', WP_DESA_VERSION);
+  }
+}
+add_action('init', 'wp_desa_check_upgrade');

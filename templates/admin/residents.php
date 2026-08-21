@@ -6,62 +6,6 @@ $per_page   = 20;
 $action     = isset($_GET['action']) ? $_GET['action'] : 'list';
 
 // ============================================================
-// Handle POST: save / update resident
-// ============================================================
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wp_desa_save_resident'])) {
-    $id       = isset($_POST['id']) ? intval($_POST['id']) : 0;
-    $nik      = isset($_POST['nik']) ? sanitize_text_field($_POST['nik']) : '';
-    $no_kk    = isset($_POST['no_kk']) ? sanitize_text_field($_POST['no_kk']) : '';
-    $nama     = isset($_POST['nama_lengkap']) ? sanitize_text_field($_POST['nama_lengkap']) : '';
-    $jk       = isset($_POST['jenis_kelamin']) ? sanitize_text_field($_POST['jenis_kelamin']) : '';
-    $sp       = isset($_POST['status_perkawinan']) ? sanitize_text_field($_POST['status_perkawinan']) : '';
-    $tl       = isset($_POST['tempat_lahir']) ? sanitize_text_field($_POST['tempat_lahir']) : '';
-    $tgl      = isset($_POST['tanggal_lahir']) ? sanitize_text_field($_POST['tanggal_lahir']) : '';
-    $pkj      = isset($_POST['pekerjaan']) ? sanitize_text_field($_POST['pekerjaan']) : '';
-    $pdd      = isset($_POST['pendidikan']) ? sanitize_text_field($_POST['pendidikan']) : '';
-    $alamat   = isset($_POST['alamat']) ? sanitize_textarea_field($_POST['alamat']) : '';
-    $errors   = [];
-
-    if (empty($nik)) $errors[] = 'NIK wajib diisi.';
-    if (empty($nama)) $errors[] = 'Nama lengkap wajib diisi.';
-
-    // Check duplicate NIK
-    if (empty($errors) && $id > 0) {
-        $dup = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_name WHERE nik = %s AND id != %d", $nik, $id));
-    } elseif (empty($errors)) {
-        $dup = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_name WHERE nik = %s", $nik));
-    }
-    if (!empty($dup)) $errors[] = 'NIK sudah terdaftar.';
-
-    if (empty($errors)) {
-        $data = [
-            'nik'               => $nik,
-            'no_kk'             => $no_kk,
-            'nama_lengkap'      => $nama,
-            'jenis_kelamin'     => $jk,
-            'status_perkawinan' => $sp,
-            'tempat_lahir'      => $tl,
-            'tanggal_lahir'     => $tgl,
-            'pekerjaan'         => $pkj,
-            'pendidikan'        => $pdd,
-            'alamat'            => $alamat,
-        ];
-
-        if ($id > 0) {
-            $wpdb->update($table_name, $data, ['id' => $id]);
-        } else {
-            $data['created_at'] = current_time('mysql');
-            $wpdb->insert($table_name, $data);
-        }
-
-        delete_transient('wp_desa_quick_stats');
-
-        wp_redirect(admin_url('admin.php?page=wp-desa-residents&saved=1'));
-        exit;
-    }
-}
-
-// ============================================================
 // Edit mode: fetch resident
 // ============================================================
 $edit_resident = null;
@@ -106,9 +50,9 @@ function wp_desa_status_badge($status)
         </div>
     <?php endif; ?>
 
-    <?php if (!empty($errors)): ?>
+    <?php if (isset($_GET['error'])): ?>
         <div class="notice notice-error is-dismissible">
-            <?php foreach ($errors as $e): ?><p><?php echo esc_html($e); ?></p><?php endforeach; ?>
+            <p><?php echo $_GET['error'] === 'duplicate' ? 'NIK sudah terdaftar.' : 'NIK dan Nama lengkap wajib diisi.'; ?></p>
         </div>
     <?php endif; ?>
 
@@ -122,7 +66,13 @@ function wp_desa_status_badge($status)
                 </div>
                 <div>
                     <a href="?page=wp-desa-residents&action=add" class="wp-desa-btn wp-desa-btn-primary">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 .83.18 2 2 0 0 0 .83-.18l8.58-3.9a1 1 0 0 0 0-1.831z"/><path d="M16 17h6"/><path d="M19 14v6"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 .825.178"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l2.116-.962"/></svg> Tambah Data
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;">
+                            <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 .83.18 2 2 0 0 0 .83-.18l8.58-3.9a1 1 0 0 0 0-1.831z" />
+                            <path d="M16 17h6" />
+                            <path d="M19 14v6" />
+                            <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 .825.178" />
+                            <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l2.116-.962" />
+                        </svg> Tambah Data
                     </a>
                 </div>
             </div>
@@ -155,8 +105,19 @@ function wp_desa_status_badge($status)
                                     <td><?php echo esc_html($r->pendidikan ?: '-'); ?></td>
                                     <td style="text-align:right;">
                                         <div class="wp-desa-inline-actions-end">
-                                            <a href="?page=wp-desa-residents&action=edit&id=<?php echo (int)$r->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v2"/><path d="M21.34 15.664a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/><path d="M8 22H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg></a>
-                                            <button class="wp-desa-btn wp-desa-btn-danger-outline wp-desa-btn-sm btn-delete-resident" data-id="<?php echo (int)$r->id; ?>" title="Hapus"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
+                                            <a href="?page=wp-desa-residents&action=edit&id=<?php echo (int)$r->id; ?>" class="wp-desa-btn wp-desa-btn-secondary wp-desa-btn-sm" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M16 4h2a2 2 0 0 1 2 2v2" />
+                                                    <path d="M21.34 15.664a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z" />
+                                                    <path d="M8 22H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                                                    <rect x="8" y="2" width="8" height="4" rx="1" />
+                                                </svg></a>
+                                            <button class="wp-desa-btn wp-desa-btn-danger-outline wp-desa-btn-sm btn-delete-resident" data-id="<?php echo (int)$r->id; ?>" title="Hapus"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M10 11v6" />
+                                                    <path d="M14 11v6" />
+                                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                                    <path d="M3 6h18" />
+                                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                </svg></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -256,9 +217,16 @@ function wp_desa_status_badge($status)
                         <select name="pendidikan" id="res-pdd" class="wp-desa-select">
                             <?php
                             $edu_options = [
-                                'Belum Sekolah', 'Belum Tamat SD/Sederajat', 'Tamat SD/Sederajat',
-                                'SLTP/Sederajat', 'SLTA/Sederajat', 'Diploma I/II', 'Diploma III',
-                                'Diploma IV/Strata I', 'Strata II', 'Strata III',
+                                'Belum Sekolah',
+                                'Belum Tamat SD/Sederajat',
+                                'Tamat SD/Sederajat',
+                                'SLTP/Sederajat',
+                                'SLTA/Sederajat',
+                                'Diploma I/II',
+                                'Diploma III',
+                                'Diploma IV/Strata I',
+                                'Strata II',
+                                'Strata III',
                             ];
                             $current_pdd = $edit_resident ? $edit_resident->pendidikan : '';
                             echo '<option value="">-- Pilih Pendidikan --</option>';

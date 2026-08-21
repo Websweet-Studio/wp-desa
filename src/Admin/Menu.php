@@ -21,6 +21,7 @@ class Menu
         add_action('admin_init', [$this, 'handle_page_generate']);
         add_action('admin_init', [$this, 'handle_settings_submit']);
         add_action('admin_init', [$this, 'handle_perangkat_submit']);
+        add_action('admin_init', [$this, 'handle_resident_submit']);
 
         $plugin_name = self::plugin_name();
 
@@ -381,6 +382,69 @@ class Menu
         }
 
         AdminLayout::close();
+    }
+
+    public function handle_resident_submit()
+    {
+        if (!isset($_POST['wp_desa_save_resident']) || !current_user_can('manage_options')) {
+            return;
+        }
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'desa_residents';
+
+        $id       = isset($_POST['id']) ? intval($_POST['id']) : 0;
+        $nik      = isset($_POST['nik']) ? sanitize_text_field($_POST['nik']) : '';
+        $no_kk    = isset($_POST['no_kk']) ? sanitize_text_field($_POST['no_kk']) : '';
+        $nama     = isset($_POST['nama_lengkap']) ? sanitize_text_field($_POST['nama_lengkap']) : '';
+        $jk       = isset($_POST['jenis_kelamin']) ? sanitize_text_field($_POST['jenis_kelamin']) : '';
+        $sp       = isset($_POST['status_perkawinan']) ? sanitize_text_field($_POST['status_perkawinan']) : '';
+        $tl       = isset($_POST['tempat_lahir']) ? sanitize_text_field($_POST['tempat_lahir']) : '';
+        $tgl      = isset($_POST['tanggal_lahir']) ? sanitize_text_field($_POST['tanggal_lahir']) : '';
+        $pkj      = isset($_POST['pekerjaan']) ? sanitize_text_field($_POST['pekerjaan']) : '';
+        $pdd      = isset($_POST['pendidikan']) ? sanitize_text_field($_POST['pendidikan']) : '';
+        $alamat   = isset($_POST['alamat']) ? sanitize_textarea_field($_POST['alamat']) : '';
+
+        $redirect = admin_url('admin.php?page=wp-desa-residents');
+
+        if (empty($nik) || empty($nama)) {
+            wp_safe_redirect(add_query_arg(['action' => $id > 0 ? 'edit' : 'add', 'id' => $id, 'error' => 'required'], $redirect));
+            exit;
+        }
+
+        $dup = $id > 0
+            ? $wpdb->get_var($wpdb->prepare("SELECT id FROM $table WHERE nik = %s AND id != %d", $nik, $id))
+            : $wpdb->get_var($wpdb->prepare("SELECT id FROM $table WHERE nik = %s", $nik));
+
+        if ($dup) {
+            wp_safe_redirect(add_query_arg(['action' => $id > 0 ? 'edit' : 'add', 'id' => $id, 'error' => 'duplicate'], $redirect));
+            exit;
+        }
+
+        $data = [
+            'nik'               => $nik,
+            'no_kk'             => $no_kk,
+            'nama_lengkap'      => $nama,
+            'jenis_kelamin'     => $jk,
+            'status_perkawinan' => $sp,
+            'tempat_lahir'      => $tl,
+            'tanggal_lahir'     => $tgl,
+            'pekerjaan'         => $pkj,
+            'pendidikan'        => $pdd,
+            'alamat'            => $alamat,
+        ];
+
+        if ($id > 0) {
+            $wpdb->update($table, $data, ['id' => $id]);
+        } else {
+            $data['created_at'] = current_time('mysql');
+            $wpdb->insert($table, $data);
+        }
+
+        delete_transient('wp_desa_quick_stats');
+
+        wp_safe_redirect(add_query_arg('saved', '1', $redirect));
+        exit;
     }
 
     public function handle_seed_clear()
