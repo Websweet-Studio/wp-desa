@@ -126,6 +126,24 @@ $counts['all'] = array_sum($counts);
             </div>
 
             <div style="margin-bottom: 20px;">
+                <span class="wp-desa-info-label" style="margin-bottom: 4px; display: block;">Identitas:</span>
+                <div class="wp-desa-detail-box" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                    <div>Tempat/Tgl Lahir: <b><?php echo esc_html(trim((isset($letter->tempat_lahir) ? $letter->tempat_lahir : '') . ', ' . (isset($letter->tanggal_lahir) ? $letter->tanggal_lahir : ''), ', ')); ?></b></div>
+                    <div>Jenis Kelamin: <b><?php echo esc_html(isset($letter->jenis_kelamin) ? $letter->jenis_kelamin : '-'); ?></b></div>
+                    <div>Warganegara: <b><?php echo esc_html(isset($letter->warganegara) && $letter->warganegara ? $letter->warganegara : 'Indonesia'); ?></b></div>
+                    <div>Agama: <b><?php echo esc_html(isset($letter->agama) && $letter->agama ? $letter->agama : '-'); ?></b></div>
+                    <div>Pekerjaan: <b><?php echo esc_html(isset($letter->pekerjaan) && $letter->pekerjaan ? $letter->pekerjaan : '-'); ?></b></div>
+                    <div>Status Perkawinan: <b><?php echo esc_html(isset($letter->status_perkawinan) && $letter->status_perkawinan ? $letter->status_perkawinan : '-'); ?></b></div>
+                    <div style="grid-column:1/-1;">Alamat: <b><?php echo esc_html(isset($letter->alamat) && $letter->alamat ? $letter->alamat : '-'); ?></b></div>
+                    <div style="grid-column:1/-1;">Berlaku: <b><?php
+                        $bm = !empty($letter->berlaku_mulai) ? $letter->berlaku_mulai : $letter->created_at;
+                        $bs = !empty($letter->berlaku_sampai) ? $letter->berlaku_sampai : date('Y-m-d H:i:s', strtotime($letter->created_at . ' +1 month'));
+                        echo esc_html(date_i18n('d-m-Y', strtotime($bm)) . ' s/d ' . date_i18n('d-m-Y', strtotime($bs)));
+                    ?></b></div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
                 <span class="wp-desa-info-label" style="margin-bottom: 4px; display: block;">Keperluan / Keterangan:</span>
                 <div class="wp-desa-detail-box"><?php echo esc_html($letter->details ?: '-'); ?></div>
             </div>

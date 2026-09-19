@@ -141,7 +141,7 @@ class LetterController extends WP_REST_Controller
             return new WP_Error('resident_not_found', 'NIK tidak ditemukan. Harap isi Nama Lengkap jika belum terdaftar.', ['status' => 400]);
         }
 
-        $tracking_code = strtoupper(wp_generate_password(8, false));
+        $tracking_code = 'LTR-' . strtoupper(wp_generate_password(8, false));
 
         $data = [
             'tracking_code' => $tracking_code,
@@ -174,14 +174,15 @@ class LetterController extends WP_REST_Controller
         $table_types = $wpdb->prefix . 'desa_letter_types';
 
         $code = $request->get_param('code');
+        $code = strtoupper(sanitize_text_field(trim((string) $code)));
         if (empty($code)) {
             return new WP_Error('missing_code', 'Kode tracking wajib diisi', ['status' => 400]);
         }
 
         $sql = "SELECT l.*, t.name as type_name 
                 FROM $table_letters l 
-                JOIN $table_types t ON l.letter_type_id = t.id 
-                WHERE l.tracking_code = %s";
+                LEFT JOIN $table_types t ON l.letter_type_id = t.id 
+                WHERE UPPER(l.tracking_code) = %s";
 
         $letter = $wpdb->get_row($wpdb->prepare($sql, $code));
 

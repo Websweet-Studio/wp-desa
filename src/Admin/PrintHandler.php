@@ -27,7 +27,10 @@ class PrintHandler
         // Fetch Letter + Type + Resident Details (Full JOIN to get resident details)
         // We join residents table on NIK to get details for the letter body
         $sql = "SELECT l.*, t.name as type_name, t.code as type_code, 
-                       r.tempat_lahir, r.tanggal_lahir, r.jenis_kelamin, r.pekerjaan, r.alamat, r.status_perkawinan
+                       r.tempat_lahir as r_tempat_lahir, r.tanggal_lahir as r_tanggal_lahir,
+                       r.jenis_kelamin as r_jenis_kelamin, r.pekerjaan as r_pekerjaan,
+                       r.alamat as r_alamat, r.status_perkawinan as r_status_perkawinan,
+                       r.agama as r_agama, r.warganegara as r_warganegara
                 FROM $table_letters l 
                 LEFT JOIN $table_types t ON l.letter_type_id = t.id 
                 LEFT JOIN $table_residents r ON l.nik = r.nik

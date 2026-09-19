@@ -348,6 +348,7 @@ class Menu
     {
         $subnav = [
             ['tab' => 'surat', 'label' => 'Surat'],
+            ['tab' => 'jenis', 'label' => 'Jenis Surat'],
             ['tab' => 'aduan', 'label' => 'Aduan'],
         ];
 
@@ -357,6 +358,8 @@ class Menu
 
         if ($current_tab === 'aduan') {
             require_once WP_DESA_PATH . 'templates/admin/complaints.php';
+        } elseif ($current_tab === 'jenis') {
+            require_once WP_DESA_PATH . 'templates/admin/letter-types.php';
         } else {
             require_once WP_DESA_PATH . 'templates/admin/letters.php';
         }
@@ -404,6 +407,8 @@ class Menu
         $pkj      = isset($_POST['pekerjaan']) ? sanitize_text_field($_POST['pekerjaan']) : '';
         $pdd      = isset($_POST['pendidikan']) ? sanitize_text_field($_POST['pendidikan']) : '';
         $alamat   = isset($_POST['alamat']) ? sanitize_textarea_field($_POST['alamat']) : '';
+        $agama    = isset($_POST['agama']) ? sanitize_text_field($_POST['agama']) : '';
+        $wn       = isset($_POST['warganegara']) ? sanitize_text_field($_POST['warganegara']) : 'Indonesia';
 
         $redirect = admin_url('admin.php?page=wp-desa-residents');
 
@@ -432,6 +437,8 @@ class Menu
             'pekerjaan'         => $pkj,
             'pendidikan'        => $pdd,
             'alamat'            => $alamat,
+            'agama'             => $agama,
+            'warganegara'       => $wn,
         ];
 
         if ($id > 0) {

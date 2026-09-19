@@ -136,11 +136,12 @@ class ComplaintController extends WP_REST_Controller
         $table_complaints = $wpdb->prefix . 'desa_complaints';
 
         $code = $request->get_param('code');
+        $code = strtoupper(sanitize_text_field(trim((string) $code)));
         if (empty($code)) {
             return new WP_Error('missing_code', 'Kode tracking wajib diisi', ['status' => 400]);
         }
 
-        $complaint = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_complaints WHERE tracking_code = %s", $code));
+        $complaint = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_complaints WHERE UPPER(tracking_code) = %s", $code));
 
         if (!$complaint) {
             return new WP_Error('not_found', 'Laporan tidak ditemukan', ['status' => 404]);

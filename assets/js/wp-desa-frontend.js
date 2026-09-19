@@ -7,10 +7,12 @@
 (function ($, window, document) {
   "use strict";
 
-  // Read restBase from global injected by PHP
-  var restBase =
-    (window.wpDesaFrontend && window.wpDesaFrontend.restBase) ||
-    "/wp-json/wp-desa/v1";
+  // Ganti REST API (diblokir Immunify/WAF) → admin-ajax.php
+  var ajaxUrl =
+    (window.wpDesaFrontend && window.wpDesaFrontend.ajaxUrl) ||
+    (typeof wpDesaAjaxUrl !== "undefined"
+      ? wpDesaAjaxUrl
+      : "/wp-admin/admin-ajax.php");
 
   // ==========================================================================
   // Shared helper functions
@@ -35,7 +37,10 @@
 
   function formatDate(dateString) {
     if (!dateString) return "-";
-    return new Date(dateString).toLocaleDateString("id-ID", {
+    var normalized = String(dateString).replace(" ", "T");
+    var d = new Date(normalized);
+    if (isNaN(d.getTime())) return dateString;
+    return d.toLocaleDateString("id-ID", {
       day: "numeric",
       month: "long",
       year: "numeric",
@@ -433,12 +438,15 @@
       });
     }
 
+    // ---- URLs (AJAX-based, replaces REST API) ----
     function _summaryUrl() {
-      return restBase + "/finances/summary?year=" + state.filterYear;
+      return (
+        ajaxUrl + "?action=desagubug_finances_summary&year=" + state.filterYear
+      );
     }
 
     function _dataUrl() {
-      return restBase + "/finances?year=" + state.filterYear;
+      return ajaxUrl + "?action=desagubug_finances&year=" + state.filterYear;
     }
 
     // ---- events ----
@@ -766,9 +774,13 @@
       state.activeProgramId = program.id;
       state.recipients = [];
 
-      $.getJSON(
-        restBase + "/aid-programs/" + program.id + "/recipients",
-        function (data) {
+      $.ajax({
+        url: ajaxUrl,
+        method: "GET",
+        data: { action: "desagubug_aid_recipients", program_id: program.id },
+        dataType: "json",
+        success: function (resp) {
+          var data = (resp.success && resp.data) || resp;
           state.recipients = Array.isArray(data && data.data)
             ? data.data
             : Array.isArray(data)
@@ -776,7 +788,7 @@
               : [];
           renderPrograms();
         },
-      );
+      });
     }
 
     // ---- events ----
@@ -790,7 +802,7 @@
 
     // ---- fetch ----
     function fetchPrograms() {
-      $.getJSON(restBase + "/aid-programs", function (data) {
+      $.getJSON(ajaxUrl + "?action=desagubug_aid_programs", function (data) {
         state.programs = Array.isArray(data && data.data)
           ? data.data
           : Array.isArray(data)
@@ -870,10 +882,8 @@
       $tabs.each(function () {
         var $btn = $(this);
         var isActive = false;
-        if (tab === "form" && $btn.text().indexOf("Buat") >= 0)
-          isActive = true;
-        if (tab === "track" && $btn.text().indexOf("Cek") >= 0)
-          isActive = true;
+        if (tab === "form" && $btn.text().indexOf("Buat") >= 0) isActive = true;
+        if (tab === "track" && $btn.text().indexOf("Cek") >= 0) isActive = true;
 
         if (isActive) {
           $btn.addClass("active");
@@ -927,8 +937,9 @@
         $photoInput[0] && $photoInput[0].files && $photoInput[0].files[0];
       if (photoFile) formData.append("photo", photoFile);
 
+      formData.append("action", "desagubug_submit_complaint");
       $.ajax({
-        url: restBase + "/complaints/submit",
+        url: ajaxUrl,
         method: "POST",
         data: formData,
         processData: false,
@@ -1019,16 +1030,24 @@
     // ---- check status ----
     function checkStatus(e) {
       e.preventDefault();
+      var code = $.trim($trackCodeInput.val() || "");
+      if (!code) {
+        state.tracking = false;
+        state.trackResult = null;
+        state.trackError = "Masukkan kode tracking terlebih dahulu.";
+        updateTrackUI();
+        return;
+      }
       state.tracking = true;
       state.trackResult = null;
       state.trackError = null;
       updateTrackUI();
 
       $.getJSON(
-        restBase +
-          "/complaints/track?code=" +
-          encodeURIComponent($trackCodeInput.val()),
-        function (data) {
+        ajaxUrl,
+        { action: "desagubug_track_complaint", code: code },
+        function (resp) {
+          var data = (resp.success && resp.data) || resp;
           state.tracking = false;
           if (data && data.id) {
             state.trackResult = data;
@@ -1038,11 +1057,7 @@
           }
           updateTrackUI();
         },
-      ).fail(function () {
-        state.tracking = false;
-        state.trackError = "Gagal menghubungi server.";
-        updateTrackUI();
-      });
+      );
     }
 
     function updateTrackUI() {
@@ -1091,7 +1106,7 @@
         $trackResultDiv.show();
         $trackErrorDiv.hide().empty();
       } else {
-        $trackResultDiv.hide().empty();
+        $trackResultDiv.hide();
       }
 
       // Error
@@ -1142,14 +1157,24 @@
     var state = {
       tab: "request",
       types: [],
-      form: { nik: "", name: "", phone: "", letter_type_id: "", details: "" },
+      form: {
+        nik: "",
+        name: "",
+        phone: "",
+        letter_type_id: "",
+        details: "",
+        jenis_kelamin: "",
+        tempat_lahir: "",
+        tanggal_lahir: "",
+        warganegara: "Indonesia",
+        agama: "",
+        pekerjaan: "",
+        status_perkawinan: "",
+        alamat: "",
+      },
       message: { type: "", content: "" },
       trackingCode: null,
       submitting: false,
-      trackCode: "",
-      trackResult: null,
-      trackError: null,
-      tracking: false,
     };
 
     // DOM refs — all relative to $el
@@ -1166,30 +1191,30 @@
       '[x-model="form.letter_type_id"]',
     );
     var $details = $requestPanel.find('[x-model="form.details"]');
+    var $jenisKelamin = $requestPanel.find('[x-model="form.jenis_kelamin"]');
+    var $tempatLahir = $requestPanel.find('[x-model="form.tempat_lahir"]');
+    var $tanggalLahir = $requestPanel.find('[x-model="form.tanggal_lahir"]');
+    var $warganegara = $requestPanel.find('[x-model="form.warganegara"]');
+    var $agama = $requestPanel.find('[x-model="form.agama"]');
+    var $pekerjaan = $requestPanel.find('[x-model="form.pekerjaan"]');
+    var $statusPerkawinan = $requestPanel.find(
+      '[x-model="form.status_perkawinan"]',
+    );
+    var $alamat = $requestPanel.find('[x-model="form.alamat"]');
     var $submitBtn = $requestPanel.find('button[type="submit"]');
     var $typeDescription = $requestPanel.find(".wp-desa-layanan-type-desc");
+    var $typeBerlaku = $requestPanel.find(".wp-desa-layanan-type-berlaku");
 
-    // Message / tracking displays
-    var $msgContent = $requestPanel.find('[x-show="message.content"]');
-    var $trackingBox = $requestPanel.find('[x-show="trackingCode"]');
+    // Message / tracking displays (support old + new markup)
+    var $msgContent = $requestPanel.find(
+      '.wp-desa-message, [x-show="message.content"]',
+    );
+    var $trackingBox = $requestPanel.find(
+      '.wp-desa-tracking-box, [x-show="trackingCode"]',
+    );
 
-    // Tracking panel elements
-    var $trackCodeInput = $trackingPanel.find('[x-model="trackCode"]');
-    var $trackBtn = $trackingPanel.find("button");
-    var $trackResultDiv = $trackingPanel.find('[x-show="trackResult"]');
-    var $trackErrorDiv = $trackingPanel.find('[x-show="trackError"]');
-
-    // ---- helpers ----
-    function formatStatus(status) {
-      var map = {
-        pending: "Menunggu",
-        processed: "Diproses",
-        ready: "Siap Diambil",
-        completed: "Selesai",
-        rejected: "Ditolak",
-      };
-      return map[status] || status;
-    }
+    // Tracking panel elements — the tracking form is a plain HTML GET form
+    // that re-renders the result server-side, so there is no tracking JS state.
 
     // ---- tab switching ----
     function switchTab(tab) {
@@ -1244,6 +1269,42 @@
         return String(t.id) === String(selectedId);
       });
       $typeDescription.text(found ? found.description || "" : "");
+      if (found && found.berlaku_bulan) {
+        $typeBerlaku.text(
+          "Masa berlaku surat: " +
+            found.berlaku_bulan +
+            " bulan sejak tanggal pengajuan.",
+        );
+      } else {
+        $typeBerlaku.text("");
+      }
+    }
+
+    // ---- auto-fill data penduduk berdasarkan NIK (hybrid) ----
+    function lookupResident() {
+      var nik = ($nik.val() || "").trim();
+      if (nik.length < 16) return;
+      $.ajax({
+        url: ajaxUrl,
+        method: "POST",
+        data: { action: "desagubug_get_resident", nik: nik },
+        dataType: "json",
+        success: function (resp) {
+          var data = resp && resp.success && resp.data ? resp.data : null;
+          if (!data) return;
+          if (data.nama_lengkap && !($name.val() || "").trim())
+            $name.val(data.nama_lengkap);
+          if (data.jenis_kelamin) $jenisKelamin.val(data.jenis_kelamin);
+          if (data.tempat_lahir) $tempatLahir.val(data.tempat_lahir);
+          if (data.tanggal_lahir) $tanggalLahir.val(data.tanggal_lahir);
+          if (data.warganegara) $warganegara.val(data.warganegara);
+          if (data.agama) $agama.val(data.agama);
+          if (data.pekerjaan) $pekerjaan.val(data.pekerjaan);
+          if (data.status_perkawinan)
+            $statusPerkawinan.val(data.status_perkawinan);
+          if (data.alamat) $alamat.val(data.alamat);
+        },
+      });
     }
 
     // ---- submit request ----
@@ -1255,19 +1316,29 @@
       updateRequestUI();
 
       $.ajax({
-        url: restBase + "/letters/request",
+        url: ajaxUrl,
         method: "POST",
-        contentType: "application/json",
-        data: JSON.stringify({
+        data: {
+          action: "desagubug_request_letter",
           nik: $nik.val() || "",
           name: $name.val() || "",
           phone: $phone.val() || "",
           letter_type_id: $letterTypeSelect.val() || "",
           details: $details.val() || "",
-        }),
-        success: function (data) {
+          jenis_kelamin: $jenisKelamin.val() || "",
+          tempat_lahir: $tempatLahir.val() || "",
+          tanggal_lahir: $tanggalLahir.val() || "",
+          warganegara: $warganegara.val() || "",
+          agama: $agama.val() || "",
+          pekerjaan: $pekerjaan.val() || "",
+          status_perkawinan: $statusPerkawinan.val() || "",
+          alamat: $alamat.val() || "",
+        },
+        dataType: "json",
+        success: function (resp) {
+          var data = (resp.success && resp.data) || resp;
           state.submitting = false;
-          if (data.success) {
+          if (resp.success || data.success) {
             state.message = { type: "success", content: data.message };
             state.trackingCode = data.tracking_code;
             // Reset form
@@ -1276,7 +1347,35 @@
             $phone.val("");
             $letterTypeSelect.val("");
             $details.val("");
+            $jenisKelamin.val("");
+            $tempatLahir.val("");
+            $tanggalLahir.val("");
+            $warganegara.val("Indonesia");
+            $agama.val("");
+            $pekerjaan.val("");
+            $statusPerkawinan.val("");
+            $alamat.val("");
             $typeDescription.text("");
+            $typeBerlaku.text("");
+            // Reload letter types
+            $.getJSON(
+              ajaxUrl,
+              { action: "desagubug_letter_types" },
+              function (typesResp) {
+                var types = (typesResp.success && typesResp.data) || typesResp;
+                state.types = Array.isArray(types) ? types : [];
+                var opts = '<option value="">Pilih Jenis Surat</option>';
+                $.each(state.types, function (_, t) {
+                  opts +=
+                    '<option value="' +
+                    t.id +
+                    '">' +
+                    escapeHtml(t.name) +
+                    "</option>";
+                });
+                $letterTypeSelect.html(opts);
+              },
+            );
           } else {
             state.message = {
               type: "error",
@@ -1303,14 +1402,20 @@
         $msgContent
           .text(state.message.content)
           .removeClass("wp-desa-message-success wp-desa-message-error")
-          .addClass(isSuccess ? "wp-desa-message-success" : "wp-desa-message-error")
+          .addClass(
+            isSuccess ? "wp-desa-message-success" : "wp-desa-message-error",
+          )
           .show();
       } else {
-        $msgContent.hide().text("").removeClass("wp-desa-message-success wp-desa-message-error");
+        $msgContent
+          .hide()
+          .text("")
+          .removeClass("wp-desa-message-success wp-desa-message-error");
       }
 
       // Tracking code box
       if (state.trackingCode) {
+        $trackingBox.find(".wp-desa-tracking-number").text(state.trackingCode);
         $trackingBox.show();
       } else {
         $trackingBox.hide();
@@ -1330,86 +1435,10 @@
       }
     }
 
-    // ---- check status ----
-    function checkStatus(e) {
-      if (e) e.preventDefault();
-      state.tracking = true;
-      state.trackResult = null;
-      state.trackError = null;
-      updateTrackUI();
-
-      $.getJSON(
-        restBase +
-          "/letters/track?code=" +
-          encodeURIComponent($trackCodeInput.val()),
-        function (data) {
-          state.tracking = false;
-          if (data && data.id) {
-            state.trackResult = data;
-          } else {
-            state.trackError =
-              (data && data.message) || "Data tidak ditemukan.";
-          }
-          updateTrackUI();
-        },
-      ).fail(function () {
-        state.tracking = false;
-        state.trackError = "Gagal menghubungi server.";
-        updateTrackUI();
-      });
-    }
-
-    function updateTrackUI() {
-      // Button
-      var $normalSpan = $trackBtn.find("span").eq(0);
-      var $loadingSpan = $trackBtn.find("span").eq(1);
-      if (state.tracking) {
-        $trackBtn.prop("disabled", true);
-        $normalSpan.hide();
-        $loadingSpan.show();
-      } else {
-        $trackBtn.prop("disabled", false);
-        $normalSpan.show();
-        $loadingSpan.hide();
-      }
-
-      // Result
-      if (state.trackResult) {
-        var r = state.trackResult;
-        var statusStyleMap = {
-          pending: "background:#fef3c7;color:#92400e;",
-          processed: "background:#dbeafe;color:#1e40af;",
-          ready: "background:#e6f4ea;color:#1f6b3c;",
-          completed: "background:#d1fae5;color:#065f46;",
-          rejected: "background:#fce8e6;color:#b3262b;",
-        };
-        var statusStyle = statusStyleMap[r.status] || "";
-
-        $trackResultDiv.find(".wp-desa-layanan-track-name").text(r.name || "");
-        $trackResultDiv
-          .find(".wp-desa-layanan-track-date")
-          .text(formatDate(r.created_at));
-        $trackResultDiv
-          .find(".wp-desa-layanan-track-status")
-          .text(formatStatus(r.status))
-          .attr("style", statusStyle);
-
-        $trackResultDiv.show();
-        $trackErrorDiv.hide().empty();
-      } else {
-        $trackResultDiv.hide().empty();
-      }
-
-      if (state.trackError) {
-        $trackErrorDiv.text(state.trackError).show();
-      } else {
-        $trackErrorDiv.hide().empty();
-      }
-    }
-
     // ---- fetch types ----
     function fetchTypes() {
-      $.getJSON(restBase + "/letters/types", function (data) {
+      $.getJSON(ajaxUrl, { action: "desagubug_letter_types" }, function (resp) {
+        var data = (resp.success && resp.data) || resp;
         state.types = Array.isArray(data) ? data : [];
         var opts = '<option value="">Pilih Jenis Surat</option>';
         $.each(state.types, function (_, t) {
@@ -1429,26 +1458,44 @@
 
     $form.on("submit", submitRequest);
     $letterTypeSelect.on("change", updateTypeDescription);
-    $trackingPanel.find("form, .wp-desa-form-group").on("submit", checkStatus);
-    $trackBtn.on("click", checkStatus);
+    $nik.on("blur", lookupResident);
 
     // ---- boot ----
-    state.tab = $el.attr("data-active-tab") === "tracking" ? "tracking" : "request";
+    state.tab =
+      $el.attr("data-active-tab") === "tracking" ? "tracking" : "request";
 
-    if (state.tab === "tracking") {
-      $requestPanel.hide();
-      $trackingPanel.show();
-    } else {
-      $requestPanel.show();
-      $trackingPanel.hide();
-    }
+    // Allow ?jenis=cek to open tracking tab directly (client-side fallback
+    // so it still works when page HTML is served from cache).
+    try {
+      var jenisParam = new URLSearchParams(window.location.search).get("jenis");
+      if (jenisParam) {
+        var jenisVal = String(jenisParam).toLowerCase();
+        if (
+          ["cek", "cek-status", "tracking", "track", "status", "lacak"].indexOf(
+            jenisVal,
+          ) >= 0
+        ) {
+          state.tab = "tracking";
+        } else if (
+          ["form", "formulir", "request", "ajukan"].indexOf(jenisVal) >= 0
+        ) {
+          state.tab = "request";
+        }
+      }
+    } catch (e) {}
+
+    // Allow ?kode_tracking=... to open the tracking tab directly.
+    try {
+      if (new URLSearchParams(window.location.search).has("kode_tracking")) {
+        state.tab = "tracking";
+      }
+    } catch (e) {}
+
+    switchTab(state.tab);
 
     $msgContent.hide();
     $trackingBox.hide();
-    $trackResultDiv.hide();
-    $trackErrorDiv.hide();
     $submitBtn.find("span").eq(1).hide(); // loading
-    $trackBtn.find("span").eq(1).hide(); // loading
 
     fetchTypes();
   }

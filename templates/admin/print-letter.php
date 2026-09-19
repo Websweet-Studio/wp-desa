@@ -18,6 +18,17 @@
         $nama_kabupaten = $settings['nama_kabupaten'] ?? '[Nama Kabupaten]';
         $alamat_kantor = $settings['alamat_kantor'] ?? 'Jl. Raya Desa No. 1';
         $kepala_desa = $settings['kepala_desa'] ?? '( Nama Kepala Desa )';
+
+        // Ambil dari snapshot surat, fallback ke data penduduk bila kosong.
+        $pick = function ($primary, $fallback) use ($letter) {
+            $val = isset($letter->$primary) ? $letter->$primary : '';
+            if ($val === '' || $val === null) {
+                $val = isset($letter->$fallback) ? $letter->$fallback : '';
+            }
+            return $val;
+        };
+        $berlaku_mulai  = !empty($letter->berlaku_mulai) ? $letter->berlaku_mulai : $letter->created_at;
+        $berlaku_sampai = !empty($letter->berlaku_sampai) ? $letter->berlaku_sampai : date('Y-m-d H:i:s', strtotime($letter->created_at . ' +1 month'));
         ?>
 
         <div class="kop-surat">
@@ -52,27 +63,42 @@
                     <tr>
                         <td>Tempat/Tgl Lahir</td>
                         <td>:</td>
-                        <td><?php echo esc_html($letter->tempat_lahir . ', ' . $letter->tanggal_lahir); ?></td>
+                        <td><?php echo esc_html(trim($pick('tempat_lahir', 'r_tempat_lahir') . ', ' . $pick('tanggal_lahir', 'r_tanggal_lahir'), ', ')); ?></td>
+                    </tr>
+                    <tr>
+                        <td>Warga Negara</td>
+                        <td>:</td>
+                        <td><?php echo esc_html($pick('warganegara', 'r_warganegara') ?: 'Indonesia'); ?></td>
+                    </tr>
+                    <tr>
+                        <td>Agama</td>
+                        <td>:</td>
+                        <td><?php echo esc_html($pick('agama', 'r_agama') ?: '-'); ?></td>
                     </tr>
                     <tr>
                         <td>Jenis Kelamin</td>
                         <td>:</td>
-                        <td><?php echo esc_html($letter->jenis_kelamin); ?></td>
+                        <td><?php echo esc_html($pick('jenis_kelamin', 'r_jenis_kelamin')); ?></td>
                     </tr>
                     <tr>
                         <td>Pekerjaan</td>
                         <td>:</td>
-                        <td><?php echo esc_html($letter->pekerjaan); ?></td>
+                        <td><?php echo esc_html($pick('pekerjaan', 'r_pekerjaan')); ?></td>
                     </tr>
                     <tr>
                         <td>Status Perkawinan</td>
                         <td>:</td>
-                        <td><?php echo esc_html($letter->status_perkawinan); ?></td>
+                        <td><?php echo esc_html($pick('status_perkawinan', 'r_status_perkawinan')); ?></td>
                     </tr>
                     <tr>
                         <td>Alamat</td>
                         <td>:</td>
-                        <td><?php echo esc_html($letter->alamat); ?></td>
+                        <td><?php echo esc_html($pick('alamat', 'r_alamat')); ?></td>
+                    </tr>
+                    <tr>
+                        <td>Berlaku</td>
+                        <td>:</td>
+                        <td><?php echo esc_html(date_i18n('d-m-Y', strtotime($berlaku_mulai)) . ' s/d ' . date_i18n('d-m-Y', strtotime($berlaku_sampai))); ?></td>
                     </tr>
                 </table>
             </div>

@@ -198,6 +198,24 @@ function wp_desa_status_badge($status)
                         </select>
                     </div>
                     <div class="wp-desa-form-group">
+                        <label class="wp-desa-label" for="res-agama">Agama</label>
+                        <select name="agama" id="res-agama" class="wp-desa-select">
+                            <?php
+                            $agama_options = ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu', 'Kepercayaan'];
+                            $current_agama = $edit_resident ? $edit_resident->agama : '';
+                            echo '<option value="">-- Pilih Agama --</option>';
+                            foreach ($agama_options as $opt):
+                            ?>
+                                <option value="<?php echo esc_attr($opt); ?>" <?php selected($current_agama === $opt); ?>><?php echo esc_html($opt); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="wp-desa-form-group">
+                        <label class="wp-desa-label" for="res-wn">Warganegara</label>
+                        <input type="text" name="warganegara" id="res-wn" class="wp-desa-input" placeholder="Indonesia"
+                            value="<?php echo esc_attr($edit_resident ? ($edit_resident->warganegara ?: 'Indonesia') : 'Indonesia'); ?>">
+                    </div>
+                    <div class="wp-desa-form-group">
                         <label class="wp-desa-label" for="res-tl">Tempat Lahir</label>
                         <input type="text" name="tempat_lahir" id="res-tl" class="wp-desa-input"
                             value="<?php echo $edit_resident ? esc_attr($edit_resident->tempat_lahir) : ''; ?>">
